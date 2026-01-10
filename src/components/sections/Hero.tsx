@@ -1,66 +1,53 @@
+"use client";
+
 import Container from "@/components/ui/Container";
+import { Scene } from "@/components/three/Scene";
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-20 pb-16 lg:pt-32 lg:pb-24 overflow-hidden">
-      <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column: Content */}
-          <div className="flex flex-col space-y-8 max-w-2xl">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-tight">
-              Building scalable systems through{" "}
-              <span className="text-blue-600">open-source</span> and real-world engineering.
-            </h1>
-            
-            <p className="text-lg md:text-xl text-slate-600 leading-relaxed">
-              Software engineer focused on architecting robust backend systems, 
-              contributing to high-impact open-source projects, and developing 
-              production-ready applications that solve complex technical challenges.
-            </p>
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-slate-950 text-white">
+      {/* Three.js Canvas Background */}
+      <Scene />
 
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <a
-                href="#opensource"
-                className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200"
-              >
-                View Open Source
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex justify-center items-center px-6 py-3 border border-slate-300 text-base font-semibold rounded-md text-slate-700 bg-white hover:bg-slate-50 transition-colors duration-200"
-              >
-                Contact Me
-              </a>
-            </div>
+      {/* Hero Content */}
+      <Container>
+        <div className="relative z-10 max-w-3xl">
+          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            <span>Open for GSoC 2026 & Summer Internships</span>
           </div>
 
-          {/* Right Column: Spline Integration Placeholder */}
-          <div className="hidden lg:block relative h-[500px] w-full bg-slate-50 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-            {/* 
-              TODO: Integrate Spline 3D Scene here.
-              Ensure the Spline component is lazy-loaded to maintain performance.
-            */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex flex-col items-center space-y-2 text-slate-400">
-                <svg
-                  className="w-12 h-12"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  />
-                </svg>
-                <span className="text-sm font-medium">3D Scene Placeholder</span>
-              </div>
-            </div>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 leading-[1.1]">
+            Architecting <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Scalable Systems</span> Through Open Source.
+          </h1>
+
+          <p className="text-lg md:text-xl text-slate-400 mb-10 leading-relaxed max-w-2xl">
+            Software engineer specializing in high-performance backend systems and distributed architectures. 
+            Actively contributing to the open-source ecosystem to build the next generation of web infrastructure.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a
+              href="#projects"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all shadow-lg shadow-blue-500/25"
+            >
+              View Projects
+            </a>
+            <a
+              href="#contact"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold border border-slate-700 transition-all"
+            >
+              Get in Touch
+            </a>
           </div>
         </div>
       </Container>
+
+      {/* Decorative Gradient Overlay */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none"></div>
     </section>
   );
 }
