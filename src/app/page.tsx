@@ -1,16 +1,17 @@
-import Hero from "@/sections/Hero";
-import About from "@/sections/About";
-import Projects from "@/sections/Projects";
-import OpenSource from "@/sections/OpenSource";
-import Contact from "@/sections/Contact";
-export default function Home(){
-    return(
-        <>
-        <Hero />
-        <About />
-        <Projects />
-        <OpenSource />
-        <Contact />
-        </>
-    );
+import Hero from "@/components/sections/Hero";
+import About from "@/components/sections/About";
+import Projects from "@/components/sections/Projects";
+import OpenSource from "@/components/sections/OpenSource";
+import Contact from "@/components/sections/Contact";
+
+export default function Home() {
+  return (
+    <>
+      <Hero />
+      <About />
+      <Projects />
+      <OpenSource />
+      <Contact />
+    </>
+  );
 }
