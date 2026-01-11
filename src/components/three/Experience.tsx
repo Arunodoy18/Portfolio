@@ -27,55 +27,51 @@ export default function Experience() {
           <color attach="background" args={["#020617"]} />
           <fog attach="fog" args={["#020617", 5, 30]} />
           
-          <ScrollControls pages={6} damping={0.2}>
-            <Scroll>
-              <Lights />
-              <Environment />
-              <CameraRig />
-              
-              {/* Hero Section - Page 0 */}
-              <group position={[0, 0, 0]}>
-                <Torus />
-              </group>
+            <ScrollControls pages={6} damping={0.15}>
+              <Scroll>
+                <Lights />
+                <Environment />
+                <CameraRig />
+                
+                <group position={[0, 0, 0]}>
+                  <Torus />
+                </group>
 
-              {/* About Section - Page 1 */}
-              <group position={[2, -10, -2]}>
-                <Hologram />
-              </group>
-              
-              {/* Skills Section - Page 2 */}
-              <group position={[-1, -20, 0]}>
-                <SkillsOrbit />
-              </group>
+                <group position={[2, -10, -2]}>
+                  <Hologram />
+                </group>
+                
+                <group position={[-1, -20, 0]}>
+                  <SkillsOrbit />
+                </group>
 
-              {/* Projects Section - Page 3 */}
-              <group position={[0, -30, 0]}>
-                <ProjectCards3D />
-              </group>
+                <group position={[0, -30, 0]}>
+                  <ProjectCards3D />
+                </group>
 
-              {/* Open Source Section - Page 4 */}
-              <group position={[0, -40, 0]}>
-                <OpenSourceNodes />
-              </group>
+                <group position={[0, -40, 0]}>
+                  <OpenSourceNodes />
+                </group>
 
-              {/* Contact Section - Page 5 */}
-              <group position={[0, -50, 0]}>
-                <mesh>
-                  <torusGeometry args={[2, 0.02, 16, 100]} />
-                  <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
-                </mesh>
-              </group>
-            </Scroll>
+                <group position={[0, -50, 0]}>
+                  <mesh>
+                    <torusGeometry args={[2, 0.02, 16, 100]} />
+                    <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
+                  </mesh>
+                </group>
+              </Scroll>
 
-            <Scroll html className="w-full">
-              <HeroOverlay />
-              <AboutOverlay />
-              <div className="h-screen" /> {/* Skills Section Spacer */}
-              <ProjectsOverlay />
-              <OpenSourceOverlay />
-              <ContactOverlay />
-            </Scroll>
-          </ScrollControls>
+              <Scroll html className="w-full">
+                <main>
+                  <HeroOverlay />
+                  <AboutOverlay />
+                  <div className="h-screen" />
+                  <ProjectsOverlay />
+                  <OpenSourceOverlay />
+                  <ContactOverlay />
+                </main>
+              </Scroll>
+            </ScrollControls>
         </Suspense>
       </Canvas>
       
