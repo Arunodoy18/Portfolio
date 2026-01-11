@@ -1,8 +1,8 @@
 "use client";
 
+import { useMemo, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
-import { Suspense } from "react";
 import { Torus } from "./Torus";
 import { Lights } from "./Lights";
 import { CameraRig } from "./CameraRig";
@@ -12,7 +12,7 @@ import { SkillsOrbit } from "./SkillsOrbit";
 import { ProjectCards3D } from "./ProjectCards3D";
 import { OpenSourceNodes } from "./OpenSourceNodes";
 
-// Import new polished overlays
+// Import overlays
 import HeroOverlay from "../sections/HeroOverlay";
 import AboutOverlay from "../sections/AboutOverlay";
 import ProjectsOverlay from "../sections/ProjectsOverlay";
@@ -23,56 +23,56 @@ export default function Experience() {
   return (
     <div className="h-screen w-full bg-[#020617] fixed inset-0">
       <Canvas shadows camera={{ position: [0, 0, 8], fov: 45 }} dpr={[1, 2]}>
-        <Suspense fallback={null}>
-          <color attach="background" args={["#020617"]} />
-          <fog attach="fog" args={["#020617", 5, 30]} />
-          
-            <ScrollControls pages={6} damping={0.15}>
-              <Scroll>
-                <Lights />
-                <Environment />
-                <CameraRig />
-                
-                <group position={[0, 0, 0]}>
-                  <Torus />
-                </group>
+        <color attach="background" args={["#020617"]} />
+        <fog attach="fog" args={["#020617", 5, 30]} />
+        
+        <ScrollControls pages={6} damping={0.15}>
+          <Scroll>
+            <Suspense fallback={null}>
+              <Lights />
+              <Environment />
+              <CameraRig />
+              
+              <group position={[0, 0, 0]}>
+                <Torus />
+              </group>
 
-                <group position={[2, -10, -2]}>
-                  <Hologram />
-                </group>
-                
-                <group position={[-1, -20, 0]}>
-                  <SkillsOrbit />
-                </group>
+              <group position={[2, -10, -2]}>
+                <Hologram />
+              </group>
+              
+              <group position={[-1, -20, 0]}>
+                <SkillsOrbit />
+              </group>
 
-                <group position={[0, -30, 0]}>
-                  <ProjectCards3D />
-                </group>
+              <group position={[0, -30, 0]}>
+                <ProjectCards3D />
+              </group>
 
-                <group position={[0, -40, 0]}>
-                  <OpenSourceNodes />
-                </group>
+              <group position={[0, -40, 0]}>
+                <OpenSourceNodes />
+              </group>
 
-                <group position={[0, -50, 0]}>
-                  <mesh>
-                    <torusGeometry args={[2, 0.02, 16, 100]} />
-                    <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
-                  </mesh>
-                </group>
-              </Scroll>
+              <group position={[0, -50, 0]}>
+                <mesh>
+                  <torusGeometry args={[2, 0.02, 16, 100]} />
+                  <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
+                </mesh>
+              </group>
+            </Suspense>
+          </Scroll>
 
-              <Scroll html className="w-full">
-                <main>
-                  <HeroOverlay />
-                  <AboutOverlay />
-                  <div className="h-screen" />
-                  <ProjectsOverlay />
-                  <OpenSourceOverlay />
-                  <ContactOverlay />
-                </main>
-              </Scroll>
-            </ScrollControls>
-        </Suspense>
+          <Scroll html className="w-full">
+            <main>
+              <HeroOverlay />
+              <AboutOverlay />
+              <div className="h-screen" /> {/* Skills Section Spacer */}
+              <ProjectsOverlay />
+              <OpenSourceOverlay />
+              <ContactOverlay />
+            </main>
+          </Scroll>
+        </ScrollControls>
       </Canvas>
       
       {/* Fixed Branding */}
