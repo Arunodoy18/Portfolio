@@ -1,40 +1,75 @@
 "use client";
 
+import { motion } from "framer-motion";
 import Container from "../ui/Container";
+import Button from "../ui/Button";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function HeroOverlay() {
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        staggerChildren: 0.2,
+        ease: [0.16, 1, 0.3, 1],
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
     <section className="h-screen w-full flex items-center">
       <Container>
-        <div className="max-w-3xl">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-            </span>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="max-w-4xl"
+        >
+          <motion.div 
+            variants={itemVariants}
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-semibold mb-8 backdrop-blur-sm"
+          >
+            <Sparkles className="w-4 h-4" />
             <span>Open for GSoC 2026 & Summer Internships</span>
-          </div>
+          </motion.div>
 
-          <h1 className="text-6xl md:text-8xl font-bold tracking-tight mb-6 leading-[1.1] text-white">
-            Architecting <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
-              Scalable Systems
+          <motion.h1 
+            variants={itemVariants}
+            className="text-7xl md:text-9xl font-bold tracking-tight mb-8 leading-[0.95] text-white"
+          >
+            Engineering <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400">
+              Future Systems
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="text-xl md:text-2xl text-slate-400 mb-10 leading-relaxed max-w-2xl">
-            Software engineer specializing in high-performance backend systems and distributed architectures.
-          </p>
+          <motion.p 
+            variants={itemVariants}
+            className="text-xl md:text-2xl text-slate-400 mb-12 leading-relaxed max-w-2xl font-light"
+          >
+            Building <span className="text-white font-medium italic">production-ready</span> systems with 
+            mathematical precision and a focus on high-performance distributed architectures.
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button className="px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-all">
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6">
+            <Button variant="primary" className="group">
               Explore Universe
-            </button>
-            <button className="px-8 py-4 rounded-lg bg-slate-800 hover:bg-slate-700 text-white font-semibold border border-slate-700 transition-all">
-              View Specs
-            </button>
-          </div>
-        </div>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+            <Button variant="outline">
+              Technical Specs
+            </Button>
+          </motion.div>
+        </motion.div>
       </Container>
     </section>
   );
