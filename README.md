@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 3D Portfolio - Software Engineer
 
-## Getting Started
+A modern, immersive 3D portfolio website built with Next.js, React Three Fiber, and Framer Motion. Features scroll-driven 3D animations, interactive holographic elements, and smooth transitions.
 
-First, run the development server:
+## 🚀 Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **3D Graphics:** React Three Fiber, Three.js, @react-three/drei
+- **Animations:** Framer Motion
+- **Styling:** Tailwind CSS v4
+- **Language:** TypeScript
+- **Icons:** Lucide React
+
+## 📦 Getting Started
+
+### Prerequisites
+- Node.js 18+ and npm
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone <your-repo-url>
+cd portfolio
+
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will start at [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Troubleshooting
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Port 3000 already in use?**
+```bash
+# On Windows PowerShell
+Get-NetTCPConnection -LocalPort 3000 | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
 
-## Learn More
+# Then retry
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+The dev server is configured to explicitly bind to port 3000. If you see "port already in use", another process (possibly another Next.js project) is running. Stop it first.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🏗️ Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+portfolio/
+├── src/
+│   ├── app/              # Next.js app router pages
+│   │   ├── layout.tsx    # Root layout with fonts
+│   │   ├── page.tsx      # Home page
+│   │   └── globals.css   # Global styles
+│   ├── components/
+│   │   ├── three/        # 3D components (Canvas, Scene, etc.)
+│   │   └── sections/     # Section overlays (Hero, About, etc.)
+│   └── ui/               # Reusable UI components
+├── public/               # Static assets
+└── package.json
+```
 
-## Deploy on Vercel
+## 🎨 Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Scroll-Driven 3D Scenes:** Navigate through different sections with smooth scroll-based animations
+- **Interactive 3D Elements:**
+  - Animated torus geometry
+  - Holographic avatar
+  - Skills orbit visualization
+  - 3D project cards
+  - Open source contribution nodes
+- **Responsive Design:** Optimized for all screen sizes
+- **Dark Theme:** Sleek dark color scheme with blue accents
+- **Performance Optimized:** Suspense boundaries, dynamic imports, and efficient rendering
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🛠️ Scripts
+
+- `npm run dev` - Start development server on port 3000 (with port conflict check)
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+
+## 🔒 Deployment
+
+This project is configured for deployment to any Node.js hosting platform. No external services are required.
+
+### Build Output
+```bash
+npm run build
+```
+Creates an optimized production build in `.next/`
+
+### Production Server
+```bash
+npm start
+```
+Starts the Next.js production server on port 3000
+
+## 📝 Development Notes
+
+- All 3D components use client-side rendering (`"use client"`)
+- Scroll controls use 6 pages (configurable in Experience.tsx)
+- Camera FOV is set to 45° for optimal perspective
+- Fog and color gradients create depth
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Ensure `npm run build` succeeds
+4. Test with `npm run dev`
+5. Submit a pull request
+
+## 📄 License
+
+This project is private and proprietary.
+
