@@ -48,7 +48,7 @@ export default function ContactOverlay() {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           >
             <h2 className="text-6xl md:text-8xl font-bold text-white mb-8 tracking-tight">
               Let's Start a <br />
@@ -85,7 +85,7 @@ export default function ContactOverlay() {
                       transition={{ 
                         duration: 0.4, 
                         delay: i * 0.1,
-                        ease: [0.16, 1, 0.3, 1]
+                        ease: [0.16, 1, 0.3, 1] as [number, number, number, number]
                       }}
                       whileHover={{ y: -5, scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}

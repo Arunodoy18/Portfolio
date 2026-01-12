@@ -9,6 +9,7 @@ interface ButtonProps {
   variant?: "primary" | "secondary" | "outline";
   className?: string;
   href?: string;
+  ariaLabel?: string;
 }
 
 export default function Button({ 
@@ -16,13 +17,14 @@ export default function Button({
   onClick, 
   variant = "primary", 
   className = "",
-  href 
+  href,
+  ariaLabel
 }: ButtonProps) {
-  const baseStyles = "relative px-8 py-4 rounded-lg font-semibold transition-all overflow-hidden flex items-center justify-center gap-2";
+  const baseStyles = "relative px-8 py-4 rounded-lg font-semibold transition-all overflow-hidden flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900";
   
   const variants = {
-    primary: "bg-blue-600 text-white hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.3)]",
-    secondary: "bg-white text-black hover:bg-slate-100",
+    primary: "bg-blue-600 text-white hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)]",
+    secondary: "bg-white text-black hover:bg-slate-100 shadow-lg hover:shadow-xl",
     outline: "bg-transparent text-white border border-slate-700 hover:border-white hover:bg-white/5"
   };
 
@@ -30,6 +32,7 @@ export default function Button({
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
       className={`${baseStyles} ${variants[variant]} ${className}`}
     >
       <motion.div
@@ -43,14 +46,25 @@ export default function Button({
 
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className="block">
+      <a 
+        href={href} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        className="block"
+        aria-label={ariaLabel || `Navigate to ${href}`}
+      >
         {content}
       </a>
     );
   }
 
   return (
-    <button onClick={onClick} className="block w-full sm:w-auto">
+    <button 
+      onClick={onClick} 
+      className="block w-full sm:w-auto"
+      aria-label={ariaLabel}
+      type="button"
+    >
       {content}
     </button>
   );

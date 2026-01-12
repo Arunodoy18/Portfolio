@@ -14,7 +14,7 @@ export default function HeroOverlay() {
       transition: {
         duration: 0.8,
         staggerChildren: 0.2,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
   };
