@@ -7,18 +7,18 @@ import * as THREE from "three";
 
 const projects = [
   {
-    title: "Smart Waste Management AI",
-    tech: "Python / FastAPI / ML",
-    desc: "AI-powered waste classification and route optimization system.",
-    live: "https://frontend.jollysea-c5c0b121.centralus.azurecontainerapps.io",
+    title: "Open Source Contributor",
+    tech: "Apache / CNCF",
+    desc: "I am a consistent open-source contributor with hands-on experience in large, production-grade projects, primarily within the Apache and CNCF ecosystems. Since November, I have been actively contributing to Apache Airflow and the OpenTelemetry Collector, focusing on understanding system internals, design trade-offs, and long-term maintainability rather than one-off fixes. I enjoy working on infrastructure-level problems involving observability, scheduling, and security boundaries.",
+    live: "https://github.com/apache/airflow",
     source: "https://github.com/Arunodoy18",
     color: "#3b82f6"
   },
   {
-    title: "Code Review Platform",
-    tech: "Java / Spring Boot / React",
-    desc: "Collaborative code review platform for open-source contributors.",
-    live: "https://yours-code-assitant.netlify.app/login",
+    title: "Systems Thinker",
+    tech: "Problem Solving / Design",
+    desc: "I enjoy understanding how complex systems work beneath the surface and how small design decisions can have large real-world impact. I'm particularly interested in problem-solving, system behavior, and building reliable software rather than just writing code that \"works.\" Computer science gives me the tools to think logically, break down complexity, and continuously learn as technology evolves.",
+    live: "https://github.com/Arunodoy18",
     source: "https://github.com/Arunodoy18",
     color: "#8b5cf6"
   }
