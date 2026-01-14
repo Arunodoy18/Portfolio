@@ -4,8 +4,20 @@ import { motion } from "framer-motion";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useScroll } from "@react-three/drei";
 
 export default function HeroOverlay() {
+  const scroll = useScroll();
+
+  const handleNavigate = (section: 'projects' | 'about') => {
+    // Scroll positions based on 6 pages: Hero(0), About(1), Skills(2), Projects(3), OpenSource(4), Contact(5)
+    const positions = {
+      about: 1 / 6,      // Page 1 of 6
+      projects: 3 / 6,   // Page 3 of 6
+    };
+    scroll.el.scrollTo({ top: scroll.el.scrollHeight * positions[section], behavior: 'smooth' });
+  };
+
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -61,17 +73,17 @@ export default function HeroOverlay() {
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6">
-            <a href="#projects" className="inline-block">
+            <button onClick={() => handleNavigate('projects')} className="inline-block">
               <Button variant="primary" className="group">
                 Explore Universe
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
-            </a>
-            <a href="#about" className="inline-block">
+            </button>
+            <button onClick={() => handleNavigate('about')} className="inline-block">
               <Button variant="outline">
                 Technical Specs
               </Button>
-            </a>
+            </button>
           </motion.div>
         </motion.div>
       </Container>

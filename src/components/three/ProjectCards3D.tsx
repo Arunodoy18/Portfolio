@@ -71,9 +71,17 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
           />
         </RoundedBox>
         
-        <Html center position={[0, 0, 0.1]} className="pointer-events-auto">
+        <Html 
+          center 
+          position={[0, 0, 0.15]} 
+          className="pointer-events-auto"
+          zIndexRange={[100, 0]}
+          occlude={false}
+          transform
+          sprite
+        >
           <div 
-            className="w-[280px] p-4 cursor-pointer"
+            className="w-[280px] p-4 cursor-pointer bg-slate-900/90 rounded-xl backdrop-blur-sm"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
