@@ -18,7 +18,7 @@ const projects = [
     title: "Code Review Platform",
     tech: "Java / Spring Boot / React",
     desc: "Collaborative code review platform for open-source contributors.",
-    live: "https://codereview-frontend.jollysea-c5c0b121.centralus.azurecontainerapps.io",
+    live: "https://yours-code-assitant.netlify.app/login",
     source: "https://github.com/Arunodoy18",
     color: "#8b5cf6"
   }

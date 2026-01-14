@@ -5,9 +5,9 @@ import Container from "../ui/Container";
 import { GitBranch, GitMerge, GitPullRequest, Globe } from "lucide-react";
 
 const contributions = [
-  { name: "Core Infrastructure", role: "Contributor", impact: "Optimizing memory allocation in distributed runtimes", icon: <GitBranch className="w-5 h-5" /> },
-  { name: "Cloud Native Tools", role: "Maintainer", impact: "Standardizing API responses for high-load services", icon: <GitMerge className="w-5 h-5" /> },
-  { name: "DevOps Ecosystem", role: "GSoC Ready", impact: "Improving observability in containerized environments", icon: <GitPullRequest className="w-5 h-5" /> }
+  { name: "Apache Airflow", role: "Contributor", link: "https://github.com/apache/airflow", icon: <GitBranch className="w-5 h-5" /> },
+  { name: "CNCF – OpenTelemetry", role: "Contributor", link: "https://github.com/open-telemetry/opentelemetry-collector", icon: <GitMerge className="w-5 h-5" /> },
+  { name: "Apache TOC", role: "Contributor and Maintainer", link: null, icon: <GitPullRequest className="w-5 h-5" /> }
 ];
 
 export default function OpenSourceOverlay() {
@@ -62,20 +62,23 @@ export default function OpenSourceOverlay() {
                   {item.icon}
                 </div>
                 <div className="flex-1 px-8">
-                  <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
-                    {item.name}
-                  </h3>
+                  {item.link ? (
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors hover:underline">
+                      {item.name}
+                    </a>
+                  ) : (
+                    <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                      {item.name}
+                    </h3>
+                  )}
                   <p className="text-slate-500 text-sm font-medium uppercase tracking-widest">{item.role}</p>
                 </div>
-                <p className="text-slate-400 font-mono text-sm max-w-[250px] leading-relaxed">
-                  {item.impact}
-                </p>
               </motion.div>
             ))}
           </div>
 
           <motion.p variants={itemVariants} className="mt-12 text-slate-500 italic text-sm">
-            Actively preparing for <span className="text-white">GSoC 2026</span> with a focus on cloud-native computing.
+            Actively contributing to open-source projects and collaborating with open communities.
           </motion.p>
         </motion.div>
       </Container>

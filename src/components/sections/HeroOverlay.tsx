@@ -39,7 +39,7 @@ export default function HeroOverlay() {
             className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-semibold mb-8 backdrop-blur-sm"
           >
             <Sparkles className="w-4 h-4" />
-            <span>Open for GSoC 2026 & Summer Internships</span>
+            <span>Welcome to Arunodoy's Space</span>
           </motion.div>
 
           <motion.h1 
@@ -61,13 +61,17 @@ export default function HeroOverlay() {
           </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6">
-            <Button variant="primary" className="group">
-              Explore Universe
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button variant="outline">
-              Technical Specs
-            </Button>
+            <a href="#projects" className="inline-block">
+              <Button variant="primary" className="group">
+                Explore Universe
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </a>
+            <a href="#about" className="inline-block">
+              <Button variant="outline">
+                Technical Specs
+              </Button>
+            </a>
           </motion.div>
         </motion.div>
       </Container>

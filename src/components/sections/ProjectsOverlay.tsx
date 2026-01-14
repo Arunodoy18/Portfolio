@@ -16,7 +16,7 @@ const projects = [
     title: "Code Review Platform", 
     tech: "Next.js / Node.js / PostgreSQL", 
     desc: "High-performance platform for contributors. Automated review workflows and seamless integration for open-source teams.",
-    live: "https://codereview-frontend.jollysea-c5c0b121.centralus.azurecontainerapps.io",
+    live: "https://yours-code-assitant.netlify.app/login",
     github: "https://github.com/Arunodoy18"
   }
 ];
@@ -38,7 +38,7 @@ export default function ProjectsOverlay() {
   };
 
   return (
-    <section className="h-screen w-full flex items-center">
+    <section id="projects" className="h-screen w-full flex items-center">
       <Container>
         <motion.div
           initial={{ opacity: 0, y: -20 }}

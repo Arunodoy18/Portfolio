@@ -21,7 +21,7 @@ export default function AboutOverlay() {
   };
 
   return (
-    <section className="h-screen w-full flex items-center justify-end">
+    <section id="about" className="h-screen w-full flex items-center justify-end">
       <Container>
         <motion.div
           variants={containerVariants}
@@ -53,10 +53,10 @@ export default function AboutOverlay() {
 
           <motion.div variants={itemVariants} className="grid grid-cols-2 gap-4">
             {[
-              { icon: <Cpu className="w-5 h-5" />, label: "Systems Architecture", value: "Distributed" },
-              { icon: <Users className="w-5 h-5" />, label: "Community Impact", value: "50+ PRs" },
-              { icon: <Code2 className="w-5 h-5" />, label: "Core Competency", value: "Java / TS" },
-              { icon: <Rocket className="w-5 h-5" />, label: "Focus", value: "Scalability" },
+              { icon: <Users className="w-5 h-5" />, label: "Open Source", value: "Contributor" },
+              { icon: <Code2 className="w-5 h-5" />, label: "Problem Solving", value: "DSA" },
+              { icon: <Cpu className="w-5 h-5" />, label: "Backend", value: "Developer" },
+              { icon: <Rocket className="w-5 h-5" />, label: "3D Design", value: "Creator" },
             ].map((stat, i) => (
               <motion.div
                 key={i}
