@@ -78,10 +78,10 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
           zIndexRange={[100, 0]}
           occlude={false}
           transform
-          sprite
+          distanceFactor={10}
         >
           <div 
-            className="w-[280px] p-4 cursor-pointer bg-slate-900/90 rounded-xl backdrop-blur-sm"
+            className="w-[280px] p-4 cursor-pointer bg-slate-900/90 rounded-xl backdrop-blur-sm flex flex-col items-center text-center"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
