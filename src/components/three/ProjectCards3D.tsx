@@ -73,15 +73,13 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
         
         <Html 
           center 
-          position={[0, 0, 0.15]} 
+          position={[0, 0, 0.2]} 
           className="pointer-events-auto"
           zIndexRange={[100, 0]}
           occlude={false}
-          transform
-          distanceFactor={10}
         >
           <div 
-            className="w-[280px] p-4 cursor-pointer bg-slate-900/90 rounded-xl backdrop-blur-sm flex flex-col items-center text-center"
+            className="w-[280px] max-h-[220px] overflow-y-auto p-4 cursor-pointer bg-slate-900/95 rounded-xl backdrop-blur-sm opacity-100 visible"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
