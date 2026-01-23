@@ -9,7 +9,7 @@ const projects = [
     title: "Smart Waste Management AI", 
     tech: "React / Python / AI / IoT", 
     desc: "Production-grade waste classification system using computer vision. Real-time monitoring and scalable backend architecture.",
-    live: "https://frontend.jollysea-c5c0b121.centralus.azurecontainerapps.io",
+    live: "https://wastifi.netlify.app/",
     github: "https://github.com/Arunodoy18"
   },
   { 
