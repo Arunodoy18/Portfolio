@@ -35,7 +35,7 @@ export default function OpenSourceOverlay() {
   };
 
   return (
-    <section className="h-screen w-full flex items-center justify-end">
+    <section id="open-source" className="h-screen w-full flex items-center justify-end">
       <Container>
         <motion.div
           variants={containerVariants}

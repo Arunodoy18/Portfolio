@@ -10,35 +10,25 @@ export default function HeroOverlay() {
   const scroll = useScroll();
 
   const handleNavigate = (section: string) => {
-    console.log('Navigate called:', section, 'scroll.el:', scroll.el);
+    console.log('Navigate called:', section);
     
-    // Try drei scroll first
-    if (scroll.el) {
-      const positions: Record<string, number> = {
-        about: 1 / 8,
-        projects: 3 / 8,
-      };
-      const position = positions[section];
-      if (position !== undefined) {
-        console.log('Using drei scroll to:', scroll.el.scrollHeight * position);
-        scroll.el.scrollTo({ top: scroll.el.scrollHeight * position, behavior: 'smooth' });
-        return;
-      }
+    // Simple approach: find the section element and scroll to it
+    const sectionElement = document.getElementById(section);
+    if (sectionElement) {
+      console.log('Found section element, scrolling to it');
+      sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
     }
     
-    // Fallback: find scroll container manually
-    const container = document.querySelector('[data-scroll-container]') as HTMLElement;
-    if (container) {
-      const positions: Record<string, number> = {
-        about: 1 / 8,
-        projects: 3 / 8,
-      };
-      const position = positions[section];
-      if (position !== undefined) {
-        console.log('Using fallback scroll to:', container.scrollHeight * position);
-        container.scrollTo({ top: container.scrollHeight * position, behavior: 'smooth' });
-      }
+    // If no section found, try to find by className or data attribute
+    const sectionByClass = document.querySelector(`[data-section="${section}"]`);
+    if (sectionByClass) {
+      console.log('Found section by data attribute');
+      sectionByClass.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
     }
+    
+    console.log('Section not found:', section);
   };
 
   const containerVariants = {

@@ -91,50 +91,28 @@ export default function Navbar() {
 
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, item: NavItem) => {
     e.preventDefault();
-    console.log('Navbar click:', item.sectionId, 'scrollContainer:', scrollContainer);
+    console.log('Navbar click:', item.sectionId);
     setActiveSection(item.sectionId);
     setIsMobileMenuOpen(false);
     
-    // Try multiple ways to find and scroll the container
-    let container = scrollContainer;
-    
-    // Method 1: Use stored container
-    if (!container) {
-      container = document.querySelector('[data-scroll-container]') as HTMLElement;
-      console.log('Method 1 - Found tagged container:', container);
-    }
-    
-    // Method 2: Find drei scroll container by characteristics
-    if (!container) {
-      const divs = document.querySelectorAll('div');
-      for (const div of divs) {
-        const style = window.getComputedStyle(div);
-        if (style.overflowY === 'scroll' && style.position === 'absolute' && 
-            div.scrollHeight > window.innerHeight * 2) {
-          container = div as HTMLElement;
-          console.log('Method 2 - Found scroll container:', container);
-          break;
-        }
-      }
-    }
-    
-    // Method 3: Try window scroll as last resort
-    if (!container) {
-      console.log('Method 3 - Using window scroll');
-      const targetPosition = window.innerHeight * item.scrollPosition * 8;
-      window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+    // Simple approach: find the section and scroll to it
+    const sectionElement = document.getElementById(item.sectionId);
+    if (sectionElement) {
+      console.log('Found section element:', sectionElement);
+      sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
     
-    if (container) {
-      const scrollTop = container.scrollHeight * item.scrollPosition;
-      console.log('Scrolling to:', scrollTop, 'of', container.scrollHeight, 'position:', item.scrollPosition);
-      container.scrollTo({ 
-        top: scrollTop, 
-        behavior: 'smooth' 
-      });
+    // Try data attribute approach
+    const sectionByData = document.querySelector(`[data-section="${item.sectionId}"]`);
+    if (sectionByData) {
+      console.log('Found section by data attribute');
+      sectionByData.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
     }
-  }, [scrollContainer]);
+    
+    console.log('Section not found:', item.sectionId);
+  }, []);
 
   const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
