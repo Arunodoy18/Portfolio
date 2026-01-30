@@ -95,12 +95,40 @@ export default function Navbar() {
     setActiveSection(item.sectionId);
     setIsMobileMenuOpen(false);
     
-    // Use the state container or find it again
-    const container = scrollContainer || document.querySelector('[data-scroll-container]') as HTMLElement;
-    console.log('Found container:', container);
+    // Try multiple ways to find and scroll the container
+    let container = scrollContainer;
+    
+    // Method 1: Use stored container
+    if (!container) {
+      container = document.querySelector('[data-scroll-container]') as HTMLElement;
+      console.log('Method 1 - Found tagged container:', container);
+    }
+    
+    // Method 2: Find drei scroll container by characteristics
+    if (!container) {
+      const divs = document.querySelectorAll('div');
+      for (const div of divs) {
+        const style = window.getComputedStyle(div);
+        if (style.overflowY === 'scroll' && style.position === 'absolute' && 
+            div.scrollHeight > window.innerHeight * 2) {
+          container = div as HTMLElement;
+          console.log('Method 2 - Found scroll container:', container);
+          break;
+        }
+      }
+    }
+    
+    // Method 3: Try window scroll as last resort
+    if (!container) {
+      console.log('Method 3 - Using window scroll');
+      const targetPosition = window.innerHeight * item.scrollPosition * 8;
+      window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+      return;
+    }
+    
     if (container) {
       const scrollTop = container.scrollHeight * item.scrollPosition;
-      console.log('Scrolling to:', scrollTop, 'of', container.scrollHeight);
+      console.log('Scrolling to:', scrollTop, 'of', container.scrollHeight, 'position:', item.scrollPosition);
       container.scrollTo({ 
         top: scrollTop, 
         behavior: 'smooth' 
@@ -111,9 +139,26 @@ export default function Navbar() {
   const handleLogoClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     setActiveSection("");
-    const container = scrollContainer || document.querySelector('[data-scroll-container]') as HTMLElement;
+    
+    // Use same approach as handleNavClick
+    let container = scrollContainer || document.querySelector('[data-scroll-container]') as HTMLElement;
+    
+    if (!container) {
+      const divs = document.querySelectorAll('div');
+      for (const div of divs) {
+        const style = window.getComputedStyle(div);
+        if (style.overflowY === 'scroll' && style.position === 'absolute' && 
+            div.scrollHeight > window.innerHeight * 2) {
+          container = div as HTMLElement;
+          break;
+        }
+      }
+    }
+    
     if (container) {
       container.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [scrollContainer]);
 

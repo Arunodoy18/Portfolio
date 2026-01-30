@@ -16,8 +16,8 @@ export default function OpenSourceOverlay() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3,
-        delayChildren: 0.2,
+        staggerChildren: 0.6,
+        delayChildren: 0.4,
       },
     },
   };
@@ -28,7 +28,7 @@ export default function OpenSourceOverlay() {
       opacity: 1, 
       x: 0, 
       transition: { 
-        duration: 0.8, 
+        duration: 1.2, 
         ease: [0.16, 1, 0.3, 1] as [number, number, number, number] 
       } 
     },
