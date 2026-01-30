@@ -3,90 +3,116 @@
 import { motion } from "framer-motion";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowDown, ChevronDown } from "lucide-react";
 import { useScroll } from "@react-three/drei";
 
 export default function HeroOverlay() {
   const scroll = useScroll();
 
-  const handleNavigate = (section: 'projects' | 'about') => {
-    // Scroll positions based on 6 pages: Hero(0), About(1), Skills(2), Projects(3), OpenSource(4), Contact(5)
-    const positions = {
-      about: 1 / 6,      // Page 1 of 6
-      projects: 3 / 6,   // Page 3 of 6
+  const handleNavigate = (section: string) => {
+    // Scroll positions based on 8 pages: Hero(0), About(1), Skills(2), Projects(3), WhyMe(4), OpenSource(5), Contact(6-7)
+    const positions: Record<string, number> = {
+      about: 1 / 8,
+      projects: 3 / 8,
     };
-    scroll.el.scrollTo({ top: scroll.el.scrollHeight * positions[section], behavior: 'smooth' });
+    const position = positions[section];
+    if (position !== undefined && scroll.el) {
+      scroll.el.scrollTo({ top: scroll.el.scrollHeight * position, behavior: 'smooth' });
+    }
   };
 
   const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      y: 0,
       transition: {
-        duration: 0.8,
-        staggerChildren: 0.2,
+        duration: 1,
+        staggerChildren: 0.15,
         ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
+      }
+    },
   };
 
   return (
-    <section className="h-screen w-full flex items-center">
+    <section className="h-screen w-full flex items-center justify-center relative">
       <Container>
         <motion.div
           variants={containerVariants}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="max-w-4xl"
+          animate="visible"
+          className="max-w-4xl mx-auto text-center"
         >
-          <motion.div 
-            variants={itemVariants}
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-semibold mb-8 backdrop-blur-sm"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>Welcome to Arunodoy's Space</span>
-          </motion.div>
-
+          {/* Name - Primary focus */}
           <motion.h1 
             variants={itemVariants}
-            className="text-7xl md:text-9xl font-bold tracking-tight mb-8 leading-[0.95] text-white"
+            className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight mb-6 text-white"
           >
-            Engineering <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400">
-              Future Systems
-            </span>
+            Arunodoy Banerjee
           </motion.h1>
 
+          {/* Identity line - Clear and confident */}
           <motion.p 
             variants={itemVariants}
-            className="text-xl md:text-2xl text-slate-400 mb-12 leading-relaxed max-w-2xl font-light"
+            className="text-xl md:text-2xl text-[#9d8ba6] mb-4 leading-relaxed max-w-2xl mx-auto font-light"
           >
-            Building <span className="text-white font-medium italic">production-ready</span> systems with 
-            mathematical precision and a focus on high-performance distributed architectures.
+            Software Engineer
+          </motion.p>
+          
+          <motion.p 
+            variants={itemVariants}
+            className="text-lg md:text-xl text-[#6b5a75] mb-12 leading-relaxed max-w-2xl mx-auto"
+          >
+            Building <span className="text-pink-400 font-medium">production-ready systems</span> with precision.
+            <br className="hidden sm:block" />
+            <span className="text-violet-400">Open source</span> contributor. <span className="text-pink-300">Systems thinker</span>.
           </motion.p>
 
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-6">
-            <button onClick={() => handleNavigate('projects')} className="inline-block">
-              <Button variant="primary" className="group">
-                Explore Universe
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          {/* Primary CTA */}
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div onClick={() => handleNavigate('projects')} className="inline-block cursor-pointer">
+              <Button variant="primary" className="group px-10 py-5 text-lg">
+                View My Work
+                <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
               </Button>
-            </button>
-            <button onClick={() => handleNavigate('about')} className="inline-block">
-              <Button variant="outline">
-                Technical Specs
+            </div>
+            <div onClick={() => handleNavigate('about')} className="inline-block cursor-pointer">
+              <Button variant="outline" className="px-8 py-5">
+                Learn More
               </Button>
-            </button>
+            </div>
           </motion.div>
         </motion.div>
       </Container>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.8 }}
+        className="absolute bottom-12 left-1/2 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center text-[#6b5a75] cursor-pointer hover:text-pink-400 transition-colors"
+          onClick={() => handleNavigate('about')}
+        >
+          <span className="text-xs font-medium tracking-widest uppercase mb-2">Scroll</span>
+          <ChevronDown className="w-5 h-5" />
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

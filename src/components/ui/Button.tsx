@@ -20,12 +20,12 @@ export default function Button({
   href,
   ariaLabel
 }: ButtonProps) {
-  const baseStyles = "relative px-8 py-4 rounded-lg font-semibold transition-all overflow-hidden flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900";
+  const baseStyles = "relative px-8 py-4 rounded-lg font-semibold transition-all overflow-hidden flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-[#0d0a0f]";
   
   const variants = {
-    primary: "bg-blue-600 text-white hover:bg-blue-500 shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)]",
-    secondary: "bg-white text-black hover:bg-slate-100 shadow-lg hover:shadow-xl",
-    outline: "bg-transparent text-white border border-slate-700 hover:border-white hover:bg-white/5"
+    primary: "bg-pink-600 text-white hover:bg-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]",
+    secondary: "bg-white text-[#0d0a0f] hover:bg-pink-50 shadow-lg hover:shadow-xl",
+    outline: "bg-transparent text-white border border-pink-500/30 hover:border-pink-400 hover:bg-pink-500/10"
   };
 
   const content = (

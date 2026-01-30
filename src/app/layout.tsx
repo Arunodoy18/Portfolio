@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Software Engineer | Open Source Contributor",
-  description: "Senior developer portfolio focused on scalable systems and open-source contributions.",
+  title: "Arunodoy Banerjee | Software Engineer",
+  description: "Production-focused software engineer specializing in scalable systems, open-source contributions, and high-performance architectures.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-950`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0d0a0f]`}
       >
         {children}
       </body>

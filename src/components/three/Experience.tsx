@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ScrollControls, Scroll } from "@react-three/drei";
 import { Torus } from "./Torus";
@@ -9,30 +9,55 @@ import { CameraRig } from "./CameraRig";
 import { Hologram } from "./Hologram";
 import { Environment } from "./Environment";
 import { SkillsOrbit } from "./SkillsOrbit";
-import { ProjectCards3D } from "./ProjectCards3D";
 import { OpenSourceNodes } from "./OpenSourceNodes";
 
 // Import overlays
 import HeroOverlay from "../sections/HeroOverlay";
 import AboutOverlay from "../sections/AboutOverlay";
 import ProjectsOverlay from "../sections/ProjectsOverlay";
+import WhyMeOverlay from "../sections/WhyMeOverlay";
 import OpenSourceOverlay from "../sections/OpenSourceOverlay";
 import ContactOverlay from "../sections/ContactOverlay";
+import Navbar from "../ui/Navbar";
 
 export default function Experience() {
+  // Tag drei scroll container for external navigation (Navbar)
+  useEffect(() => {
+    const tagScrollContainer = () => {
+      const containers = document.querySelectorAll('div');
+      for (const div of containers) {
+        const style = window.getComputedStyle(div);
+        if (style.overflowY === 'scroll' && style.position === 'absolute' && div.scrollHeight > window.innerHeight * 2) {
+          div.setAttribute('data-scroll-container', 'true');
+          return true;
+        }
+      }
+      return false;
+    };
+
+    // Try immediately, then retry
+    if (!tagScrollContainer()) {
+      const timer = setTimeout(tagScrollContainer, 100);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   return (
-    <div className="h-screen w-full bg-[#020617] fixed inset-0">
+    <div className="h-screen w-full bg-[#0d0a0f] fixed inset-0">
+      <Navbar />
+      
       <Canvas shadows camera={{ position: [0, 0, 8], fov: 45 }} dpr={[1, 2]}>
-        <color attach="background" args={["#020617"]} />
-        <fog attach="fog" args={["#020617", 5, 30]} />
+        <color attach="background" args={["#0d0a0f"]} />
+        <fog attach="fog" args={["#0d0a0f", 5, 30]} />
         
-        <ScrollControls pages={6} damping={0.15}>
+        <ScrollControls pages={8} damping={0.15}>
             <Scroll html>
               <main className="w-full">
                 <HeroOverlay />
                 <AboutOverlay />
                 <div className="h-screen" /> {/* Skills Section Spacer */}
                 <ProjectsOverlay />
+                <WhyMeOverlay />
                 <OpenSourceOverlay />
                 <ContactOverlay />
               </main>
@@ -44,30 +69,39 @@ export default function Experience() {
                 <Environment />
                 <CameraRig />
                 
+                {/* Hero - Torus */}
                 <group position={[0, 0, 0]}>
                   <Torus />
                 </group>
 
+                {/* About - Hologram */}
                 <group position={[2, -10, -2]}>
                   <Hologram />
                 </group>
                 
+                {/* Skills - Orbit */}
                 <group position={[-1, -20, 0]}>
                   <SkillsOrbit />
                 </group>
 
-                <group position={[0, -30, 0]}>
-                  <ProjectCards3D />
+                {/* Decorative element for Projects section */}
+                <group position={[0, -35, -5]}>
+                  <mesh>
+                    <torusGeometry args={[3, 0.02, 16, 100]} />
+                    <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.3} transparent opacity={0.4} />
+                  </mesh>
                 </group>
 
-                <group position={[0, -40, 0]}>
+                {/* Open Source - Nodes */}
+                <group position={[0, -55, 0]}>
                   <OpenSourceNodes />
                 </group>
 
-                <group position={[0, -50, 0]}>
+                {/* Contact - Ring */}
+                <group position={[0, -75, 0]}>
                   <mesh>
                     <torusGeometry args={[2, 0.02, 16, 100]} />
-                    <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.5} />
+                    <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.5} />
                   </mesh>
                 </group>
               </Suspense>
@@ -75,17 +109,13 @@ export default function Experience() {
         </ScrollControls>
       </Canvas>
       
-      {/* Fixed Branding */}
-      <div className="fixed top-8 left-8 z-50 pointer-events-none">
-        <p className="text-white font-bold text-lg tracking-tighter">AB<span className="text-blue-500">.</span></p>
-      </div>
-      
+      {/* Fixed Branding - moved to navbar */}
       <div className="fixed bottom-8 left-8 z-50 flex flex-col gap-4 pointer-events-auto">
         <a 
           href="https://github.com/Arunodoy18" 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="text-slate-500 hover:text-white transition-colors"
+          className="text-[#6b5a75] hover:text-pink-400 transition-colors"
           aria-label="Visit GitHub profile"
           title="GitHub Profile"
         >

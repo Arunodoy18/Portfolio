@@ -1,13 +1,44 @@
 @import "tailwindcss";
 
 :root {
-  --background: #020617; /* slate-950 */
-  --foreground: #f8fafc; /* slate-50 */
+  /* Dark pinkish/magenta theme palette */
+  --background: #0d0a0f; /* deep charcoal with pink undertones */
+  --foreground: #f5f0f5; /* soft off-white */
+  
+  /* Primary accent: neon pink / rose / magenta */
+  --primary: #ec4899; /* pink-500 */
+  --primary-light: #f472b6; /* pink-400 */
+  --primary-dark: #db2777; /* pink-600 */
+  --primary-glow: rgba(236, 72, 153, 0.4);
+  
+  /* Secondary accent: soft lavender / muted purple */
+  --secondary: #a78bfa; /* violet-400 */
+  --secondary-light: #c4b5fd; /* violet-300 */
+  --secondary-dark: #8b5cf6; /* violet-500 */
+  
+  /* Surface colors */
+  --surface: #1a1520; /* dark purple-ish surface */
+  --surface-elevated: #251e2c; /* slightly lighter surface */
+  --border: rgba(236, 72, 153, 0.15);
+  --border-hover: rgba(236, 72, 153, 0.4);
+  
+  /* Text colors */
+  --text-primary: #f5f0f5;
+  --text-secondary: #9d8ba6;
+  --text-muted: #6b5a75;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+  --color-secondary-dark: var(--secondary-dark);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
 }
 
 * {
@@ -22,6 +53,49 @@ body {
 }
 
 ::selection {
-  background: #3b82f6;
+  background: var(--primary);
   color: white;
+}
+
+/* Custom scrollbar with pink theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-dark);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Focus ring utility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-[#0d0a0f];
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(26, 21, 32, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(236, 72, 153, 0.1);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Pink glow effect */
+.glow-pink {
+  box-shadow: 0 0 20px var(--primary-glow), 0 0 40px rgba(236, 72, 153, 0.2);
 }

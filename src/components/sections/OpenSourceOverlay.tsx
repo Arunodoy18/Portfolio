@@ -37,15 +37,15 @@ export default function OpenSourceOverlay() {
           className="max-w-3xl ml-auto text-right"
         >
           <motion.div variants={itemVariants} className="mb-12">
-            <div className="flex justify-end mb-4 text-purple-500">
+            <div className="flex justify-end mb-4 text-violet-400">
               <Globe className="w-12 h-12" />
             </div>
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
-              Community <span className="text-purple-500 italic">Impact</span>
+              Community <span className="text-violet-400 italic">Impact</span>
             </h2>
-            <p className="text-xl text-slate-400 leading-relaxed font-light">
+            <p className="text-xl text-[#9d8ba6] leading-relaxed font-light">
               Deeply committed to the <span className="text-white font-medium">Open Source</span> philosophy. 
-              My contributions focus on <span className="text-purple-400">system-level optimizations</span> and 
+              My contributions focus on <span className="text-pink-400">system-level optimizations</span> and 
               building tools that empower developers worldwide.
             </p>
           </motion.div>
@@ -55,29 +55,29 @@ export default function OpenSourceOverlay() {
               <motion.div
                 key={i}
                 variants={itemVariants}
-                whileHover={{ x: -10, backgroundColor: "rgba(147, 51, 234, 0.1)" }}
-                className="flex items-center justify-between p-6 rounded-2xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-md transition-all group"
+                whileHover={{ x: -10, backgroundColor: "rgba(236, 72, 153, 0.1)" }}
+                className="flex items-center justify-between p-6 rounded-2xl bg-[#1a1520]/60 border border-pink-500/10 backdrop-blur-md transition-all group"
               >
-                <div className="flex items-center gap-4 text-purple-400 group-hover:scale-110 transition-transform">
+                <div className="flex items-center gap-4 text-pink-400 group-hover:scale-110 transition-transform">
                   {item.icon}
                 </div>
                 <div className="flex-1 px-8">
                   {item.link ? (
-                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors hover:underline">
+                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-xl font-bold text-white group-hover:text-pink-400 transition-colors hover:underline">
                       {item.name}
                     </a>
                   ) : (
-                    <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
+                    <h3 className="text-xl font-bold text-white group-hover:text-pink-400 transition-colors">
                       {item.name}
                     </h3>
                   )}
-                  <p className="text-slate-500 text-sm font-medium uppercase tracking-widest">{item.role}</p>
+                  <p className="text-[#6b5a75] text-sm font-medium uppercase tracking-widest">{item.role}</p>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <motion.p variants={itemVariants} className="mt-12 text-slate-500 italic text-sm">
+          <motion.p variants={itemVariants} className="mt-12 text-[#6b5a75] italic text-sm">
             Actively contributing to open-source projects and collaborating with open communities.
           </motion.p>
         </motion.div>

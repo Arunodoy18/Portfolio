@@ -41,50 +41,50 @@ export function SkillsOrbit() {
         <h2 className="text-4xl font-bold text-white text-center whitespace-nowrap">Technical Skills</h2>
       </Html>
 
-      {/* Central core */}
+      {/* Central core - pink theme */}
       <mesh>
         <icosahedronGeometry args={[0.5, 1]} />
-        <meshStandardMaterial color="#8b5cf6" emissive="#8b5cf6" emissiveIntensity={0.5} metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.5} metalness={0.9} roughness={0.1} />
       </mesh>
 
-      {/* Backend skills - outer orbit */}
+      {/* Backend skills - outer orbit - pink accent */}
       {skills.backend.map((skill, i) => (
         <Float key={skill} speed={2} rotationIntensity={0.2} floatIntensity={0.3}>
           <group position={backendPositions[i]}>
             <mesh>
               <boxGeometry args={[0.3, 0.3, 0.3]} />
-              <meshStandardMaterial color="#3b82f6" emissive="#3b82f6" emissiveIntensity={0.3} metalness={0.8} roughness={0.2} />
+              <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.3} metalness={0.8} roughness={0.2} />
             </mesh>
             <Html center position={[0, 0.5, 0]} className="pointer-events-none">
-              <span className="text-blue-400 text-sm font-mono whitespace-nowrap bg-slate-900/80 px-2 py-1 rounded">{skill}</span>
+              <span className="text-pink-400 text-sm font-mono whitespace-nowrap bg-[#1a1520]/80 px-2 py-1 rounded border border-pink-500/20">{skill}</span>
             </Html>
           </group>
         </Float>
       ))}
 
-      {/* Frontend skills - inner orbit */}
+      {/* Frontend skills - inner orbit - violet accent */}
       {skills.frontend.map((skill, i) => (
         <Float key={skill} speed={3} rotationIntensity={0.3} floatIntensity={0.4}>
           <group position={frontendPositions[i]}>
             <mesh>
               <octahedronGeometry args={[0.2, 0]} />
-              <meshStandardMaterial color="#06b6d4" emissive="#06b6d4" emissiveIntensity={0.3} metalness={0.8} roughness={0.2} />
+              <meshStandardMaterial color="#a78bfa" emissive="#a78bfa" emissiveIntensity={0.3} metalness={0.8} roughness={0.2} />
             </mesh>
             <Html center position={[0, 0.4, 0]} className="pointer-events-none">
-              <span className="text-cyan-400 text-sm font-mono whitespace-nowrap bg-slate-900/80 px-2 py-1 rounded">{skill}</span>
+              <span className="text-violet-400 text-sm font-mono whitespace-nowrap bg-[#1a1520]/80 px-2 py-1 rounded border border-violet-500/20">{skill}</span>
             </Html>
           </group>
         </Float>
       ))}
 
-      {/* Orbit rings */}
+      {/* Orbit rings - pink theme */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[3, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#3b82f6" transparent opacity={0.3} />
+        <meshBasicMaterial color="#ec4899" transparent opacity={0.3} />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[1.8, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#06b6d4" transparent opacity={0.3} />
+        <meshBasicMaterial color="#a78bfa" transparent opacity={0.3} />
       </mesh>
     </group>
   );

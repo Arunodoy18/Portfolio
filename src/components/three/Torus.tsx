@@ -25,37 +25,37 @@ export function Torus() {
   return (
     <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
       <group>
-        {/* Main torus knot */}
+        {/* Main torus knot - pink/magenta theme */}
         <mesh ref={meshRef}>
           <torusKnotGeometry args={[1.2, 0.35, 128, 32]} />
           <meshStandardMaterial 
-            color="#8b5cf6" 
+            color="#ec4899" 
             metalness={0.9} 
             roughness={0.1} 
-            emissive="#6d28d9"
+            emissive="#db2777"
             emissiveIntensity={0.4}
           />
         </mesh>
 
-        {/* Inner rotating icosahedron */}
+        {/* Inner rotating icosahedron - violet accent */}
         <mesh ref={innerRef} scale={0.4}>
           <icosahedronGeometry args={[1, 1]} />
           <meshStandardMaterial 
-            color="#3b82f6" 
+            color="#a78bfa" 
             metalness={0.8} 
             roughness={0.2}
-            emissive="#1d4ed8"
+            emissive="#8b5cf6"
             emissiveIntensity={0.5}
             wireframe
           />
         </mesh>
 
-        {/* Outer ring */}
+        {/* Outer ring - soft pink */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[2.2, 0.02, 16, 100]} />
           <meshStandardMaterial 
-            color="#06b6d4" 
-            emissive="#06b6d4" 
+            color="#f472b6" 
+            emissive="#f472b6" 
             emissiveIntensity={0.8}
             transparent
             opacity={0.6}

@@ -48,16 +48,16 @@ export function OpenSourceNodes() {
       <Html center position={[0, 3.5, 0]} className="pointer-events-none">
         <div className="text-center">
           <h2 className="text-4xl font-bold text-white whitespace-nowrap">Open Source Mindset</h2>
-          <p className="text-slate-400 mt-2">Building in public. Contributing to the ecosystem.</p>
+          <p className="text-[#9d8ba6] mt-2">Building in public. Contributing to the ecosystem.</p>
         </div>
       </Html>
 
-      {/* Connection lines */}
+      {/* Connection lines - pink theme */}
       <lineSegments ref={linesRef} geometry={lineGeometry}>
-        <lineBasicMaterial color="#3b82f6" transparent opacity={0.3} />
+        <lineBasicMaterial color="#ec4899" transparent opacity={0.3} />
       </lineSegments>
 
-      {/* Nodes */}
+      {/* Nodes - pink/violet theme */}
       {contributions.map((item, i) => (
         <Float key={item.name} speed={2 + i * 0.2} rotationIntensity={0.1} floatIntensity={0.2}>
           <group position={nodePositions[i]}>
@@ -70,18 +70,18 @@ export function OpenSourceNodes() {
                 <sphereGeometry args={[0.2, 16, 16]} />
               )}
               <meshStandardMaterial
-                color={item.type === "core" ? "#8b5cf6" : item.type === "badge" ? "#06b6d4" : "#3b82f6"}
-                emissive={item.type === "core" ? "#8b5cf6" : item.type === "badge" ? "#06b6d4" : "#3b82f6"}
+                color={item.type === "core" ? "#ec4899" : item.type === "badge" ? "#a78bfa" : "#f472b6"}
+                emissive={item.type === "core" ? "#ec4899" : item.type === "badge" ? "#a78bfa" : "#f472b6"}
                 emissiveIntensity={item.type === "core" ? 0.5 : 0.3}
                 metalness={0.8}
                 roughness={0.2}
               />
             </mesh>
             <Html center position={[0, item.type === "core" ? 0.7 : 0.5, 0]} className="pointer-events-none">
-              <span className={`text-xs font-mono whitespace-nowrap px-2 py-1 rounded ${
-                item.type === "core" ? "text-purple-400 bg-purple-900/50" : 
-                item.type === "badge" ? "text-cyan-400 bg-cyan-900/50" : 
-                "text-blue-400 bg-slate-900/80"
+              <span className={`text-xs font-mono whitespace-nowrap px-2 py-1 rounded border ${
+                item.type === "core" ? "text-pink-400 bg-pink-900/50 border-pink-500/20" : 
+                item.type === "badge" ? "text-violet-400 bg-violet-900/50 border-violet-500/20" : 
+                "text-pink-300 bg-[#1a1520]/80 border-pink-500/20"
               }`}>
                 {item.name}
               </span>
@@ -90,10 +90,10 @@ export function OpenSourceNodes() {
         </Float>
       ))}
 
-      {/* Outer ring */}
+      {/* Outer ring - pink theme */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[3.5, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#8b5cf6" transparent opacity={0.2} />
+        <meshBasicMaterial color="#ec4899" transparent opacity={0.2} />
       </mesh>
     </group>
   );

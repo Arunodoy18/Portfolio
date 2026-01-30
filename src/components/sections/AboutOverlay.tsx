@@ -32,17 +32,17 @@ export default function AboutOverlay() {
         >
           <motion.div variants={itemVariants} className="text-right mb-12">
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tight">
-              The Engineering <span className="text-blue-500 italic">Core</span>
+              The Engineering <span className="text-pink-400 italic">Core</span>
             </h2>
-            <p className="text-xl md:text-2xl text-slate-400 leading-relaxed font-light">
+            <p className="text-xl md:text-2xl text-[#9d8ba6] leading-relaxed font-light">
               I am a <span className="text-white font-semibold">Builder</span> and 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 font-bold ml-1">Open Source</span> contributor 
-              dedicated to crafting <span className="text-blue-400 font-medium underline decoration-blue-500/30 underline-offset-8">Production-Ready Systems</span>.
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-violet-400 font-bold ml-1">Open Source</span> contributor 
+              dedicated to crafting <span className="text-pink-300 font-medium underline decoration-pink-500/30 underline-offset-8">Production-Ready Systems</span>.
             </p>
           </motion.div>
 
           <motion.div variants={itemVariants} className="text-right mb-12">
-            <p className="text-lg text-slate-500 leading-relaxed">
+            <p className="text-lg text-[#6b5a75] leading-relaxed">
               Currently <span className="text-green-400 font-bold uppercase tracking-widest text-sm border-b border-green-400/30 pb-1">Open to Work</span>. 
               I specialize in building real-world, scalable products end-to-end, from high-performance backends to fluid 3D interfaces. 
               Actively seeking <span className="text-white font-medium">Internships</span>, 
@@ -60,12 +60,12 @@ export default function AboutOverlay() {
             ].map((stat, i) => (
               <motion.div
                 key={i}
-                whileHover={{ y: -5, borderColor: "rgba(255,255,255,0.2)" }}
-                className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-md transition-colors text-right"
+                whileHover={{ y: -5, borderColor: "rgba(236,72,153,0.3)" }}
+                className="p-6 rounded-2xl bg-[#1a1520]/60 border border-pink-500/10 backdrop-blur-md transition-colors text-right"
               >
-                <div className="flex justify-end text-blue-500 mb-3">{stat.icon}</div>
+                <div className="flex justify-end text-pink-400 mb-3">{stat.icon}</div>
                 <h3 className="text-white font-bold text-xl mb-1">{stat.value}</h3>
-                <p className="text-slate-500 text-xs uppercase tracking-widest font-semibold">{stat.label}</p>
+                <p className="text-[#6b5a75] text-xs uppercase tracking-widest font-semibold">{stat.label}</p>
               </motion.div>
             ))}
           </motion.div>

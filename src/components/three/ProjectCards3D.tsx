@@ -12,7 +12,7 @@ const projects = [
     desc: "I am a consistent open-source contributor with hands-on experience in large, production-grade projects, primarily within the Apache and CNCF ecosystems. Since November, I have been actively contributing to Apache Airflow and the OpenTelemetry Collector, focusing on understanding system internals, design trade-offs, and long-term maintainability rather than one-off fixes. I enjoy working on infrastructure-level problems involving observability, scheduling, and security boundaries.",
     live: "https://github.com/apache/airflow",
     source: "https://github.com/Arunodoy18",
-    color: "#3b82f6"
+    color: "#ec4899"
   },
   {
     title: "Systems Thinker",
@@ -20,7 +20,7 @@ const projects = [
     desc: "I enjoy understanding how complex systems work beneath the surface and how small design decisions can have large real-world impact. I'm particularly interested in problem-solving, system behavior, and building reliable software rather than just writing code that \"works.\" Computer science gives me the tools to think logically, break down complexity, and continuously learn as technology evolves.",
     live: "https://github.com/Arunodoy18",
     source: "https://github.com/Arunodoy18",
-    color: "#8b5cf6"
+    color: "#a78bfa"
   }
 ];
 
@@ -63,7 +63,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
           onPointerOut={() => setHovered(false)}
         >
           <meshStandardMaterial 
-            color={hovered ? project.color : "#1e293b"} 
+            color={hovered ? project.color : "#1a1520"} 
             metalness={0.5} 
             roughness={0.5}
             emissive={project.color}
@@ -79,19 +79,19 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
           occlude={false}
         >
           <div 
-            className="w-[280px] max-h-[220px] overflow-y-auto p-4 cursor-pointer bg-slate-900/95 rounded-xl backdrop-blur-sm opacity-100 visible"
+            className="w-[280px] max-h-[220px] overflow-y-auto p-4 cursor-pointer bg-[#1a1520]/95 rounded-xl backdrop-blur-sm opacity-100 visible border border-pink-500/10"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
           >
-            <p className="text-blue-400 text-xs font-mono mb-2">{project.tech}</p>
+            <p className="text-pink-400 text-xs font-mono mb-2">{project.tech}</p>
             <h3 className="text-white font-bold text-lg mb-2">{project.title}</h3>
-            <p className="text-slate-400 text-sm mb-4">{project.desc}</p>
+            <p className="text-[#9d8ba6] text-sm mb-4">{project.desc}</p>
             <div className="flex gap-2">
               <a 
                 href={project.live} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-all"
+                className="px-3 py-1 bg-pink-600 hover:bg-pink-500 text-white text-xs rounded transition-all"
               >
                 Live Demo
               </a>
@@ -99,7 +99,7 @@ function ProjectCard({ project, index }: { project: typeof projects[0]; index: n
                 href={project.source} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="px-3 py-1 bg-slate-700 hover:bg-slate-600 text-white text-xs rounded transition-all"
+                className="px-3 py-1 bg-[#251e2c] hover:bg-[#2d2436] text-white text-xs rounded transition-all border border-pink-500/20"
               >
                 Source
               </a>
