@@ -11,16 +11,33 @@ export default function HeroOverlay() {
 
   const handleNavigate = (section: string) => {
     console.log('Navigate called:', section, 'scroll.el:', scroll.el);
-    // Scroll positions based on 8 pages: Hero(0), About(1), Skills(2), Projects(3), WhyMe(4), OpenSource(5), Contact(6-7)
-    const positions: Record<string, number> = {
-      about: 1 / 8,
-      projects: 3 / 8,
-    };
-    const position = positions[section];
-    console.log('Position calculated:', position);
-    if (position !== undefined && scroll.el) {
-      console.log('Scrolling to:', scroll.el.scrollHeight * position);
-      scroll.el.scrollTo({ top: scroll.el.scrollHeight * position, behavior: 'smooth' });
+    
+    // Try drei scroll first
+    if (scroll.el) {
+      const positions: Record<string, number> = {
+        about: 1 / 8,
+        projects: 3 / 8,
+      };
+      const position = positions[section];
+      if (position !== undefined) {
+        console.log('Using drei scroll to:', scroll.el.scrollHeight * position);
+        scroll.el.scrollTo({ top: scroll.el.scrollHeight * position, behavior: 'smooth' });
+        return;
+      }
+    }
+    
+    // Fallback: find scroll container manually
+    const container = document.querySelector('[data-scroll-container]') as HTMLElement;
+    if (container) {
+      const positions: Record<string, number> = {
+        about: 1 / 8,
+        projects: 3 / 8,
+      };
+      const position = positions[section];
+      if (position !== undefined) {
+        console.log('Using fallback scroll to:', container.scrollHeight * position);
+        container.scrollTo({ top: container.scrollHeight * position, behavior: 'smooth' });
+      }
     }
   };
 
@@ -108,7 +125,7 @@ export default function HeroOverlay() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.8 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex justify-center w-full"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
