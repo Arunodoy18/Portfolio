@@ -91,14 +91,18 @@ export default function Navbar() {
 
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, item: NavItem) => {
     e.preventDefault();
+    console.log('Navbar click:', item.sectionId, 'scrollContainer:', scrollContainer);
     setActiveSection(item.sectionId);
     setIsMobileMenuOpen(false);
     
     // Use the state container or find it again
     const container = scrollContainer || document.querySelector('[data-scroll-container]') as HTMLElement;
+    console.log('Found container:', container);
     if (container) {
+      const scrollTop = container.scrollHeight * item.scrollPosition;
+      console.log('Scrolling to:', scrollTop, 'of', container.scrollHeight);
       container.scrollTo({ 
-        top: container.scrollHeight * item.scrollPosition, 
+        top: scrollTop, 
         behavior: 'smooth' 
       });
     }

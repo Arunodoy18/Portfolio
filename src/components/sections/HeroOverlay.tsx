@@ -10,13 +10,16 @@ export default function HeroOverlay() {
   const scroll = useScroll();
 
   const handleNavigate = (section: string) => {
+    console.log('Navigate called:', section, 'scroll.el:', scroll.el);
     // Scroll positions based on 8 pages: Hero(0), About(1), Skills(2), Projects(3), WhyMe(4), OpenSource(5), Contact(6-7)
     const positions: Record<string, number> = {
       about: 1 / 8,
       projects: 3 / 8,
     };
     const position = positions[section];
+    console.log('Position calculated:', position);
     if (position !== undefined && scroll.el) {
+      console.log('Scrolling to:', scroll.el.scrollHeight * position);
       scroll.el.scrollTo({ top: scroll.el.scrollHeight * position, behavior: 'smooth' });
     }
   };
@@ -81,17 +84,21 @@ export default function HeroOverlay() {
 
           {/* Primary CTA */}
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <div onClick={() => handleNavigate('projects')} className="inline-block cursor-pointer">
-              <Button variant="primary" className="group px-10 py-5 text-lg">
-                View My Work
-                <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-              </Button>
-            </div>
-            <div onClick={() => handleNavigate('about')} className="inline-block cursor-pointer">
-              <Button variant="outline" className="px-8 py-5">
-                Learn More
-              </Button>
-            </div>
+            <Button 
+              variant="primary" 
+              className="group px-10 py-5 text-lg"
+              onClick={() => handleNavigate('projects')}
+            >
+              View My Work
+              <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+            </Button>
+            <Button 
+              variant="secondary" 
+              className="group px-8 py-5 text-lg"
+              onClick={() => handleNavigate('about')}
+            >
+              Learn More
+            </Button>
           </motion.div>
         </motion.div>
       </Container>
