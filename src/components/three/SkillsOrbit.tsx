@@ -23,8 +23,7 @@ export function SkillsOrbit() {
     return skills.backend.map((_, i) => {
       const angle = (i / skills.backend.length) * Math.PI * 2;
       const radius = 2.5;
-      // Position skills on the right side (positive X)
-      return [Math.cos(angle) * radius + 3.5, Math.sin(i * 0.5) * 0.5, Math.sin(angle) * radius * 0.5] as [number, number, number];
+      return [Math.cos(angle) * radius, Math.sin(i * 0.5) * 0.5, Math.sin(angle) * radius * 0.3] as [number, number, number];
     });
   }, []);
 
@@ -32,19 +31,18 @@ export function SkillsOrbit() {
     return skills.frontend.map((_, i) => {
       const angle = (i / skills.frontend.length) * Math.PI * 2 + Math.PI / 4;
       const radius = 1.5;
-      // Position skills on the right side (positive X)
-      return [Math.cos(angle) * radius + 3.5, Math.sin(i * 0.3) * 0.3 + 1, Math.sin(angle) * radius * 0.5] as [number, number, number];
+      return [Math.cos(angle) * radius, Math.sin(i * 0.3) * 0.3 + 1, Math.sin(angle) * radius * 0.3] as [number, number, number];
     });
   }, []);
 
   return (
     <group ref={groupRef}>
-      <Html center position={[3.5, 3, 0]} className="pointer-events-none">
+      <Html center position={[0, 3, 0]} className="pointer-events-none">
         <h2 className="text-4xl font-bold text-white text-center whitespace-nowrap">Technical Skills</h2>
       </Html>
 
-      {/* Central core - pink theme - moved to the right */}
-      <mesh position={[3.5, 0, 0]}>
+      {/* Central core - pink theme */}
+      <mesh position={[0, 0, 0]}>
         <icosahedronGeometry args={[0.5, 1]} />
         <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.5} metalness={0.9} roughness={0.1} />
       </mesh>
@@ -79,12 +77,12 @@ export function SkillsOrbit() {
         </Float>
       ))}
 
-      {/* Orbit rings - pink theme - moved to the right */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[3.5, 0, 0]}>
+      {/* Orbit rings - pink theme */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <torusGeometry args={[2.5, 0.01, 16, 100]} />
         <meshBasicMaterial color="#ec4899" transparent opacity={0.3} />
       </mesh>
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[3.5, 0, 0]}>
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <torusGeometry args={[1.5, 0.01, 16, 100]} />
         <meshBasicMaterial color="#a78bfa" transparent opacity={0.3} />
       </mesh>
