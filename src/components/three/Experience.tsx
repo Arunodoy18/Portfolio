@@ -80,7 +80,7 @@ export default function Experience() {
                 </group>
                 
                 {/* Skills - Orbit */}
-                <group position={[4, -20, 0]}>
+                <group position={[6, -20, 0]}>
                   <SkillsOrbit />
                 </group>
 
