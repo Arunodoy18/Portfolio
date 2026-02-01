@@ -55,7 +55,6 @@ export default function Experience() {
               <main className="w-full">
                 <HeroOverlay />
                 <AboutOverlay />
-                <div className="h-screen" /> {/* Skills Section Spacer */}
                 <ProjectsOverlay />
                 <WhyMeOverlay />
                 <OpenSourceOverlay />
