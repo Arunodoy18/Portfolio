@@ -50,7 +50,7 @@ export default function Experience() {
         <color attach="background" args={["#0d0a0f"]} />
         <fog attach="fog" args={["#0d0a0f", 5, 30]} />
         
-        <ScrollControls pages={8} damping={0.15}>
+        <ScrollControls pages={8} damping={0.3}>
             <Scroll html>
               <main className="w-full">
                 <HeroOverlay />

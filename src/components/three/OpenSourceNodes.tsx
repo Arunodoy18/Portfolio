@@ -59,7 +59,7 @@ export function OpenSourceNodes() {
 
       {/* Nodes - pink/violet theme */}
       {contributions.map((item, i) => (
-        <Float key={item.name} speed={2 + i * 0.2} rotationIntensity={0.1} floatIntensity={0.2}>
+        <Float key={item.name} speed={0.8 + i * 0.1} rotationIntensity={0.05} floatIntensity={0.15}>
           <group position={nodePositions[i]}>
             <mesh>
               {item.type === "core" ? (
