@@ -50,7 +50,7 @@ export default function Experience() {
         <color attach="background" args={["#0d0a0f"]} />
         <fog attach="fog" args={["#0d0a0f", 5, 30]} />
         
-        <ScrollControls pages={6} damping={0.5}>
+        <ScrollControls pages={7} damping={0.5}>
             <Scroll html>
               <main className="w-full">
                 <HeroOverlay />
@@ -84,7 +84,7 @@ export default function Experience() {
                 </group>
 
                 {/* Decorative element for Projects section */}
-                <group position={[0, -35, -5]}>
+                <group position={[0, -30, -5]}>
                   <mesh>
                     <torusGeometry args={[3, 0.02, 16, 100]} />
                     <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.3} transparent opacity={0.4} />
@@ -92,12 +92,12 @@ export default function Experience() {
                 </group>
 
                 {/* Open Source - Nodes */}
-                <group position={[0, -55, 0]}>
+                <group position={[0, -45, 0]}>
                   <OpenSourceNodes />
                 </group>
 
                 {/* Contact - Ring */}
-                <group position={[0, -75, 0]}>
+                <group position={[0, -60, 0]}>
                   <mesh>
                     <torusGeometry args={[2, 0.02, 16, 100]} />
                     <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.5} />
