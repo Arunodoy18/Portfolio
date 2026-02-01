@@ -110,12 +110,12 @@ export default function HeroOverlay() {
         </motion.div>
       </Container>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator - positioned relative to viewport */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.8 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2"
+        className="fixed bottom-12 left-0 right-0 flex justify-center z-10"
       >
         <motion.div
           animate={{ y: [0, 8, 0] }}
