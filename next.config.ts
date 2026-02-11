@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Disable strict mode to prevent React Three Fiber Scroll component
-  // from attempting to create multiple roots (React 18+ issue)
+  output: "export",
   reactStrictMode: false,
-  
-  // Performance optimizations
   generateEtags: true,
   compress: true,
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;

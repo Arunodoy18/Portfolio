@@ -1,5 +1,5 @@
-# Netlify Configuration for Next.js 16 Portfolio
+# Netlify Configuration for Next.js 16 Portfolio (Static Export)
 
-# Let Netlify's Next.js Runtime handle everything automatically
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
+[build]
+  command = "npm run build"
+  publish = "out"
