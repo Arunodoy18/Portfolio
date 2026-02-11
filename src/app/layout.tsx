@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Rajdhani, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const rajdhani = Rajdhani({
+  variable: "--font-rajdhani",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const shareTechMono = Share_Tech_Mono({
+  variable: "--font-share-tech-mono",
   subsets: ["latin"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
-  title: "Arunodoy Banerjee | Software Engineer",
-  description: "Production-focused software engineer specializing in scalable systems, open-source contributions, and high-performance architectures.",
+  title: "AGENT ARUNODOY | Tactical Portfolio",
+  description: "Production-focused software engineer specializing in scalable systems, open-source contributions, and high-performance architectures. Enter the arena.",
 };
 
 export default function RootLayout({
@@ -25,7 +27,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0d0a0f]`}
+        className={`${rajdhani.variable} ${shareTechMono.variable} antialiased bg-[#0a0a0f]`}
+        style={{ fontFamily: "'Rajdhani', sans-serif" }}
       >
         {children}
       </body>

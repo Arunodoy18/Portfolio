@@ -1,9 +1,5 @@
-import Experience from "@/components/three/Experience";
+import GameShell from "@/components/GameShell";
 
 export default function Home() {
-  return (
-    <main className="relative bg-[#0d0a0f]">
-      <Experience />
-    </main>
-  );
+  return <GameShell />;
 }

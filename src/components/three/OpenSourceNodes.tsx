@@ -47,17 +47,17 @@ export function OpenSourceNodes() {
     <group ref={groupRef}>
       <Html center position={[0, 3.5, 0]} className="pointer-events-none">
         <div className="text-center">
-          <h2 className="text-4xl font-bold text-white whitespace-nowrap">Open Source Mindset</h2>
-          <p className="text-[#9d8ba6] mt-2">Building in public. Contributing to the ecosystem.</p>
+          <h2 className="text-4xl font-bold text-white whitespace-nowrap font-tactical uppercase tracking-widest">Open Source Mindset</h2>
+          <p className="text-[#8a8a9a] mt-2 font-mono">Building in public. Contributing to the ecosystem.</p>
         </div>
       </Html>
 
-      {/* Connection lines - pink theme */}
+      {/* Connection lines - Valorant red */}
       <lineSegments ref={linesRef} geometry={lineGeometry}>
-        <lineBasicMaterial color="#ec4899" transparent opacity={0.3} />
+        <lineBasicMaterial color="#ff4655" transparent opacity={0.3} />
       </lineSegments>
 
-      {/* Nodes - pink/violet theme */}
+      {/* Nodes - Valorant red/cyan theme */}
       {contributions.map((item, i) => (
         <Float key={item.name} speed={0.8 + i * 0.1} rotationIntensity={0.05} floatIntensity={0.15}>
           <group position={nodePositions[i]}>
@@ -70,8 +70,8 @@ export function OpenSourceNodes() {
                 <sphereGeometry args={[0.2, 16, 16]} />
               )}
               <meshStandardMaterial
-                color={item.type === "core" ? "#ec4899" : item.type === "badge" ? "#a78bfa" : "#f472b6"}
-                emissive={item.type === "core" ? "#ec4899" : item.type === "badge" ? "#a78bfa" : "#f472b6"}
+                color={item.type === "core" ? "#ff4655" : item.type === "badge" ? "#00e5ff" : "#1fb6ff"}
+                emissive={item.type === "core" ? "#ff4655" : item.type === "badge" ? "#00e5ff" : "#1fb6ff"}
                 emissiveIntensity={item.type === "core" ? 0.5 : 0.3}
                 metalness={0.8}
                 roughness={0.2}
@@ -79,9 +79,9 @@ export function OpenSourceNodes() {
             </mesh>
             <Html center position={[0, item.type === "core" ? 0.7 : 0.5, 0]} className="pointer-events-none">
               <span className={`text-xs font-mono whitespace-nowrap px-2 py-1 rounded border ${
-                item.type === "core" ? "text-pink-400 bg-pink-900/50 border-pink-500/20" : 
-                item.type === "badge" ? "text-violet-400 bg-violet-900/50 border-violet-500/20" : 
-                "text-pink-300 bg-[#1a1520]/80 border-pink-500/20"
+                item.type === "core" ? "text-[#ff4655] bg-[#ff4655]/10 border-[#ff4655]/30" : 
+                item.type === "badge" ? "text-[#00e5ff] bg-[#00e5ff]/10 border-[#00e5ff]/30" : 
+                "text-[#1fb6ff] bg-[#111118]/80 border-[#1fb6ff]/20"
               }`}>
                 {item.name}
               </span>
@@ -90,10 +90,10 @@ export function OpenSourceNodes() {
         </Float>
       ))}
 
-      {/* Outer ring - pink theme */}
+      {/* Outer ring - Valorant red */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[3.5, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#ec4899" transparent opacity={0.2} />
+        <meshBasicMaterial color="#ff4655" transparent opacity={0.2} />
       </mesh>
     </group>
   );

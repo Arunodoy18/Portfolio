@@ -20,12 +20,12 @@ export default function Button({
   href,
   ariaLabel
 }: ButtonProps) {
-  const baseStyles = "relative px-8 py-4 rounded-lg font-semibold transition-all overflow-hidden flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-[#0d0a0f]";
+  const baseStyles = "relative px-8 py-4 font-semibold transition-all overflow-hidden flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#ff4655] focus:ring-offset-2 focus:ring-offset-[#0a0a0f] clip-diagonal font-tactical uppercase tracking-wider";
   
   const variants = {
-    primary: "bg-pink-600 text-white hover:bg-pink-500 shadow-[0_0_20px_rgba(236,72,153,0.3)] hover:shadow-[0_0_30px_rgba(236,72,153,0.5)]",
-    secondary: "bg-white text-[#0d0a0f] hover:bg-pink-50 shadow-lg hover:shadow-xl",
-    outline: "bg-transparent text-white border border-pink-500/30 hover:border-pink-400 hover:bg-pink-500/10"
+    primary: "bg-[#ff4655] text-white hover:bg-[#ff5a67] shadow-[0_0_20px_rgba(255,70,85,0.3)] hover:shadow-[0_0_30px_rgba(255,70,85,0.5)]",
+    secondary: "bg-[#00e5ff] text-[#0a0a0f] hover:bg-[#33ecff] shadow-lg hover:shadow-xl",
+    outline: "bg-transparent text-white border border-[#ff4655]/30 hover:border-[#ff4655] hover:bg-[#ff4655]/10"
   };
 
   const content = (

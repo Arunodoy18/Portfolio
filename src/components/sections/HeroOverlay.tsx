@@ -1,34 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Container from "../ui/Container";
-import Button from "../ui/Button";
-import { ArrowDown, ChevronDown } from "lucide-react";
-import { useScroll } from "@react-three/drei";
+import { Crosshair, ChevronDown, Zap, Palette, Sparkles } from "lucide-react";
 
 export default function HeroOverlay() {
-  const scroll = useScroll();
-
   const handleNavigate = (section: string) => {
-    console.log('Navigate called:', section);
-    
-    // Simple approach: find the section element and scroll to it
     const sectionElement = document.getElementById(section);
     if (sectionElement) {
-      console.log('Found section element, scrolling to it');
       sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    
-    // If no section found, try to find by className or data attribute
     const sectionByClass = document.querySelector(`[data-section="${section}"]`);
     if (sectionByClass) {
-      console.log('Found section by data attribute');
       sectionByClass.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
     }
-    
-    console.log('Section not found:', section);
   };
 
   const containerVariants = {
@@ -37,7 +22,7 @@ export default function HeroOverlay() {
       opacity: 1,
       transition: {
         duration: 1,
-        staggerChildren: 0.15,
+        staggerChildren: 0.12,
         ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
@@ -56,76 +41,203 @@ export default function HeroOverlay() {
   };
 
   return (
-    <section className="h-screen w-full flex items-center justify-center relative">
-      <Container>
+    <section className="h-screen w-full flex items-center justify-center relative scanlines overflow-hidden">
+      {/* HUD Corner Elements */}
+      <div className="absolute top-6 left-6 z-20">
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5, duration: 0.8 }}
+          className="font-mono-game text-[10px] text-[#53545f] space-y-1"
+        >
+          <div>SYS://PORTFOLIO_v2.6</div>
+          <div className="text-[#00e5ff]">STATUS: ONLINE</div>
+          <div>PING: 12ms</div>
+        </motion.div>
+      </div>
+
+      <div className="absolute top-6 right-6 z-20">
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="font-mono-game text-[10px] text-right text-[#53545f] space-y-1"
+        >
+          <div>AGENT SELECT</div>
+          <div className="text-[#ff4655]">RANK: RADIANT</div>
+          <div>REGION: IN-1</div>
+        </motion.div>
+      </div>
+
+      {/* Main Agent Select Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="max-w-4xl mx-auto text-center"
+          className="flex flex-col lg:flex-row items-center justify-between gap-12"
         >
-          {/* Name - Primary focus */}
-          <motion.h1 
-            variants={itemVariants}
-            className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight mb-6 text-white"
-          >
-            Arunodoy Banerjee
-          </motion.h1>
+          {/* LEFT: Agent Info Panel */}
+          <div className="flex-1 max-w-xl order-2 lg:order-1">
+            {/* Agent class tag */}
+            <motion.div variants={itemVariants} className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-[2px] bg-[#ff4655]" />
+              <span className="font-mono-game text-xs text-[#ff4655] tracking-[0.3em] uppercase animate-flicker">
+                Agent Selected
+              </span>
+            </motion.div>
 
-          {/* Identity line - Clear and confident */}
-          <motion.p 
-            variants={itemVariants}
-            className="text-xl md:text-2xl text-[#9d8ba6] mb-4 leading-relaxed max-w-2xl mx-auto font-light"
-          >
-            Software Engineer
-          </motion.p>
-          
-          <motion.p 
-            variants={itemVariants}
-            className="text-lg md:text-xl text-[#6b5a75] mb-12 leading-relaxed max-w-2xl mx-auto"
-          >
-            Building <span className="text-pink-400 font-medium">production-ready systems</span> with precision.
-            <br className="hidden sm:block" />
-            <span className="text-violet-400">Open source</span> contributor. <span className="text-pink-300">Systems thinker</span>.
-          </motion.p>
+            {/* Agent Name */}
+            <motion.h1 
+              variants={itemVariants}
+              className="text-5xl sm:text-6xl md:text-8xl font-tactical text-white mb-2 leading-none tracking-wider"
+            >
+              ARUNODOY
+            </motion.h1>
 
-          {/* Primary CTA */}
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button 
-              variant="primary" 
-              className="group px-10 py-5 text-lg"
-              onClick={() => handleNavigate('projects')}
+            <motion.div variants={itemVariants} className="flex items-center gap-3 mb-6">
+              <div className="h-[1px] flex-1 bg-gradient-to-r from-[#ff4655] to-transparent" />
+              <span className="font-mono-game text-sm text-[#8b8d98]">BANERJEE</span>
+            </motion.div>
+
+            {/* Role & Class */}
+            <motion.div variants={itemVariants} className="mb-8 space-y-2">
+              <div className="flex items-center gap-4">
+                <span className="font-mono-game text-xs text-[#53545f] w-16">ROLE</span>
+                <span className="font-tactical text-lg text-[#00e5ff]">SOFTWARE ENGINEER</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="font-mono-game text-xs text-[#53545f] w-16">CLASS</span>
+                <span className="font-tactical text-lg text-[#e8e6e3]">CREATIVE ENGINEER</span>
+              </div>
+            </motion.div>
+
+            {/* Agent Bio */}
+            <motion.p 
+              variants={itemVariants}
+              className="text-base text-[#8b8d98] mb-6 leading-relaxed"
             >
-              View My Work
-              <ArrowDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-            </Button>
-            <Button 
-              variant="secondary" 
-              className="group px-8 py-5 text-lg"
-              onClick={() => handleNavigate('about')}
+              Building <span className="text-[#ff4655] font-semibold">production-ready systems</span> with precision.
+              <br />
+              <span className="text-[#00e5ff]">Open source</span> contributor. <span className="text-[#e8e6e3]">Systems thinker</span>.
+            </motion.p>
+
+            {/* Special Abilities */}
+            <motion.div variants={itemVariants} className="mb-8">
+              <p className="font-mono-game text-xs text-[#53545f] mb-3 tracking-[0.2em]">SPECIAL ABILITIES</p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { icon: <Sparkles className="w-3.5 h-3.5" />, label: "3D WEB" },
+                  { icon: <Palette className="w-3.5 h-3.5" />, label: "UI DESIGN" },
+                  { icon: <Zap className="w-3.5 h-3.5" />, label: "ANIMATIONS" },
+                ].map((ability) => (
+                  <div key={ability.label} className="flex items-center gap-2 px-3 py-1.5 clip-diagonal bg-[#111118] border border-[rgba(0,229,255,0.2)] text-[#00e5ff] text-xs font-mono-game">
+                    {ability.icon}
+                    {ability.label}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Status bar */}
+            <motion.div variants={itemVariants} className="mb-10">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-mono-game text-[#53545f]">OPEN FOR</span>
+                <span className="text-[10px] font-mono-game text-green-400 animate-pulse">GSoC 2026 & SUMMER INTERNSHIPS</span>
+              </div>
+              <div className="h-1 w-full bg-[#111118] rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-[#ff4655] to-[#00e5ff]"
+                  initial={{ width: 0 }}
+                  animate={{ width: "100%" }}
+                  transition={{ delay: 1.5, duration: 1.5, ease: "easeOut" }}
+                />
+              </div>
+            </motion.div>
+
+            {/* ENTER ARENA CTA */}
+            <motion.div variants={itemVariants}>
+              <motion.button
+                onClick={() => handleNavigate('about')}
+                className="group relative px-10 py-4 clip-diagonal bg-[#ff4655] text-white font-tactical text-lg tracking-[0.15em] overflow-hidden"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full"
+                  animate={{ x: ["100%", "-100%"] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                />
+                <span className="relative z-10 flex items-center gap-3">
+                  <Crosshair className="w-5 h-5" />
+                  ENTER ARENA
+                </span>
+              </motion.button>
+            </motion.div>
+          </div>
+
+          {/* RIGHT: 3D Character space (empty - character is in 3D canvas) */}
+          <div className="flex-1 max-w-lg order-1 lg:order-2 relative">
+            {/* Agent stat overlay on the 3D character side */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.8, duration: 1 }}
+              className="absolute -right-4 top-1/4 space-y-3 z-10 hidden lg:block"
             >
-              Learn More
-            </Button>
-          </motion.div>
+              {[
+                { label: "PWR", value: 95, color: "#ff4655" },
+                { label: "SPD", value: 88, color: "#00e5ff" },
+                { label: "INT", value: 97, color: "#1fb6ff" },
+              ].map((stat) => (
+                <div key={stat.label} className="flex items-center gap-2">
+                  <span className="font-mono-game text-[10px] text-[#53545f] w-8">{stat.label}</span>
+                  <div className="w-20 h-1 bg-[#111118] overflow-hidden">
+                    <motion.div
+                      className="h-full"
+                      style={{ background: stat.color }}
+                      initial={{ width: 0 }}
+                      animate={{ width: stat.value + "%" }}
+                      transition={{ delay: 2, duration: 1, ease: "easeOut" }}
+                    />
+                  </div>
+                  <span className="font-mono-game text-[10px] text-[#8b8d98]">{stat.value}</span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
         </motion.div>
-      </Container>
+      </div>
 
-      {/* Scroll indicator - positioned relative to viewport */}
+      {/* Bottom HUD elements */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.8 }}
-        className="fixed bottom-12 left-0 right-0 flex justify-center z-10"
+        transition={{ delay: 2, duration: 0.8 }}
+        className="absolute bottom-6 left-0 right-0 flex justify-between items-end px-8 z-10"
       >
+        {/* Bottom-left: map/region info */}
+        <div className="font-mono-game text-[10px] text-[#53545f] hidden sm:block">
+          <div>MAP: PORTFOLIO_ARENA</div>
+          <div>MODE: COMPETITIVE</div>
+        </div>
+
+        {/* Center scroll indicator */}
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center text-[#6b5a75] cursor-pointer hover:text-pink-400 transition-colors"
+          className="flex flex-col items-center text-[#53545f] cursor-pointer hover:text-[#ff4655] transition-colors"
           onClick={() => handleNavigate('about')}
         >
-          <span className="text-xs font-medium tracking-widest uppercase mb-2">Scroll</span>
-          <ChevronDown className="w-5 h-5" />
+          <span className="text-[10px] font-mono-game tracking-[0.3em] uppercase mb-2">DEPLOY</span>
+          <ChevronDown className="w-4 h-4" />
         </motion.div>
+
+        {/* Bottom-right */}
+        <div className="font-mono-game text-[10px] text-[#53545f] text-right hidden sm:block">
+          <div>FPS: 144</div>
+          <div>ROUND: 1/∞</div>
+        </div>
       </motion.div>
     </section>
   );

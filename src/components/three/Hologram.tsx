@@ -29,13 +29,13 @@ export function Hologram() {
           onPointerOver={() => setHovered(true)}
           onPointerOut={() => setHovered(false)}
         >
-          {/* Photo frame - pink theme */}
+          {/* Photo frame - Valorant theme */}
           <RoundedBox args={[2.5, 3, 0.1]} radius={0.05} smoothness={4}>
             <meshStandardMaterial 
-              color={hovered ? "#ec4899" : "#1a1520"}
+              color={hovered ? "#ff4655" : "#111118"}
               metalness={0.7}
               roughness={0.3}
-              emissive="#ec4899"
+              emissive="#ff4655"
               emissiveIntensity={hovered ? 0.4 : 0.1}
             />
           </RoundedBox>
@@ -44,32 +44,32 @@ export function Hologram() {
           <mesh position={[0, 0, 0.06]}>
             <planeGeometry args={[2.3, 2.8]} />
             <meshStandardMaterial 
-              color="#0d0a0f"
+              color="#0a0a0f"
               metalness={0.9}
               roughness={0.1}
             />
           </mesh>
 
-          {/* Scan lines effect - pink */}
+          {/* Scan lines effect - cyan */}
           {[...Array(8)].map((_, i) => (
             <mesh key={i} position={[0, -1.2 + i * 0.35, 0.08]}>
               <planeGeometry args={[2.2, 0.02]} />
-              <meshBasicMaterial color="#ec4899" transparent opacity={0.3} />
+              <meshBasicMaterial color="#00e5ff" transparent opacity={0.3} />
             </mesh>
           ))}
 
-          {/* Corner accents - violet */}
+          {/* Corner accents - Valorant red */}
           {[[-1, 1.2], [1, 1.2], [-1, -1.2], [1, -1.2]].map(([x, y], i) => (
             <mesh key={i} position={[x, y, 0.07]}>
               <planeGeometry args={[0.15, 0.15]} />
-              <meshBasicMaterial color="#a78bfa" transparent opacity={0.8} />
+              <meshBasicMaterial color="#ff4655" transparent opacity={0.8} />
             </mesh>
           ))}
 
-          {/* Glow ring - pink */}
+          {/* Glow ring - cyan */}
           <mesh position={[0, 0, -0.1]}>
             <ringGeometry args={[1.8, 2, 64]} />
-            <meshBasicMaterial color="#ec4899" transparent opacity={hovered ? 0.3 : 0.1} />
+            <meshBasicMaterial color="#00e5ff" transparent opacity={hovered ? 0.3 : 0.1} />
           </mesh>
         </group>
       </Float>

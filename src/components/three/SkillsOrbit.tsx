@@ -38,53 +38,53 @@ export function SkillsOrbit() {
   return (
     <group ref={groupRef}>
       <Html center position={[0, 3, 0]} className="pointer-events-none">
-        <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-violet-400 text-center whitespace-nowrap drop-shadow-lg">Technical Skills</h2>
+        <h2 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff4655] to-[#00e5ff] text-center whitespace-nowrap drop-shadow-lg font-tactical uppercase tracking-widest">Technical Skills</h2>
       </Html>
 
-      {/* Central core - pink theme - larger and brighter */}
+      {/* Central core - Valorant red */}
       <mesh position={[0, 0, 0]}>
         <icosahedronGeometry args={[0.6, 1]} />
-        <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.8} metalness={0.9} roughness={0.1} />
+        <meshStandardMaterial color="#ff4655" emissive="#ff4655" emissiveIntensity={0.8} metalness={0.9} roughness={0.1} />
       </mesh>
 
-      {/* Backend skills - outer orbit - pink accent */}
+      {/* Backend skills - outer orbit - red accent */}
       {skills.backend.map((skill, i) => (
         <Float key={skill} speed={2} rotationIntensity={0.2} floatIntensity={0.3}>
           <group position={backendPositions[i]}>
             <mesh>
               <boxGeometry args={[0.4, 0.4, 0.4]} />
-              <meshStandardMaterial color="#ec4899" emissive="#ec4899" emissiveIntensity={0.5} metalness={0.8} roughness={0.2} />
+              <meshStandardMaterial color="#ff4655" emissive="#ff4655" emissiveIntensity={0.5} metalness={0.8} roughness={0.2} />
             </mesh>
             <Html center position={[0, 0.5, 0]} className="pointer-events-none">
-              <span className="text-pink-300 text-base font-bold font-mono whitespace-nowrap bg-[#1a1520]/95 px-3 py-2 rounded-lg border-2 border-pink-500/40 shadow-lg shadow-pink-500/20">{skill}</span>
+              <span className="text-[#ff4655] text-base font-bold font-mono whitespace-nowrap bg-[#111118]/95 px-3 py-2 rounded border border-[#ff4655]/40 shadow-lg shadow-[#ff4655]/20">{skill}</span>
             </Html>
           </group>
         </Float>
       ))}
 
-      {/* Frontend skills - inner orbit - violet accent */}
+      {/* Frontend skills - inner orbit - cyan accent */}
       {skills.frontend.map((skill, i) => (
         <Float key={skill} speed={3} rotationIntensity={0.3} floatIntensity={0.4}>
           <group position={frontendPositions[i]}>
             <mesh>
               <octahedronGeometry args={[0.25, 0]} />
-              <meshStandardMaterial color="#a78bfa" emissive="#a78bfa" emissiveIntensity={0.5} metalness={0.8} roughness={0.2} />
+              <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={0.5} metalness={0.8} roughness={0.2} />
             </mesh>
             <Html center position={[0, 0.4, 0]} className="pointer-events-none">
-              <span className="text-violet-300 text-base font-bold font-mono whitespace-nowrap bg-[#1a1520]/95 px-3 py-2 rounded-lg border-2 border-violet-500/40 shadow-lg shadow-violet-500/20">{skill}</span>
+              <span className="text-[#00e5ff] text-base font-bold font-mono whitespace-nowrap bg-[#111118]/95 px-3 py-2 rounded border border-[#00e5ff]/40 shadow-lg shadow-[#00e5ff]/20">{skill}</span>
             </Html>
           </group>
         </Float>
       ))}
 
-      {/* Orbit rings - pink theme */}
+      {/* Orbit rings - Valorant theme */}
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <torusGeometry args={[2.5, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#ec4899" transparent opacity={0.3} />
+        <meshBasicMaterial color="#ff4655" transparent opacity={0.3} />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
         <torusGeometry args={[1.5, 0.01, 16, 100]} />
-        <meshBasicMaterial color="#a78bfa" transparent opacity={0.3} />
+        <meshBasicMaterial color="#00e5ff" transparent opacity={0.3} />
       </mesh>
     </group>
   );
