@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Github, Crosshair, Target, Zap, ChevronRight } from "lucide-react";
+import { ExternalLink, Github, Crosshair, Target, Zap, ChevronRight, FileText } from "lucide-react";
 
 const missions = [
   {
@@ -27,6 +27,18 @@ const missions = [
     status: "COMPLETED",
     live: "https://yours-code-assitant.netlify.app/login",
     github: "https://github.com/Arunodoy18",
+  },
+  {
+    title: "Nakung AI Assistant",
+    codeName: "OPERATION NAKUNG",
+    tech: "AI / NLP / VS Code Extension",
+    difficulty: "EXPERT",
+    objective: "Developers need an intelligent coding assistant integrated directly into their workflow.",
+    briefing: "AI-powered VS Code extension that acts as your personal coding companion. Context-aware code suggestions, intelligent debugging assistance, and seamless developer experience built from the ground up.",
+    result: "Published extension enhancing developer productivity.",
+    status: "ACTIVE",
+    live: "",
+    github: "https://github.com/Arunodoy18/Nakung",
   },
 ];
 
@@ -62,7 +74,17 @@ export default function MissionSelect() {
             MISSION <span className="text-[#ff4655]">SELECT</span>
           </h2>
           <p className="text-[#8b8d98] text-base font-mono-game">Real deployments. Real impact at scale.</p>
-          <div className="h-[2px] w-32 bg-gradient-to-r from-[#ff4655] to-transparent mt-4" />
+          <div className="flex items-center gap-4 mt-4">
+            <div className="h-[2px] w-32 bg-gradient-to-r from-[#ff4655] to-transparent" />
+            <a
+              href="/ARUNODOY.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 clip-diagonal bg-[#00e5ff]/10 border border-[#00e5ff]/20 text-[#00e5ff] text-xs font-tactical tracking-[0.1em] hover:bg-[#00e5ff]/20 transition-colors"
+            >
+              <FileText className="w-3.5 h-3.5" /> VIEW RESUME
+            </a>
+          </div>
         </motion.div>
 
         <motion.div
@@ -124,14 +146,16 @@ export default function MissionSelect() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-6">
-                  <a
-                    href={mission.live}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 clip-diagonal bg-[#ff4655]/10 border border-[#ff4655]/20 text-[#ff4655] text-xs font-tactical tracking-[0.1em] hover:bg-[#ff4655]/20 transition-colors"
-                  >
-                    LAUNCH MISSION <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                  {mission.live && (
+                    <a
+                      href={mission.live}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 clip-diagonal bg-[#ff4655]/10 border border-[#ff4655]/20 text-[#ff4655] text-xs font-tactical tracking-[0.1em] hover:bg-[#ff4655]/20 transition-colors"
+                    >
+                      LAUNCH MISSION <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
                   <a
                     href={mission.github}
                     target="_blank"

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Code2, Cpu, Rocket, Users, GitBranch, Award, Star } from "lucide-react";
+import { Code2, Cpu, Rocket, Users, GitBranch, Award, Star, FileDown } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -48,7 +48,17 @@ export default function PlayerProfile() {
             <h2 className="text-4xl md:text-6xl font-tactical text-white mb-2 tracking-wider">
               PLAYER <span className="text-[#ff4655]">PROFILE</span>
             </h2>
-            <div className="h-[1px] w-full bg-gradient-to-r from-[#ff4655]/40 to-transparent mt-4" />
+            <div className="flex items-center gap-4 mt-4">
+              <div className="h-[1px] flex-1 bg-gradient-to-r from-[#ff4655]/40 to-transparent" />
+              <a
+                href="/ARUNODOY.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 clip-diagonal bg-[#ff4655]/10 border border-[#ff4655]/20 text-[#ff4655] text-xs font-tactical tracking-[0.1em] hover:bg-[#ff4655]/20 transition-colors"
+              >
+                <FileDown className="w-3.5 h-3.5" /> DOWNLOAD DOSSIER
+              </a>
+            </div>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
