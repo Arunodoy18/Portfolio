@@ -40,6 +40,18 @@ const missions = [
     live: "",
     github: "https://github.com/Arunodoy18/Nakung",
   },
+  {
+    title: "Meow AI - Universal Developer Copilot",
+    codeName: "OPERATION MEOW",
+    tech: "Chrome Extension / Cloudflare Workers / AI",
+    difficulty: "EXPERT",
+    objective: "Developers lack a zero-setup, context-aware AI assistant that works across all technical websites.",
+    briefing: "Production-grade Chrome Extension that operates seamlessly across GitHub, LeetCode, StackOverflow, LinkedIn, YouTube, documentation sites, and research papers. Universal context detection adapts intelligence per site — senior-level code reviews on PRs, hint-first DSA tutoring, career intelligence, and plain-language paper breakdowns. Side chat panel with streaming responses. Secured via Cloudflare Workers with no API keys, no tracking, and no data stored.",
+    result: "Zero-config AI copilot covering 10+ site categories with structured smart responses.",
+    status: "ACTIVE",
+    live: "",
+    github: "https://github.com/Arunodoy18",
+  },
 ];
 
 const containerVariants = {
