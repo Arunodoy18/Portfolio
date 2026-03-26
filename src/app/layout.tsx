@@ -3,9 +3,27 @@ import { Rajdhani, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 
 const siteUrl = "https://aruno.buildc3.tech";
+const personId = `${siteUrl}#person`;
+const webSiteId = `${siteUrl}#website`;
+
+const webSiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": webSiteId,
+  name: "AGENT ARUNODOY Tactical Portfolio",
+  url: siteUrl,
+  inLanguage: "en",
+  description:
+    "Portfolio of Arunodoy Banerjee featuring full stack engineering, open-source work, and 3D web projects.",
+  publisher: {
+    "@id": personId,
+  },
+};
+
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
+  "@id": personId,
   name: "Arunodoy Banerjee",
   alternateName: "Agent Arunodoy",
   jobTitle: "Full Stack Developer & Open Source Contributor",
@@ -28,6 +46,11 @@ const personSchema = {
     "Open Source",
     "Cloud Native Engineering",
   ],
+};
+
+const rootStructuredData = {
+  "@context": "https://schema.org",
+  "@graph": [webSiteSchema, personSchema],
 };
 
 const rajdhani = Rajdhani({
@@ -98,7 +121,7 @@ export default function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(rootStructuredData) }}
         />
       </head>
       <body

@@ -59,6 +59,21 @@ export default function Home() {
             Portfolio: <a href="https://aruno.buildc3.tech">https://aruno.buildc3.tech</a>
           </li>
         </ul>
+        <h2>Key Crawlable Pages</h2>
+        <ul>
+          <li>
+            About: <a href="/about">https://aruno.buildc3.tech/about</a>
+          </li>
+          <li>
+            Projects: <a href="/projects">https://aruno.buildc3.tech/projects</a>
+          </li>
+          <li>
+            Open Source: <a href="/open-source">https://aruno.buildc3.tech/open-source</a>
+          </li>
+          <li>
+            Contact: <a href="/contact">https://aruno.buildc3.tech/contact</a>
+          </li>
+        </ul>
       </div>
       <GameShell />
     </>
