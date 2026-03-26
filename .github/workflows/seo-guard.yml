@@ -1,0 +1,51 @@
+name: SEO Guard
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  verify-seo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify required SEO files
+        run: |
+          test -f src/app/robots.ts
+          test -f src/app/sitemap.ts
+          test -f src/app/layout.tsx
+          test -f src/app/page.tsx
+
+      - name: Validate metadata and schema markers
+        run: |
+          grep -q "metadataBase" src/app/layout.tsx
+          grep -q "application/ld+json" src/app/layout.tsx
+          grep -q '"@type": "Person"' src/app/layout.tsx
+          grep -q "alternates" src/app/layout.tsx
+          grep -q "openGraph" src/app/layout.tsx
+          grep -q "twitter" src/app/layout.tsx
+
+      - name: Validate fallback text layer
+        run: |
+          grep -q "className=\"sr-only\"" src/app/page.tsx
+          grep -q "GSoC 2026" src/app/page.tsx
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
