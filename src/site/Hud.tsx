@@ -61,7 +61,7 @@ export default function Hud() {
         Skip past the black hole
       </a>
 
-      <header className="hud pointer-events-none fixed inset-x-0 top-0 z-50 flex items-start justify-between px-[3.2vw] pt-5">
+      <header className="hud focus-in pointer-events-none fixed inset-x-0 top-0 z-50 flex items-start justify-between px-[3.2vw] pt-5">
         <a href="#lens" data-cursor="hover" className="pointer-events-auto flex items-center gap-2">
           <span className="cast text-[13px] tracking-[0.02em]">
             {profile.first} {profile.last}
@@ -81,7 +81,7 @@ export default function Hud() {
         <span className="font-mono text-[9.5px] tracking-[0.22em]">PLATE {plate.slice(0, 2)} / 06</span>
       </header>
 
-      <footer className="hud pointer-events-none fixed inset-x-0 bottom-0 z-50 flex items-end justify-between gap-6 px-[3.2vw] pb-5">
+      <footer className="hud focus-in pointer-events-none fixed inset-x-0 bottom-0 z-50 flex items-end justify-between gap-6 px-[3.2vw] pb-5">
         <span className="whitespace-nowrap font-mono text-[9.5px] tracking-[0.22em] md:min-w-[18ch]">{plate}</span>
         <span className="relative hidden h-2 flex-1 max-w-[340px] md:block" aria-hidden>
           <span className="absolute inset-x-0 bottom-0 flex justify-between">
@@ -105,7 +105,8 @@ export default function Hud() {
       </footer>
 
       <Cursor />
-      <Loader />
+      {/* page arrives out of focus, tinted, and resolves */}
+      <div aria-hidden className="focus-tint pointer-events-none fixed inset-0 z-[95]" />
     </>
   );
 }
@@ -149,53 +150,6 @@ function Cursor() {
       <span className="absolute inset-0 rounded-full border border-white" />
       <span className="absolute left-1/2 top-[6px] h-[16px] w-px -translate-x-1/2 bg-white" />
       <span className="absolute left-[6px] top-1/2 h-px w-[16px] -translate-y-1/2 bg-white" />
-    </div>
-  );
-}
-
-function Loader() {
-  const [mb, setMb] = useState(0);
-  const [done, setDone] = useState(false);
-  const [gone, setGone] = useState(false);
-  useEffect(() => {
-    const target = 1.8;
-    const start = performance.now();
-    let ready = false;
-    const assets = ["/work/zone.jpg", "/work/nura.jpg", "/work/cadence.jpg", "/work/portrait.jpg"].map(
-      (src) =>
-        new Promise<void>((res) => {
-          const i = new Image();
-          i.onload = i.onerror = () => res();
-          i.src = src;
-        }),
-    );
-    Promise.all([document.fonts?.ready, ...assets]).then(() => (ready = true));
-    const off = onTick((now) => {
-      const t = Math.min(1, (now - start) / 1400);
-      const v = ready ? Math.max(t, 0.92) : Math.min(t, 0.85);
-      setMb(+(v * target).toFixed(1));
-      if (ready && now - start > 1400) {
-        setDone(true);
-        off();
-        setTimeout(() => setGone(true), 1100);
-      }
-    });
-    return off;
-  }, []);
-  if (gone) return null;
-  return (
-    <div
-      aria-hidden
-      className={`fixed inset-0 z-[100] flex items-center justify-center bg-paper transition-[clip-path] duration-1000 ease-[cubic-bezier(.7,0,.2,1)] ${
-        done ? "[clip-path:inset(0_0_100%_0)]" : "[clip-path:inset(0_0_0_0)]"
-      }`}
-    >
-      <div className="grid grid-cols-2 gap-x-10 font-mono text-[10px] tracking-[0.25em] text-ink/70">
-        <span>DOWNLOADING</span>
-        <span>RECEIVED</span>
-        <span>THE PAGE</span>
-        <span className="tabular-nums text-ink">{mb.toFixed(1)} MB</span>
-      </div>
     </div>
   );
 }

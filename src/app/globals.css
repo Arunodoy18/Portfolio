@@ -93,11 +93,19 @@ body {
 /* the glass lens */
 .lens {
   box-shadow:
-    0 30px 60px -20px rgba(11, 12, 15, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    0 30px 60px -20px rgba(11, 12, 15, calc(0.35 * (1 - var(--dark)))),
+    inset 0 0 0 1px rgba(255, 255, 255, calc(0.6 * (1 - var(--dark))));
   background: var(--color-paper);
 }
+.lens {
+  --dark: 0;
+}
+.lens-dark {
+  background: #000;
+  opacity: var(--dark);
+}
 .lens-glass {
+  opacity: calc(1 - var(--dark));
   background:
     radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 32%),
     radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 58%, rgba(214, 170, 40, 0.28) 66%, rgba(47, 91, 211, 0.22) 72%, rgba(255, 255, 255, 0.85) 76%, rgba(11, 12, 15, 0.25) 79%, rgba(255, 255, 255, 0) 80%),
@@ -127,7 +135,47 @@ body {
   transform: rotate(18deg) scale(1.05);
 }
 
+/* arrival: the page starts out of focus and tinted, then resolves */
+@keyframes focus-in {
+  0% {
+    filter: blur(26px);
+    opacity: 0.35;
+  }
+  35% {
+    filter: blur(14px);
+    opacity: 0.8;
+  }
+  100% {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+@keyframes tint-out {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.focus-in {
+  animation: focus-in 1.35s cubic-bezier(0.3, 0.6, 0.2, 1) 0.1s backwards;
+}
+.focus-tint {
+  background: #a061d1;
+  mix-blend-mode: lighten;
+  animation: tint-out 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .focus-in,
+  .focus-tint {
+    animation: none;
+  }
+  .focus-tint {
+    opacity: 0;
+  }
   .work-entry,
   .work-entry .glyph {
     transition: none;

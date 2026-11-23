@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <>
       <Hud />
-      <main>
+      <main className="focus-in">
         {/* plain-text layer for screen readers and crawlers */}
         <div className="sr-only">
           <p>

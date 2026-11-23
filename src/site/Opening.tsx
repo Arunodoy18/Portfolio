@@ -3,53 +3,134 @@
 import { useEffect, useRef } from "react";
 import BlackHole, { type HoleState } from "./BlackHole";
 import { profile } from "./data";
-import { ease, easeOut, lerp, range, useSectionProgress } from "./scroll";
+import { clamp, ease, easeOut, lerp, range, useSectionProgress } from "./scroll";
+
+type Rest = { x: number; y: number }[];
+
+/** Letters spiral into the hole: radius collapses, angle winds, the orbit flattens into the disk plane. */
+function swallow(spans: HTMLElement[], rest: Rest, hx: number, hy: number, t: number, swirl: number) {
+  if (!rest.length) return;
+  const maxR = Math.max(...rest.map((r) => Math.hypot(r.x - hx, r.y - hy)), 1);
+  spans.forEach((el, i) => {
+    const r0 = rest[i];
+    if (!r0) return;
+    if (t <= 0) {
+      el.style.transform = "";
+      el.style.opacity = "";
+      el.style.color = "";
+      return;
+    }
+    const dx = r0.x - hx, dy = r0.y - hy;
+    const R = Math.hypot(dx, dy);
+    const th0 = Math.atan2(dy, dx);
+    // nearer letters fall first
+    const k = clamp(t * 1.45 - (R / maxR) * 0.45);
+    const e = k * k;
+    const R1 = R * (1 - e);
+    const th = th0 + swirl * e * 2.4;
+    const x = hx + Math.cos(th) * R1;
+    const y = hy + Math.sin(th) * R1 * lerp(1, 0.42, e);
+    el.style.transform = `translate(${x - r0.x}px, ${y - r0.y}px) rotate(${swirl * e * 140}deg) scale(${1 - 0.75 * e})`;
+    el.style.opacity = `${1 - range(e, 0.72, 1)}`;
+    // light reddens as it is stretched into the well
+    const red = Math.sin(Math.min(1, e * 1.4) * Math.PI);
+    el.style.color = `rgb(${lerp(11, 139, red)}, ${lerp(12, 30, red)}, ${lerp(15, 63, red)})`;
+  });
+}
+
+function measure(stage: HTMLElement, spans: HTMLElement[], clear: HTMLElement[]): Rest {
+  const prev = clear.map((el) => el.style.transform);
+  clear.forEach((el) => (el.style.transform = "none"));
+  spans.forEach((el) => (el.style.transform = "none"));
+  const o = stage.getBoundingClientRect();
+  const rest = spans.map((el) => {
+    const r = el.getBoundingClientRect();
+    return { x: r.left - o.left + r.width / 2, y: r.top - o.top + r.height / 2 };
+  });
+  clear.forEach((el, i) => (el.style.transform = prev[i]));
+  return rest;
+}
+
+const Letters = ({ text }: { text: string }) => (
+  <>
+    {text.split("").map((c, i) =>
+      c === " " ? (
+        <span key={i}>&nbsp;</span>
+      ) : (
+        <span key={i} data-c className="inline-block will-change-transform">
+          {c}
+        </span>
+      ),
+    )}
+  </>
+);
 
 export default function Opening() {
   const section = useRef<HTMLElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
   const intro = useRef<HTMLDivElement>(null);
   const word = useRef<HTMLSpanElement>(null);
   const flyer = useRef<HTMLDivElement>(null);
   const head = useRef<HTMLHeadingElement>(null);
   const tail = useRef<HTMLSpanElement>(null);
   const art = useRef<HTMLParagraphElement>(null);
+  const welcome = useRef<HTMLDivElement>(null);
   const notes = useRef<HTMLDivElement>(null);
   const readout = useRef<HTMLSpanElement>(null);
   const caption = useRef<HTMLDivElement>(null);
   const orbit = useRef<SVGCircleElement>(null);
+  const black = useRef<HTMLDivElement>(null);
 
-  const hole = useRef<HoleState>({ focus: 0, cx: 0.5, cy: 0.53, scale: 1 });
+  const hole = useRef<HoleState>({ focus: 0, cx: 0.5, cy: 0.53, scale: 1, zoom: 0 });
   const geo = useRef({ dx: 0, dy: 0, s: 1 });
+  const rest = useRef<{ head: Rest; art: Rest; welcome: Rest }>({ head: [], art: [], welcome: [] });
 
-  // measure where the intro word must fly to become the headline
+  const spansOf = (el: HTMLElement | null) => (el ? Array.from(el.querySelectorAll<HTMLElement>("[data-c]")) : []);
+
   useEffect(() => {
-    const measure = () => {
-      if (!word.current || !head.current || !flyer.current) return;
+    const run = () => {
+      if (!word.current || !head.current || !flyer.current || !stage.current) return;
+      // where the intro word must fly to become the headline
+      const o = stage.current.getBoundingClientRect();
       const a = word.current.getBoundingClientRect();
       const b = head.current.querySelector("[data-root]")!.getBoundingClientRect();
-      const s = b.height / a.height;
-      geo.current = { dx: b.left - a.left, dy: b.top - a.top, s };
-      flyer.current.style.left = `${a.left}px`;
-      flyer.current.style.top = `${a.top}px`;
+      geo.current = { dx: b.left - a.left, dy: b.top - a.top, s: b.height / a.height };
+      flyer.current.style.left = `${a.left - o.left}px`;
+      flyer.current.style.top = `${a.top - o.top}px`;
       flyer.current.style.fontSize = getComputedStyle(word.current).fontSize;
+      // resting place of every letter that will be swallowed
+      rest.current = {
+        head: measure(stage.current, spansOf(head.current), []),
+        art: measure(stage.current, spansOf(art.current), [art.current!]),
+        welcome: measure(stage.current, spansOf(welcome.current), [welcome.current!]),
+      };
     };
-    measure();
-    document.fonts?.ready.then(measure);
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    run();
+    document.fonts?.ready.then(run);
+    window.addEventListener("resize", run);
+    return () => window.removeEventListener("resize", run);
   }, []);
 
   useSectionProgress(section, (p, time) => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const h = hole.current;
+
+    // which plate we are on
+    const plate = p < 0.47 ? "01 — THE LENS" : p < 0.8 ? "02 — THE EYE" : "03 — THE OTHER SIDE";
+    if (section.current && section.current.dataset.plate !== plate) section.current.dataset.plate = plate;
+
     // 1. intro sentence
-    const out = ease(range(p, 0.08, 0.3));
+    const out = ease(range(p, 0.04, 0.14));
     if (intro.current) {
       intro.current.style.opacity = `${1 - out}`;
       intro.current.style.filter = `blur(${out * 10}px)`;
       intro.current.style.transform = `scale(${1 + out * 0.06})`;
+      intro.current.style.visibility = out >= 1 ? "hidden" : "visible";
     }
 
     // 2. the word ENGINEER flies to the headline
-    const fly = ease(range(p, 0.1, 0.34));
+    const fly = ease(range(p, 0.05, 0.16));
     const g = geo.current;
     if (flyer.current) {
       flyer.current.style.transform = `translate(${g.dx * fly}px, ${g.dy * fly}px) scale(${lerp(1, g.s, fly)})`;
@@ -57,33 +138,55 @@ export default function Opening() {
     }
     if (head.current) head.current.style.opacity = fly >= 1 ? "1" : "0";
     if (tail.current) {
-      const t = easeOut(range(p, 0.33, 0.42));
-      tail.current.style.clipPath = `inset(0 ${100 - t * 100}% 0 0)`;
+      const t = easeOut(range(p, 0.155, 0.2));
+      tail.current.style.clipPath = t >= 1 ? "none" : `inset(-50% ${100 - t * 100}% -50% 0)`;
     }
 
-    // 3. the hole comes into focus
-    const f = ease(range(p, 0.12, 0.48));
-    hole.current.focus = f;
-    hole.current.scale = lerp(0.78, 0.9, f) + range(p, 0.75, 1) * 0.25;
+    // 3. the hole comes into focus, then the camera falls toward it, then through it
+    const f = ease(range(p, 0.06, 0.22));
+    const z = ease(range(p, 0.36, 0.54));
+    const d = range(p, 0.74, 0.97);
+    h.focus = f;
+    h.zoom = z;
+    h.cy = lerp(lerp(0.53, 0.34, z), 0.5, ease(d));
+    h.scale = (lerp(0.78, 0.9, f) + z * 0.6) * Math.exp(Math.pow(d, 1.6) * 3.3);
     if (readout.current) {
       const m = lerp(0.3, 4.2, f);
       readout.current.textContent = f >= 1 ? "IN FOCUS" : `FOCUSING ${m.toFixed(2)} M`;
     }
 
-    // 4. annotations & "as art."
-    const a = easeOut(range(p, 0.42, 0.6));
+    // 4. annotations & "as art." arrive...
+    const a = easeOut(range(p, 0.2, 0.28)) * (1 - range(p, 0.34, 0.4));
     if (notes.current) {
       notes.current.style.opacity = `${a}`;
-      notes.current.style.setProperty("--draw", `${1 - a}`);
+      notes.current.style.setProperty("--draw", `${1 - easeOut(range(p, 0.2, 0.28))}`);
     }
+    if (caption.current) caption.current.style.opacity = `${a}`;
     if (art.current) {
-      const t = easeOut(range(p, 0.38, 0.55));
+      const t = easeOut(range(p, 0.18, 0.26));
       art.current.style.opacity = `${t}`;
       art.current.style.transform = `translateX(${(1 - t) * 6}vw)`;
     }
-    if (caption.current) caption.current.style.opacity = `${a}`;
 
-    // 5. a small body still making orbits
+    // 5. ...and are swallowed
+    const hx = vw * h.cx, hy = vh * (1 - h.cy);
+    const sw = range(p, 0.34, 0.5);
+    swallow(spansOf(head.current), rest.current.head, hx, hy, sw, -1);
+    swallow(spansOf(art.current), rest.current.art, hx, hy, range(p, 0.36, 0.52), 1);
+
+    // 6. Welcome.
+    if (welcome.current) {
+      const w = easeOut(range(p, 0.5, 0.57));
+      welcome.current.style.opacity = `${w}`;
+      welcome.current.style.filter = w < 1 ? `blur(${(1 - w) * 8}px)` : "none";
+      welcome.current.style.transform = `translateY(${(1 - w) * 30}px)`;
+    }
+    swallow(spansOf(welcome.current), rest.current.welcome, hx, hy, range(p, 0.64, 0.75), -1);
+
+    // 7. inside: nothing but dark
+    if (black.current) black.current.style.opacity = `${range(p, 0.86, 0.96)}`;
+
+    // a small body still making orbits
     if (orbit.current) {
       const th = time / 2400;
       orbit.current.setAttribute("cx", `${Math.cos(th) * 30}`);
@@ -92,8 +195,8 @@ export default function Opening() {
   });
 
   return (
-    <section ref={section} id="lens" data-plate="01 — THE LENS" className="relative h-[340vh]">
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+    <section ref={section} id="lens" data-plate="01 — THE LENS" className="relative h-[640vh]">
+      <div ref={stage} className="sticky top-0 h-[100svh] overflow-hidden">
         <BlackHole state={hole} className="absolute inset-0 h-full w-full" />
 
         {/* the intro sentence */}
@@ -131,23 +234,35 @@ export default function Opening() {
         {/* headline */}
         <h1
           ref={head}
-          className="cast absolute left-[3.2vw] top-[11vh] text-[clamp(44px,7.4vw,150px)] leading-none text-ink opacity-0"
+          aria-label={`Engineering, as art — ${profile.first} ${profile.last}`}
+          className="cast absolute left-[3.2vw] top-[11vh] whitespace-nowrap text-[clamp(44px,7.4vw,150px)] leading-none text-ink opacity-0"
         >
-          <span data-root className="inline-block">
-            {profile.role}
+          <span data-root aria-hidden className="inline-block">
+            <Letters text={profile.role} />
           </span>
-          <span ref={tail} className="inline-block" style={{ clipPath: "inset(0 100% 0 0)" }}>
-            ING,
+          <span ref={tail} aria-hidden className="inline-block" style={{ clipPath: "inset(-50% 100% -50% 0)" }}>
+            <Letters text="ING," />
           </span>
-          <span className="sr-only"> as art — {profile.first} {profile.last}</span>
         </h1>
 
         <p
           ref={art}
-          className="absolute bottom-[12vh] right-[4vw] font-serif text-[clamp(44px,7.6vw,150px)] italic font-light leading-none tracking-[-0.03em] text-ink opacity-0"
+          className="absolute bottom-[12vh] right-[4vw] whitespace-nowrap font-serif text-[clamp(44px,7.6vw,150px)] italic font-light leading-none tracking-[-0.03em] text-ink opacity-0"
         >
-          as art.
+          <Letters text="as art." />
         </p>
+
+        {/* Welcome. */}
+        <div ref={welcome} className="absolute inset-x-0 top-[9vh] text-center opacity-0">
+          <p className="font-serif text-[clamp(40px,5.4vw,96px)] italic font-light leading-none tracking-[-0.03em] text-ink">
+            <Letters text="Welcome." />
+          </p>
+          <p className="cast mt-3 text-[clamp(10px,0.8vw,13px)] tracking-[0.12em] text-ink">
+            <Letters text={`AN ${profile.first} EXPERIENCE.`} />
+          </p>
+        </div>
+
+        <div ref={black} aria-hidden className="pointer-events-none absolute inset-0 bg-black opacity-0" />
 
         {/* annotations around the hole, in a square measured in vh */}
         <div

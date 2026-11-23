@@ -44,9 +44,11 @@ export default function Bio() {
     off.width = n;
     off.height = m;
     const o = off.getContext("2d")!;
-    const ar = w / h;
-    const sw = i.height * ar * 0.62, sh = i.height * 0.62;
-    const sx = (i.width - sw) / 2, sy = i.height * 0.3;
+    // cover-fit the (already portrait-cropped) photo into the frame
+    const ar = w / h, iar = i.width / i.height;
+    const sw = iar > ar ? i.height * ar : i.width;
+    const sh = iar > ar ? i.height : i.width / ar;
+    const sx = (i.width - sw) / 2, sy = (i.height - sh) * 0.25;
     o.filter = "grayscale(1) contrast(1.15)";
     o.drawImage(i, sx, sy, sw, sh, 0, 0, n, m);
     ctx.imageSmoothingEnabled = n >= 160;

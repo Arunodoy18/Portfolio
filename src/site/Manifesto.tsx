@@ -24,6 +24,7 @@ export default function Manifesto() {
   const lens = useRef<HTMLDivElement>(null);
   const inner = useRef<HTMLDivElement>(null);
   const caps = useRef<HTMLDivElement>(null);
+  const thin = useRef<HTMLDivElement>(null);
   const label = useRef<HTMLParagraphElement>(null);
   const sm = useRef({ x: 0.5, y: 0.5 });
 
@@ -47,32 +48,49 @@ export default function Manifesto() {
     sm.current.x += (mouse.x - sm.current.x) * 0.06;
     sm.current.y += (mouse.y - sm.current.y) * 0.06;
 
-    // ---- phase A: the lens travels over the sentence ----
-    const a = range(p, 0.0, 0.5);
-    const size = Math.min(vw, vh) * 0.34;
-    const lx = lerp(-0.15, 1.05, ease(a)) * vw + (sm.current.x - 0.5) * vw * 0.12;
-    const ly = vh * 0.5 + Math.sin(a * Math.PI * 2) * vh * 0.09 + (sm.current.y - 0.5) * vh * 0.12;
+    // ---- phase A: we come out of the hole. The dark disc shrinks into a lens. ----
+    const cover = Math.hypot(vw, vh) * 1.05;
+    const base = Math.min(vw, vh) * 0.34;
+    const em = ease(range(p, 0.0, 0.16));
+    const wander = range(p, 0.14, 0.4);
+    const shrink = ease(range(p, 0.32, 0.42));
+    const size = Math.max(1, lerp(cover, base, em) * (1 - shrink));
+    const dark = 1 - ease(range(p, 0.07, 0.2));
+    const lx = vw * 0.5 + Math.sin(wander * Math.PI * 1.3) * vw * 0.2 * em + (sm.current.x - 0.5) * vw * 0.08 * em;
+    const ly = vh * 0.5 + Math.sin(wander * Math.PI * 2.2) * vh * 0.1 * em + (sm.current.y - 0.5) * vh * 0.08 * em;
+    const spin = wander * 140;
 
-    const fade = ease(range(p, 0.48, 0.6));
+    // the sentence relaxes into thin capitals once the lens has gone
+    const toThin = ease(range(p, 0.42, 0.5));
     if (serif.current) {
-      serif.current.style.opacity = `${1 - fade}`;
-      serif.current.style.filter = `blur(${fade * 8}px)`;
+      serif.current.style.opacity = `${1 - toThin}`;
+      serif.current.style.filter = toThin > 0 ? `blur(${toThin * 6}px)` : "none";
+    }
+    if (thin.current) {
+      const off = ease(range(p, 0.58, 0.68));
+      thin.current.style.opacity = `${toThin * (1 - off)}`;
+      thin.current.style.filter = toThin < 1 ? `blur(${(1 - toThin) * 6}px)` : off > 0 ? `blur(${off * 6}px)` : "none";
+      thin.current.style.letterSpacing = `${lerp(0.02, 0.12, toThin)}em`;
     }
     if (lens.current && inner.current) {
       lens.current.style.width = lens.current.style.height = `${size}px`;
-      lens.current.style.transform = `translate(${lx - size / 2}px, ${ly - size / 2}px) rotate(${a * 120}deg)`;
-      lens.current.style.opacity = `${1 - fade}`;
+      lens.current.style.transform = `translate(${lx - size / 2}px, ${ly - size / 2}px) rotate(${spin}deg)`;
+      lens.current.style.visibility = shrink >= 1 ? "hidden" : "visible";
+      lens.current.style.setProperty("--dark", `${dark}`);
       // the clone inside is counter-positioned so it lines up, then magnified around the lens centre
-      inner.current.style.transform = `rotate(${-a * 120}deg)`;
-      const clone = inner.current.firstElementChild as HTMLElement;
+      inner.current.style.transform = `rotate(${-spin}deg)`;
+      const clone = inner.current.querySelector<HTMLElement>("[data-clone]")!;
       clone.style.width = `${vw}px`;
       clone.style.height = `${vh}px`;
       clone.style.transformOrigin = `${lx}px ${ly}px`;
       clone.style.transform = `translate(${-(lx - size / 2)}px, ${-(ly - size / 2)}px) scale(1.55)`;
+      clone.style.filter = `url(#refract) invert(${dark})`;
+      // stay pure black while the section slides in under the dive
+      clone.style.opacity = `${range(p, 0.004, 0.05)}`;
     }
 
     // ---- phase B: the sentence pours out of the lens as capitals ----
-    const b = range(p, 0.52, 0.92);
+    const b = range(p, 0.6, 0.94);
     if (caps.current) {
       caps.current.style.opacity = b > 0 ? "1" : "0";
       const spans = caps.current.querySelectorAll<HTMLSpanElement>("[data-k]");
@@ -93,7 +111,7 @@ export default function Manifesto() {
   });
 
   return (
-    <section ref={section} id="eye" data-plate="02 — THE EYE" className="relative h-[360vh]">
+    <section ref={section} id="eye" data-plate="03 — THE OTHER SIDE" className="relative h-[480vh]">
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div ref={serif} className="absolute inset-0 flex items-center justify-center px-6">
           <SerifBlock />
@@ -106,11 +124,21 @@ export default function Manifesto() {
           className="lens pointer-events-none absolute left-0 top-0 overflow-hidden rounded-full will-change-transform"
         >
           <div ref={inner} className="absolute inset-0">
-            <div className="absolute left-0 top-0 flex items-center justify-center px-6" style={{ filter: "url(#refract)" }}>
+            <div className="lens-dark absolute inset-0" />
+            <div data-clone className="absolute left-0 top-0 flex items-center justify-center px-6" style={{ filter: "url(#refract)" }}>
               <SerifBlock />
             </div>
           </div>
           <div className="lens-glass absolute inset-0 rounded-full" />
+        </div>
+
+        {/* thin capitals */}
+        <div ref={thin} aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0">
+          <p className="text-right font-sans text-[clamp(16px,2.1vw,36px)] font-light uppercase leading-[1.15] text-ink">
+            <span className="block">Engineering and art</span>
+            <span className="block">should be seen through</span>
+            <span className="block">the same lens.</span>
+          </p>
         </div>
 
         {/* capitals */}

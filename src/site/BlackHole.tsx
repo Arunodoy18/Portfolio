@@ -17,6 +17,7 @@ uniform vec2 uMouse;
 uniform float uFocus;   // 0..1 how "formed" the hole is
 uniform vec2 uCenter;   // screen-space centre (0..1)
 uniform float uScale;   // size in units of viewport height
+uniform float uZoom;    // 0..1 camera falling toward the hole
 
 float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 float noise(vec2 p){
@@ -50,7 +51,7 @@ void main(){
 
   float t = uTime;
   float rs = 0.11 * mix(0.2, 1.0, uFocus);    // event horizon
-  vec2 p = rot(-0.16) * uv;                    // disk tilt in plane
+  vec2 p = rot(-0.16 * (1.0 - uZoom)) * uv;    // disk tilt levels out as we approach
   float r = length(p);
 
   // gravitational lensing of the paper grid behind
@@ -68,7 +69,7 @@ void main(){
   float gd = gas(dr/outer, th, t);
   // doppler: approaching side (left) is denser ink, with a long trailing plume
   float doppler = 0.55 + 0.45 * smoothstep(0.5, -0.9, dp.x / (dr + 1e-3));
-  float plume = smoothstep(outer*1.5, 0.0, length(vec2(p.x + rs*2.2, (p.y + p.x*0.18) / 0.26))) * 0.38;
+  float plume = smoothstep(outer*1.5, 0.0, length(vec2(p.x + rs*2.2, (p.y + p.x*0.18) / 0.26))) * 0.38 * (1.0 - uZoom*0.75);
   float disk = band * (0.35 + 0.95*gd) * doppler + plume * (0.4 + 0.6*fbm(p*6.0 - vec2(t*0.08, 0.)));
 
   // front half of the disk (below the hole) is in front, the back half is hidden by it
@@ -80,6 +81,15 @@ void main(){
   float haloGas = 0.55 + 0.8 * fbm(vec2(atan(p.y,p.x)*2.5 + t*0.25, r*12.0));
   float upper = smoothstep(-0.35, 0.6, p.y / max(r,1e-3));
   float lensed = halo * haloGas * (0.45 + 0.55*upper);
+
+  // up close, the far side of the disk is lifted over the hole into a tall arch
+  float archW = rs * (2.3 + 1.6*uZoom);
+  float archY = rs * (1.2 + 1.15*uZoom) * exp(-pow(p.x / archW, 2.0));
+  float thick = rs * (0.28 + 0.55*uZoom);
+  float arch = exp(-pow((p.y - archY) / thick, 2.0));
+  float under = smoothstep(archY, archY - thick*2.5, p.y) * smoothstep(-rs*0.4, rs*0.6, p.y) * exp(-pow(p.x / (archW*1.6), 2.0)) * 0.35;
+  float streak = 0.6 + 0.6 * fbm(vec2(p.x*3.0 - t*0.2, (p.y - archY) * 40.0));
+  lensed = mix(lensed, max(lensed, (arch * streak + under) * 0.9), uZoom);
 
   // photon ring: a razor of light just outside the horizon
   float photon = exp(-pow((r - rs*1.04) / (rs*0.035), 2.0));
@@ -107,7 +117,7 @@ void main(){
   vec3 inkCol = vec3(0.03, 0.035, 0.045);
   vec3 col = mix(paper, inkCol, ink);
   // the light razor is white even on top of ink
-  col = mix(col, vec3(1.0), clamp(photonArc * uFocus * 0.95, 0.0, 1.0) * (1.0 - front*0.5));
+  col = mix(col, vec3(1.0), clamp(photonArc * uFocus * (0.95 + uZoom), 0.0, 1.0) * (1.0 - front*0.5));
 
   // film grain
   col += (hash(frag + fract(t)) - 0.5) * 0.025;
@@ -115,7 +125,7 @@ void main(){
 }
 `;
 
-export type HoleState = { focus: number; cx: number; cy: number; scale: number };
+export type HoleState = { focus: number; cx: number; cy: number; scale: number; zoom: number };
 
 type Props = {
   /** read every frame: how formed the hole is (0..1), centre & scale */
@@ -153,7 +163,7 @@ export default function BlackHole({ state, className }: Props) {
 
     const u = (n: string) => gl.getUniformLocation(prog, n);
     const uRes = u("uRes"), uTime = u("uTime"), uMouse = u("uMouse"), uFocus = u("uFocus");
-    const uCenter = u("uCenter"), uScale = u("uScale");
+    const uCenter = u("uCenter"), uScale = u("uScale"), uZoom = u("uZoom");
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -182,6 +192,7 @@ export default function BlackHole({ state, className }: Props) {
       gl.uniform1f(uFocus, st.focus);
       gl.uniform2f(uCenter, st.cx, st.cy);
       gl.uniform1f(uScale, st.scale);
+      gl.uniform1f(uZoom, st.zoom);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     });
 
