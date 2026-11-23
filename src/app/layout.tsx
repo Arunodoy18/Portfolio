@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Rajdhani, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 
 const siteUrl = "https://aruno.buildc3.tech";
@@ -53,18 +52,6 @@ const rootStructuredData = {
   "@graph": [webSiteSchema, personSchema],
 };
 
-const rajdhani = Rajdhani({
-  variable: "--font-rajdhani",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const shareTechMono = Share_Tech_Mono({
-  variable: "--font-share-tech-mono",
-  subsets: ["latin"],
-  weight: "400",
-});
-
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
@@ -117,16 +104,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(rootStructuredData) }}
         />
       </head>
-      <body
-        className={`${rajdhani.variable} ${shareTechMono.variable} antialiased bg-[#0a0a0f]`}
-      >
+      <body className="antialiased">
         {children}
       </body>
     </html>
