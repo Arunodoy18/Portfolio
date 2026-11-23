@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import SubPage from "@/site/SubPage";
+import { profile } from "@/site/data";
 
 const siteUrl = "https://aruno.buildc3.tech";
 
@@ -10,40 +12,41 @@ export const metadata: Metadata = {
     canonical: `${siteUrl}/contact`,
   },
   openGraph: {
-    title: "Contact | AGENT ARUNODOY",
+    title: "Contact | Arunodoy Banerjee",
     description:
       "Get in touch with Arunodoy Banerjee for projects, internships, and engineering collaboration.",
     url: `${siteUrl}/contact`,
   },
   twitter: {
     card: "summary",
-    title: "Contact | AGENT ARUNODOY",
+    title: "Contact | Arunodoy Banerjee",
     description: "Connect with Arunodoy Banerjee via email, GitHub, and LinkedIn.",
   },
 };
 
 export default function ContactPage() {
+  const links = [
+    { label: "Email", href: `mailto:${profile.email}`, note: profile.email },
+    { label: "GitHub", href: profile.github, note: "Arunodoy18" },
+    { label: "LinkedIn", href: profile.linkedin, note: "arunodoy-banerjee" },
+    { label: "LeetCode", href: profile.leetcode, note: "Arunodoy45" },
+  ];
   return (
-    <main className="min-h-screen bg-[#0a0a0f] text-white px-6 py-20">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <h1 className="text-4xl font-bold">Contact</h1>
-        <p className="text-[#b9bac5] leading-relaxed">
-          I am open to internships, freelance projects, and full-time engineering roles. If you are building
-          products that need strong full stack execution, scalable architecture, or interactive web experiences,
-          I would be glad to connect.
-        </p>
-        <ul className="space-y-3 text-[#b9bac5]">
-          <li>
-            Email: <a className="underline" href="mailto:barun4927@gmail.com">barun4927@gmail.com</a>
+    <SubPage
+      plate="06 — NOTES"
+      title="CONTACT"
+      lead="If it has to work when everything else doesn't, write to me. Open to internships, collaborations and engineering roles."
+    >
+      <ul>
+        {links.map((l) => (
+          <li key={l.label} className="border-t border-ink/15">
+            <a href={l.href} className="group flex items-baseline justify-between py-4">
+              <span className="cast text-[clamp(26px,3vw,44px)] leading-none">{l.label.toUpperCase()}</span>
+              <span className="font-mono text-[11px] tracking-[0.12em] text-ink/60 group-hover:text-ink">{l.note} ↗</span>
+            </a>
           </li>
-          <li>
-            GitHub: <a className="underline" href="https://github.com/Arunodoy18">https://github.com/Arunodoy18</a>
-          </li>
-          <li>
-            LinkedIn: <a className="underline" href="https://www.linkedin.com/in/arunodoy-banerjee-214251342/">https://www.linkedin.com/in/arunodoy-banerjee-214251342/</a>
-          </li>
-        </ul>
-      </div>
-    </main>
+        ))}
+      </ul>
+    </SubPage>
   );
 }

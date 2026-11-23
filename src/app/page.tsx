@@ -1,3 +1,40 @@
+import Bio from "@/site/Bio";
+import Hud from "@/site/Hud";
+import Manifesto from "@/site/Manifesto";
+import Notes from "@/site/Notes";
+import Opening from "@/site/Opening";
+import OtherSide from "@/site/OtherSide";
+import Practice from "@/site/Practice";
+import Works from "@/site/Works";
+import { profile, projects } from "@/site/data";
+
 export default function Home() {
-  return <main />;
+  return (
+    <>
+      <Hud />
+      <main>
+        {/* plain-text layer for screen readers and crawlers */}
+        <div className="sr-only">
+          <p>
+            {profile.first} {profile.last} is a backend-focused software engineer from {profile.place}, studying Computer
+            Science (AI &amp; ML) at Sikkim Manipal Institute of Technology and preparing for GSoC 2026.
+          </p>
+          <ul>
+            {projects.map((p) => (
+              <li key={p.slug}>
+                {p.name}: {p.line}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Opening />
+        <Manifesto />
+        <OtherSide />
+        <Bio />
+        <Works />
+        <Practice />
+        <Notes />
+      </main>
+    </>
+  );
 }

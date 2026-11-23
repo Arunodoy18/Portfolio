@@ -1,22 +1,34 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { Archivo, Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
+
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  variable: "--font-newsreader",
+  display: "swap",
+});
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
 
 const siteUrl = "https://aruno.buildc3.tech";
 const personId = `${siteUrl}#person`;
 const webSiteId = `${siteUrl}#website`;
+const title = "Arunodoy Banerjee — Engineering, as art";
+const description =
+  "Arunodoy Banerjee is a backend-focused engineer building offline mesh networks, AI developer tools, Android apps and the systems underneath them: Zone, Cadence, Nura, Meow AI, Nakung AI and more.";
 
 const webSiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "@id": webSiteId,
-  name: "AGENT ARUNODOY Tactical Portfolio",
+  name: "Arunodoy Banerjee",
   url: siteUrl,
   inLanguage: "en",
-  description:
-    "Portfolio of Arunodoy Banerjee featuring full stack engineering, open-source work, and 3D web projects.",
-  publisher: {
-    "@id": personId,
-  },
+  description,
+  publisher: { "@id": personId },
 };
 
 const personSchema = {
@@ -24,26 +36,23 @@ const personSchema = {
   "@type": "Person",
   "@id": personId,
   name: "Arunodoy Banerjee",
-  alternateName: "Agent Arunodoy",
-  jobTitle: "Full Stack Developer & Open Source Contributor",
-  description:
-    "Full Stack engineer focused on scalable systems, 3D web experiences, and open-source development. Preparing for GSoC 2026 and building production-ready software.",
+  jobTitle: "Software Engineer",
+  description,
   url: siteUrl,
-  image: `${siteUrl}/window.svg`,
-  sameAs: [
-    "https://github.com/Arunodoy18",
-    "https://www.linkedin.com/in/arunodoy-banerjee-214251342/",
-  ],
+  image: `${siteUrl}/work/portrait.jpg`,
+  alumniOf: { "@type": "CollegeOrUniversity", name: "Sikkim Manipal Institute of Technology" },
+  sameAs: ["https://github.com/Arunodoy18", "https://www.linkedin.com/in/arunodoy-banerjee-214251342/"],
   knowsAbout: [
-    "Full Stack Development",
-    "3D Web Development",
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Three.js",
+    "Backend Engineering",
     "Distributed Systems",
-    "Open Source",
-    "Cloud Native Engineering",
+    "Java",
+    "Spring Boot",
+    "Python",
+    "FastAPI",
+    "Android",
+    "Bluetooth Mesh Networking",
+    "Large Language Models",
+    "Browser Extensions",
   ],
 };
 
@@ -54,66 +63,45 @@ const rootStructuredData = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "AGENT ARUNODOY | Tactical Portfolio",
-    template: "%s | AGENT ARUNODOY",
-  },
-  description:
-    "Production-focused software engineer specializing in full-stack systems, open-source contributions, and high-performance 3D web experiences.",
+  title: { default: title, template: "%s | Arunodoy Banerjee" },
+  description,
   keywords: [
     "Arunodoy Banerjee",
-    "Full Stack Developer",
-    "3D Web Developer",
-    "Next.js Portfolio",
-    "React Three Fiber",
-    "GSoC 2026",
-    "Open Source Contributor",
+    "Software Engineer",
+    "Backend Developer",
+    "Zone offline mesh",
+    "Cadence",
+    "Nura",
+    "Meow AI",
+    "Nakung AI",
+    "Portfolio",
   ],
-  alternates: {
-    canonical: siteUrl,
-  },
+  alternates: { canonical: siteUrl },
   openGraph: {
     type: "website",
     url: siteUrl,
-    title: "AGENT ARUNODOY | Tactical Portfolio",
-    description:
-      "Explore Arunodoy Banerjee's tactical portfolio: full-stack systems, 3D web engineering, open-source work, and GSoC-focused projects.",
-    siteName: "AGENT ARUNODOY Portfolio",
-    images: [
-      {
-        url: `${siteUrl}/window.svg`,
-        width: 1200,
-        height: 630,
-        alt: "AGENT ARUNODOY Tactical Portfolio Preview",
-      },
-    ],
+    title,
+    description,
+    siteName: "Arunodoy Banerjee",
+    images: [{ url: `${siteUrl}/og.jpg`, width: 1200, height: 630, alt: "Engineering, as art — Arunodoy Banerjee" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AGENT ARUNODOY | Tactical Portfolio",
-    description:
-      "Full Stack + 3D Web engineer building production-grade systems and open-source projects.",
-    images: [`${siteUrl}/window.svg`],
-    creator: "@Arunodoy18",
+    title,
+    description,
+    images: [`${siteUrl}/og.jpg`],
   },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export const viewport: Viewport = { themeColor: "#f4f4f1" };
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${archivo.variable} ${newsreader.variable} ${geist.variable} ${geistMono.variable}`}>
       <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(rootStructuredData) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rootStructuredData) }} />
       </head>
-      <body className="antialiased">
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -1,7 +1,137 @@
 @import "tailwindcss";
 
-html,
+@theme {
+  --color-paper: #f4f4f1;
+  --color-ink: #0b0c0f;
+  --color-steel: #5b6b86;
+  --color-accent: #2f5bd3;
+  --font-sans: var(--font-geist), ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-cast: var(--font-archivo), Impact, "Arial Narrow", sans-serif;
+}
+
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
-  padding: 0;
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* heavy, condensed display caps */
+.cast {
+  font-family: var(--font-cast);
+  font-weight: 900;
+  font-stretch: 62%;
+  font-variation-settings: "wdth" 62;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+/* letters as windows onto an image */
+.image-text {
+  color: transparent;
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: grayscale(1) contrast(1.45) brightness(0.62);
+}
+
+/* HUD reads on both paper and ink */
+.hud {
+  color: #fff;
+  mix-blend-mode: difference;
+}
+
+/* crosshair cursor on fine pointers */
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+.cursor {
+  mix-blend-mode: difference;
+}
+
+.link-u {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.5s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.link-u:hover,
+.link-u:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* annotation leaders draw in */
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: var(--draw, 1);
+}
+
+/* the glass lens */
+.lens {
+  box-shadow:
+    0 30px 60px -20px rgba(11, 12, 15, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  background: var(--color-paper);
+}
+.lens-glass {
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 32%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 58%, rgba(214, 170, 40, 0.28) 66%, rgba(47, 91, 211, 0.22) 72%, rgba(255, 255, 255, 0.85) 76%, rgba(11, 12, 15, 0.25) 79%, rgba(255, 255, 255, 0) 80%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 70%, rgba(11, 12, 15, 0.12) 100%);
+}
+
+/* works entries */
+.work-entry {
+  opacity: 0;
+  transform: translateY(60px);
+  transition:
+    opacity 1s cubic-bezier(0.2, 0.7, 0.1, 1) var(--d, 0ms),
+    transform 1.2s cubic-bezier(0.2, 0.7, 0.1, 1) var(--d, 0ms);
+}
+.work-entry.in {
+  opacity: 1;
+  transform: none;
+}
+.work-entry .glyph {
+  transition: transform 1.6s cubic-bezier(0.2, 0.7, 0.1, 1);
+  transform: rotate(-30deg) scale(0.8);
+}
+.work-entry.in .glyph {
+  transform: none;
+}
+.work-entry:hover .glyph {
+  transform: rotate(18deg) scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-entry,
+  .work-entry .glyph {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
 }

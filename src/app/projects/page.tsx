@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
+import SubPage from "@/site/SubPage";
+import { projects } from "@/site/data";
 
 const siteUrl = "https://aruno.buildc3.tech";
 
 export const metadata: Metadata = {
   title: "Projects",
   description:
-    "Project portfolio of Arunodoy Banerjee featuring full stack systems, AI tools, and 3D web applications.",
-  alternates: {
-    canonical: `${siteUrl}/projects`,
-  },
+    "Projects by Arunodoy Banerjee: Zone (offline Bluetooth mesh), Cadence, Nura, Meow AI, Nakung AI, Your-Reviewer, RedZone, Vaayu and more.",
+  alternates: { canonical: `${siteUrl}/projects` },
   openGraph: {
-    title: "Projects | AGENT ARUNODOY",
-    description:
-      "Explore shipped and active projects by Arunodoy Banerjee across AI, full stack engineering, and developer tooling.",
+    title: "Projects | Arunodoy Banerjee",
+    description: "Apps, browser extensions, platforms and systems built by Arunodoy Banerjee.",
     url: `${siteUrl}/projects`,
     type: "website",
   },
   twitter: {
     card: "summary",
-    title: "Projects | AGENT ARUNODOY",
-    description:
-      "Project showcase covering Smart Waste Management AI, Code Review Platform, and Nakung AI Assistant.",
+    title: "Projects | Arunodoy Banerjee",
+    description: "Zone, Cadence, Nura, Meow AI, Nakung AI and more.",
   },
 };
 
@@ -30,84 +28,54 @@ const projectsSchema = {
   "@id": `${siteUrl}/projects#collection-page`,
   url: `${siteUrl}/projects`,
   name: "Projects by Arunodoy Banerjee",
-  hasPart: [
-    {
-      "@type": "CreativeWork",
-      name: "Smart Waste Management AI",
-      url: "https://wastifi.netlify.app/",
-      creator: { "@id": `${siteUrl}#person` },
-    },
-    {
-      "@type": "CreativeWork",
-      name: "Code Review Platform",
-      url: "https://yours-code-assitant.netlify.app/login",
-      creator: { "@id": `${siteUrl}#person` },
-    },
-    {
-      "@type": "SoftwareSourceCode",
-      name: "Nakung AI Assistant",
-      codeRepository: "https://github.com/Arunodoy18/Nakung",
-      creator: { "@id": `${siteUrl}#person` },
-    },
-  ],
+  hasPart: projects.map((p) => ({
+    "@type": p.code ? "SoftwareSourceCode" : "CreativeWork",
+    name: p.name,
+    description: p.line,
+    ...(p.live ? { url: p.live } : {}),
+    ...(p.code ? { codeRepository: p.code } : {}),
+    creator: { "@id": `${siteUrl}#person` },
+  })),
 };
-
-const projects = [
-  {
-    name: "Smart Waste Management AI",
-    summary:
-      "Computer vision and IoT-driven waste classification platform for operational efficiency and lower manual sorting errors.",
-    live: "https://wastifi.netlify.app/",
-    source: "https://github.com/Arunodoy18",
-  },
-  {
-    name: "Code Review Platform",
-    summary:
-      "High-performance review workflow platform supporting open-source contributor collaboration.",
-    live: "https://yours-code-assitant.netlify.app/login",
-    source: "https://github.com/Arunodoy18",
-  },
-  {
-    name: "Nakung AI Assistant",
-    summary:
-      "AI-powered assistant focused on developer productivity, context-aware coding help, and better debugging flow.",
-    live: "",
-    source: "https://github.com/Arunodoy18/Nakung",
-  },
-];
 
 export default function ProjectsPage() {
   return (
-    <main className="min-h-screen bg-[#0a0a0f] text-white px-6 py-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsSchema) }}
-      />
-      <div className="max-w-5xl mx-auto space-y-8">
-        <h1 className="text-4xl font-bold">Projects</h1>
-        <p className="text-[#b9bac5] leading-relaxed">
-          This page documents selected projects built by Arunodoy Banerjee. Each project demonstrates a
-          production-focused approach to architecture, maintainability, and user impact.
-        </p>
-        <div className="grid gap-6 md:grid-cols-2">
-          {projects.map((project) => (
-            <article key={project.name} className="border border-[#2a2b37] p-5 rounded-lg bg-[#111118]">
-              <h2 className="text-xl font-semibold mb-2">{project.name}</h2>
-              <p className="text-[#b9bac5] mb-4">{project.summary}</p>
-              <div className="flex gap-4 text-sm">
-                {project.live ? (
-                  <a className="underline" href={project.live} target="_blank" rel="noopener noreferrer">
-                    Live
+    <SubPage
+      plate="05 — WORKS"
+      title="WORKS"
+      lead="Things built to be used: apps that work with no network, extensions that sit beside you while you learn, and the systems underneath them."
+    >
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsSchema) }} />
+      <ol className="space-y-px bg-ink/15">
+        {projects.map((p, i) => (
+          <li key={p.slug} className="grid gap-4 bg-paper py-8 md:grid-cols-[80px_1fr_220px]">
+            <span className="font-mono text-[11px] tracking-[0.2em] text-ink/45">{String(i + 1).padStart(2, "0")}</span>
+            <div>
+              <h2 className="font-serif text-[clamp(30px,3vw,44px)] italic leading-none">{p.name}</h2>
+              <p className="mt-2 font-serif text-[17px] text-ink/85">{p.line}</p>
+              <p className="mt-3 max-w-[70ch] text-[14px] leading-relaxed text-ink/70">{p.body}</p>
+            </div>
+            <div className="font-mono text-[10px] leading-relaxed tracking-[0.15em] text-ink/60">
+              <p>
+                {p.kind.toUpperCase()} · {p.year}
+              </p>
+              <p className="mt-2">{p.stack.join(" · ").toUpperCase()}</p>
+              <p className="mt-3 flex gap-4 text-ink">
+                {p.live && (
+                  <a className="link-u" href={p.live}>
+                    VISIT ↗
                   </a>
-                ) : null}
-                <a className="underline" href={project.source} target="_blank" rel="noopener noreferrer">
-                  Source
-                </a>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </main>
+                )}
+                {p.code && (
+                  <a className="link-u" href={p.code}>
+                    SOURCE ↗
+                  </a>
+                )}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </SubPage>
   );
 }

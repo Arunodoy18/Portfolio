@@ -1,49 +1,54 @@
 import type { Metadata } from "next";
+import SubPage from "@/site/SubPage";
+import { profile, projects } from "@/site/data";
 
 const siteUrl = "https://aruno.buildc3.tech";
 
 export const metadata: Metadata = {
   title: "Open Source",
   description:
-    "Open source contribution focus and collaboration goals by Arunodoy Banerjee.",
+    "Open-source work by Arunodoy Banerjee: Zone, Cadence, Nura, Meow AI, Nakung AI, Your-Reviewer and more.",
   alternates: {
     canonical: `${siteUrl}/open-source`,
   },
   openGraph: {
-    title: "Open Source | AGENT ARUNODOY",
+    title: "Open Source | Arunodoy Banerjee",
     description:
       "Read about open-source contribution areas, engineering interests, and collaboration direction.",
     url: `${siteUrl}/open-source`,
   },
   twitter: {
     card: "summary",
-    title: "Open Source | AGENT ARUNODOY",
+    title: "Open Source | Arunodoy Banerjee",
     description: "Open-source contribution profile of Arunodoy Banerjee.",
   },
 };
 
 export default function OpenSourcePage() {
+  const open = projects.filter((p) => p.code);
   return (
-    <main className="min-h-screen bg-[#0a0a0f] text-white px-6 py-20">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <h1 className="text-4xl font-bold">Open Source</h1>
-        <p className="text-[#b9bac5] leading-relaxed">
-          Open source is a core part of my engineering growth strategy. I focus on contribution quality,
-          maintainable pull requests, and practical improvements that help teams ship faster and with more
-          confidence. My active preparation for GSoC 2026 is centered on collaborative development, codebase
-          onboarding speed, and measurable technical outcomes.
-        </p>
-        <h2 className="text-2xl font-semibold">Contribution Themes</h2>
-        <ul className="list-disc pl-6 space-y-2 text-[#b9bac5]">
-          <li>Developer tooling and workflow automation</li>
-          <li>Cloud-native and platform engineering practices</li>
-          <li>Documentation quality and contributor onboarding</li>
-          <li>Testing and reliability in production-facing systems</li>
-        </ul>
-        <p className="text-[#b9bac5]">
-          Primary profile: <a className="underline" href="https://github.com/Arunodoy18">https://github.com/Arunodoy18</a>
-        </p>
-      </div>
-    </main>
+    <SubPage
+      plate="05 — OPEN SOURCE"
+      title="IN THE OPEN"
+      lead="Most of what I build is public. Small, reviewable pull requests; documentation people can actually onboard from; tools that make other developers faster."
+    >
+      <p className="mb-8 max-w-[60ch] text-[15px] leading-relaxed text-ink/80">
+        I am preparing for GSoC 2026, with a focus on developer tooling, reliability and contributor onboarding. Everything below
+        has its source on <a className="underline" href={profile.github}>GitHub</a>.
+      </p>
+      <ul className="grid gap-px bg-ink/15 sm:grid-cols-2">
+        {open.map((p) => (
+          <li key={p.slug} className="bg-paper p-5">
+            <a href={p.code} className="group block">
+              <p className="font-mono text-[10px] tracking-[0.2em] text-ink/50">
+                {p.kind.toUpperCase()} · {p.year}
+              </p>
+              <p className="mt-2 font-serif text-[28px] italic leading-none group-hover:underline">{p.name}</p>
+              <p className="mt-2 text-[14px] leading-snug text-ink/75">{p.line}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </SubPage>
   );
 }
