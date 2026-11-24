@@ -197,3 +197,31 @@ export const practice = {
 };
 
 export const images = ["/work/zone.jpg", "/work/nura.jpg", "/work/cadence.jpg", "/work/nakung.jpg", "/work/wastifi.jpg", "/work/zone-install.jpg"];
+
+/** Notes on the plane: short pieces about the work, each placed by hand on a 3000 x 2300 board. */
+export type Note = {
+  id: string;
+  kind: "Essay" | "Photographs";
+  title: string;
+  body: string;
+  href?: string;
+  link?: string;
+  year: string;
+  image?: string;
+  x: number;
+  y: number;
+  w?: number;
+};
+
+export const notes: Note[] = [
+  { id: "N-01", kind: "Essay", title: "Silence is a signal", body: "Every packet in Zone says when it will speak again, so a phone that went quiet can be told apart from one that was destroyed.", href: "https://github.com/Arunodoy18/TheZone", link: "Read the source", year: "2026", image: "/work/zone.jpg", x: 110, y: 40 },
+  { id: "N-02", kind: "Photographs", title: "Where the network forgets", body: "The hills of Sikkim, where a dropped signal is ordinary and offline-first is not a feature but a starting point.", year: "2026", image: "/work/hills.jpg", x: 640, y: 110 },
+  { id: "N-03", kind: "Essay", title: "Talking, not tapping", body: "Cadence builds a speaker, not a streak: real conversation, a voice that answers, and a score on every sentence.", href: "https://github.com/Arunodoy18/Cadence", link: "Read the source", year: "2026", image: "/work/cadence.jpg", x: 1420, y: 560 },
+  { id: "N-04", kind: "Essay", title: "Hints before answers", body: "A tutor that asks the next question instead of handing over the solution. Nakung sits beside the problem, not on top of it.", href: "https://github.com/Arunodoy18/Nakung", link: "Read the source", year: "2025", image: "/work/nakung.jpg", x: 2180, y: 600 },
+  { id: "N-05", kind: "Essay", title: "Bring your own model", body: "Code review should not lock you into one vendor. Your-Reviewer takes any LLM and your own MCP servers.", href: "https://github.com/Arunodoy18/Your-reviewer", link: "Read the source", year: "2026", x: 90, y: 960 },
+  { id: "N-06", kind: "Photographs", title: "The long way up", body: "Stone steps and tea gardens. The places all of this gets written from.", year: "2026", image: "/work/steps.jpg", x: 660, y: 990, w: 300 },
+  { id: "N-07", kind: "Essay", title: "Calibrated, not assumed", body: "RedZone fits its hazard weights against historical loss, and solves relocation as an optimisation problem.", href: "https://github.com/Arunodoy18/SIH_2026", link: "Read the source", year: "2026", x: 90, y: 1560 },
+  { id: "N-08", kind: "Essay", title: "A photo becomes a plan", body: "Nura turns a photo, a barcode or a few typed words into a day of meals, with targets safe for a child.", href: "https://github.com/Arunodoy18/NutTrack", link: "Read the source", year: "2026", image: "/work/nura.jpg", x: 2470, y: 1500 },
+  { id: "N-09", kind: "Essay", title: "One engine, three readers", body: "A student, a campus and a city read the same carbon numbers. Vaayu writes them once.", href: "https://github.com/Arunodoy18/campusCarbon", link: "Read the source", year: "2026", x: 1080, y: 2040 },
+  { id: "N-10", kind: "Essay", title: "Snap it, sort it", body: "Wastifi classifies waste from a single photo and says how sure it is, so nobody trusts a guess.", href: "https://wastifi.netlify.app/", link: "Visit", year: "2025", image: "/work/wastifi.jpg", x: 1720, y: 2040 },
+];

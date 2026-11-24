@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Glyph from "./Glyph";
+import { Wormhole } from "./Notes";
 import { projects, type Project } from "./data";
 
 const KINDS = ["All", "App", "Extension", "Platform", "System", "Agent"] as const;
@@ -12,7 +13,7 @@ export default function Works() {
 
   return (
     <section id="work" data-plate="04 — WORKS" className="relative bg-paper px-[3.2vw] pb-[14vh] pt-[18vh]">
-      <MapBackdrop />
+      <Wormhole className="pointer-events-none absolute inset-0 h-full w-full text-ink/[0.13]" />
       <div className="relative grid grid-cols-1 gap-y-12 md:grid-cols-12 md:gap-x-[1.2vw]">
         <aside className="md:sticky md:top-[12vh] md:col-span-4 md:h-fit">
           <p className="font-mono text-[10px] tracking-[0.25em] text-ink/50">04 — WORKS</p>
@@ -112,24 +113,5 @@ function Entry({ p, i, index }: { p: Project; i: number; index: number }) {
         <Glyph kind={p.glyph} className="glyph h-[clamp(80px,9vw,150px)] w-[clamp(80px,9vw,150px)] text-ink" />
       </div>
     </li>
-  );
-}
-
-function MapBackdrop() {
-  return (
-    <svg className="pointer-events-none absolute inset-0 h-full w-full text-ink/[0.07]" aria-hidden>
-      <defs>
-        <pattern id="dots" width="14" height="14" patternUnits="userSpaceOnUse">
-          <circle cx="1" cy="1" r="0.9" fill="currentColor" />
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#dots)" />
-      <g fill="none" stroke="currentColor" strokeWidth="1">
-        <path d="M -20 300 C 300 180 520 460 820 300 S 1400 120 1900 260" />
-        <path d="M -20 900 C 400 760 600 1100 1000 920 S 1500 700 1900 880" />
-        <path d="M 300 -20 L 420 2000" strokeDasharray="4 6" />
-        <path d="M 1200 -20 L 1060 2400" strokeDasharray="4 6" />
-      </g>
-    </svg>
   );
 }

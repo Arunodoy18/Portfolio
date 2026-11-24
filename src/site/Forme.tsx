@@ -11,6 +11,8 @@ import { clamp, ease, isInk, lerp, range, useSectionProgress } from "./scroll";
 
 const LINES = ["ENGINEERING AND ART", "SHOULD BE SEEN THROUGH", "THE SAME LENS."];
 const WORD = "ENGINEER";
+// a loose cluster of cells, the first thing the next plate resolves from
+const PIXELS: [number, number][] = [[2, 0], [2, 1], [1, 2], [2, 2], [3, 2], [0, 3], [2, 3], [3, 3], [1, 4], [3, 4], [4, 4], [2, 5], [4, 5], [5, 3]];
 const FALLS = [
   "Off the letters, nothing holds. He is recompiled where he stood.",
   "Null beneath his feet. Restored from the last good commit.",
@@ -34,12 +36,18 @@ export default function Forme() {
   const caption = useRef<HTMLParagraphElement>(null);
   const readout = useRef<HTMLDivElement>(null);
   const prog = useRef(0);
+  const pixels = useRef<HTMLDivElement>(null);
 
   useSectionProgress(section, (p) => {
     prog.current = p;
     const r = section.current!.getBoundingClientRect();
     // stay hidden while sliding in over the manifesto; take over the instant we pin
     if (stage.current) stage.current.style.visibility = r.top <= 1 && r.bottom > 0 ? "visible" : "hidden";
+    // on the way out, the picture breaks down into a few pixels
+    pixels.current?.querySelectorAll<HTMLElement>("[data-px]").forEach((el, i) => {
+      const t = ease(range(p, 0.955 + (i % 7) * 0.005, 0.985 + (i % 7) * 0.002));
+      el.style.transform = `scale(${t})`;
+    });
   });
 
   useEffect(() => {
@@ -360,7 +368,7 @@ export default function Forme() {
         // ---- veil between the two acts
         if (veil.current) {
           const v = Math.sin(Math.PI * clamp((toWalk - 0.2) / 0.6)) * (toWalk > 0 && toWalk < 1 ? 1 : 0);
-          const out = range(p, 0.95, 1);
+          const out = range(p, 0.925, 0.958);
           veil.current.style.opacity = `${Math.max(v, out)}`;
         }
 
@@ -528,6 +536,16 @@ export default function Forme() {
       <div ref={stage} className="sticky top-0 h-[100svh] overflow-hidden bg-paper" style={{ visibility: "hidden" }}>
         <canvas ref={canvas} className="absolute inset-0 h-full w-full" aria-label="Engineering and art should be seen through the same lens. A walkway made of the word ENGINEER, with a small figure you can walk by dragging." />
         <div ref={veil} aria-hidden className="pointer-events-none absolute inset-0 bg-paper opacity-0" />
+        <div ref={pixels} aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[30vh] w-[30vh] -translate-x-1/2 -translate-y-1/2">
+          {PIXELS.map(([x, y], i) => (
+            <span
+              key={i}
+              data-px
+              className="absolute bg-ink"
+              style={{ left: `${x * 16.66}%`, top: `${y * 16.66}%`, width: "16.66%", height: "16.66%", transform: "scale(0)" }}
+            />
+          ))}
+        </div>
 
         <div
           ref={readout}

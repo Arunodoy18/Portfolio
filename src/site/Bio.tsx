@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { profile } from "./data";
+import { Wormhole } from "./Notes";
 import { easeOut, range, useSectionProgress } from "./scroll";
 
 const STEPS = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 160];
@@ -79,7 +80,7 @@ export default function Bio() {
 
         {/* dotted field */}
         <div data-r="2" className="relative col-span-5 hidden border border-ink/10 md:block">
-          <DotField />
+          <Wormhole className="absolute inset-0 h-full w-full text-ink/45" />
           <div className="absolute right-3 top-3 text-right font-mono text-[9px] leading-relaxed tracking-[0.18em] text-ink/60">
             {profile.place.toUpperCase()}
             <br />
@@ -137,25 +138,5 @@ export default function Bio() {
         </div>
       </div>
     </section>
-  );
-}
-
-function DotField() {
-  // a deterministic dotted contour field, drawn once
-  const dots: { x: number; y: number; r: number }[] = [];
-  for (let y = 0; y < 22; y++) {
-    for (let x = 0; x < 48; x++) {
-      const v = Math.sin(x * 0.23 + y * 0.4) + Math.cos(y * 0.31 - x * 0.12) + Math.sin((x + y) * 0.09);
-      if (Math.abs(v) < 0.42 || (x * 7 + y * 13) % 29 === 0) dots.push({ x: x * 2.1 + 1, y: y * 4.4 + 2, r: Math.abs(v) < 0.15 ? 0.45 : 0.28 });
-    }
-  }
-  return (
-    <svg viewBox="0 0 102 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full text-ink/45" aria-hidden>
-      {dots.map((d, i) => (
-        <circle key={i} cx={d.x} cy={d.y} r={d.r} fill="currentColor" />
-      ))}
-      <path d="M 70 18 L 88 18 L 88 40" fill="none" stroke="currentColor" strokeWidth="0.2" vectorEffect="non-scaling-stroke" />
-      <circle cx="70" cy="18" r="1.2" fill="none" stroke="currentColor" strokeWidth="0.2" vectorEffect="non-scaling-stroke" />
-    </svg>
   );
 }
