@@ -97,8 +97,18 @@ export const viewport: Viewport = { themeColor: "#f4f4f1" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${archivo.variable} ${newsreader.variable} ${geist.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      data-theme="paper"
+      suppressHydrationWarning
+      className={`${archivo.variable} ${newsreader.variable} ${geist.variable} ${geistMono.variable}`}
+    >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem("theme");if(t!=="ink"&&t!=="paper")t=matchMedia("(prefers-color-scheme: dark)").matches?"ink":"paper";document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rootStructuredData) }} />
       </head>
       <body>{children}</body>

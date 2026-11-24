@@ -2,6 +2,7 @@
 
 import { useMemo, useRef } from "react";
 import { images, practice } from "./data";
+import { Wormhole } from "./Notes";
 import { clamp, range, useSectionProgress } from "./scroll";
 
 // a cross-shaped mosaic, 12 x 7. 1 = skill tile, 2 = image fragment, 0 = empty
@@ -62,8 +63,9 @@ export default function Practice() {
   });
 
   return (
-    <section ref={section} id="practice" data-plate="05 — PRACTICE" className="relative h-[200vh] bg-paper">
+    <section ref={section} id="practice" data-plate="04 — PRACTICE" className="relative h-[200vh] bg-paper">
       <div className="sticky top-0 grid h-[100svh] grid-cols-1 content-center gap-6 overflow-hidden px-[3.2vw] md:grid-cols-12 md:items-center md:gap-8">
+        <Wormhole className="pointer-events-none absolute bottom-[-10vh] right-[-4vw] h-[80vh] w-[70vw] text-ink/20" />
         <div className="md:col-span-4">
           <h2 className="cast text-[clamp(56px,7.5vw,150px)] leading-[0.8] text-ink">PRACTICE</h2>
           <div className="mt-6 bg-ink p-4 text-paper">

@@ -35,6 +35,15 @@ if (typeof window !== "undefined") {
   );
 }
 
+export const isInk = () => typeof document !== "undefined" && document.documentElement.dataset.theme === "ink";
+
+export function setTheme(t: "ink" | "paper") {
+  document.documentElement.dataset.theme = t;
+  try {
+    localStorage.setItem("theme", t);
+  } catch {}
+}
+
 export const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 /** maps v from [a,b] to [0,1], clamped */

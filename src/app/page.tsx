@@ -3,7 +3,7 @@ import Hud from "@/site/Hud";
 import Manifesto from "@/site/Manifesto";
 import Notes from "@/site/Notes";
 import Opening from "@/site/Opening";
-import OtherSide from "@/site/OtherSide";
+import Forme from "@/site/Forme";
 import Practice from "@/site/Practice";
 import Works from "@/site/Works";
 import { profile, projects } from "@/site/data";
@@ -29,7 +29,7 @@ export default function Home() {
         </div>
         <Opening />
         <Manifesto />
-        <OtherSide />
+        <Forme />
         <Bio />
         <Works />
         <Practice />

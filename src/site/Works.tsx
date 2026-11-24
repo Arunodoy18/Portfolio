@@ -11,11 +11,11 @@ export default function Works() {
   const list = projects.filter((p) => kind === "All" || p.kind === kind);
 
   return (
-    <section id="work" data-plate="05 — WORKS" className="relative bg-paper px-[3.2vw] pb-[14vh] pt-[18vh]">
+    <section id="work" data-plate="04 — WORKS" className="relative bg-paper px-[3.2vw] pb-[14vh] pt-[18vh]">
       <MapBackdrop />
       <div className="relative grid grid-cols-1 gap-y-12 md:grid-cols-12 md:gap-x-[1.2vw]">
         <aside className="md:sticky md:top-[12vh] md:col-span-4 md:h-fit">
-          <p className="font-mono text-[10px] tracking-[0.25em] text-ink/50">05 — WORKS</p>
+          <p className="font-mono text-[10px] tracking-[0.25em] text-ink/50">04 — WORKS</p>
           <h2 className="cast mt-3 text-[clamp(64px,9vw,180px)] leading-[0.8] text-ink">WORKS</h2>
           <p className="mt-6 max-w-[34ch] font-serif text-[clamp(15px,1.3vw,20px)] italic leading-snug text-ink/75">
             Things built to be used: apps that work with no network, extensions that sit beside you while you learn, and the

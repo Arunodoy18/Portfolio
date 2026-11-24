@@ -1,10 +1,10 @@
 "use client";
 
 import { useMemo, useRef } from "react";
-import { clamp, ease, easeOut, lerp, mouse, range, useSectionProgress } from "./scroll";
+import { clamp, ease, easeOut, isInk, lerp, mouse, range, useSectionProgress } from "./scroll";
 
 const LINES = ["Engineering and art", "should be seen through", "the same lens."];
-const CAPS = ["ENGINEERING", "AND ART", "SHOULD BE SEEN", "THROUGH", "THE SAME LENS."];
+const CAPS = ["ENGINEERING AND ART", "SHOULD BE SEEN THROUGH", "THE SAME LENS."];
 
 function SerifBlock() {
   return (
@@ -84,7 +84,7 @@ export default function Manifesto() {
       clone.style.height = `${vh}px`;
       clone.style.transformOrigin = `${lx}px ${ly}px`;
       clone.style.transform = `translate(${-(lx - size / 2)}px, ${-(ly - size / 2)}px) scale(1.55)`;
-      clone.style.filter = `url(#refract) invert(${dark})`;
+      clone.style.filter = `url(#refract) invert(${isInk() ? 0 : dark})`;
       // stay pure black while the section slides in under the dive
       clone.style.opacity = `${range(p, 0.004, 0.05)}`;
     }
@@ -112,7 +112,7 @@ export default function Manifesto() {
 
   return (
     <section ref={section} id="eye" data-plate="03 — THE OTHER SIDE" className="relative h-[480vh]">
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
+      <div data-stage className="sticky top-0 h-[100svh] overflow-hidden">
         <div ref={serif} className="absolute inset-0 flex items-center justify-center px-6">
           <SerifBlock />
         </div>
@@ -147,8 +147,9 @@ export default function Manifesto() {
             <div
               key={li}
               aria-hidden
-              className="cast flex text-[clamp(30px,6.2vw,120px)] leading-[0.92] text-ink"
-              style={{ marginLeft: `${[-24, 18, -10, 26, 4][li]}vw` }}
+              data-caps-line
+              className="cast flex text-[clamp(26px,4.6vw,92px)] leading-[0.95] text-ink"
+              style={{ marginLeft: `${[-14, 4, 22][li]}vw` }}
             >
               {line.map((l, i) =>
                 l.ch === " " ? (

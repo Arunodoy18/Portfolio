@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type RefObject } from "react";
-import { mouse, onTick } from "./scroll";
+import { isInk, mouse, onTick } from "./scroll";
 
 const vert = `
 attribute vec2 a;
@@ -18,6 +18,7 @@ uniform float uFocus;   // 0..1 how "formed" the hole is
 uniform vec2 uCenter;   // screen-space centre (0..1)
 uniform float uScale;   // size in units of viewport height
 uniform float uZoom;    // 0..1 camera falling toward the hole
+uniform float uDark;    // 0 day, 1 night
 
 float hash(vec2 p){ p = fract(p*vec2(123.34,456.21)); p += dot(p,p+45.32); return fract(p.x*p.y); }
 float noise(vec2 p){
@@ -97,26 +98,28 @@ void main(){
 
   float horizon = 1.0 - smoothstep(rs*0.97, rs*1.0, r);
 
-  float ink = 0.0;
-  ink += lensed * 0.95;
-  ink += disk * (1.0 - horizon) ;
-  ink = max(ink, horizon);
-  ink += disk * front * horizon * 0.85;         // disk passes in front of the hole
-  ink = clamp(ink, 0.0, 1.0);
-  ink *= uFocus;
+  // light matter (disk + lensed halo) and the dark horizon, kept apart so both themes work
+  float matter = clamp(lensed * 0.95 + disk * (1.0 - horizon) + disk * front * horizon * 0.85, 0.0, 1.0) * uFocus;
+  float hole = horizon * (1.0 - clamp(disk * front * 0.85, 0.0, 1.0)) * uFocus;
 
-  // paper
   vec2 sUV = frag / uRes;
-  vec3 paper = vec3(0.958, 0.958, 0.952);
-  paper -= 0.035 * length(sUV - vec2(0.5, 0.55));
-  paper -= grid * uFocus;
-  // a faint cold bloom on the receding side
   float cold = exp(-length(vec2(p.x - rs*5.0, p.y/0.25)) * 4.5) * 0.10 * uFocus;
-  paper -= vec3(cold*0.55, cold*0.3, 0.0);
 
+  // day: ink on paper
+  vec3 paper = vec3(0.958, 0.958, 0.952) - 0.035 * length(sUV - vec2(0.5, 0.55)) - grid * uFocus;
+  paper -= vec3(cold*0.55, cold*0.3, 0.0);
   vec3 inkCol = vec3(0.03, 0.035, 0.045);
-  vec3 col = mix(paper, inkCol, ink);
-  // the light razor is white even on top of ink
+  vec3 day = mix(paper, inkCol, max(matter, hole));
+
+  // night: glowing gas in black space, the horizon blacker than the sky
+  vec3 space = vec3(0.039, 0.039, 0.047) + 0.025 * (1.0 - length(sUV - vec2(0.5, 0.55))) + grid * uFocus * 0.6;
+  space += vec3(0.0, cold*0.25, cold*0.55);
+  vec3 gas = vec3(0.93, 0.93, 0.95);
+  vec3 night = mix(space, gas, matter * 0.92);
+  night = mix(night, vec3(0.0), hole);
+
+  vec3 col = mix(day, night, uDark);
+  // the light razor is white in both
   col = mix(col, vec3(1.0), clamp(photonArc * uFocus * (0.95 + uZoom), 0.0, 1.0) * (1.0 - front*0.5));
 
   // film grain
@@ -163,7 +166,8 @@ export default function BlackHole({ state, className }: Props) {
 
     const u = (n: string) => gl.getUniformLocation(prog, n);
     const uRes = u("uRes"), uTime = u("uTime"), uMouse = u("uMouse"), uFocus = u("uFocus");
-    const uCenter = u("uCenter"), uScale = u("uScale"), uZoom = u("uZoom");
+    const uCenter = u("uCenter"), uScale = u("uScale"), uZoom = u("uZoom"), uDark = u("uDark");
+    let dark = isInk() ? 1 : 0;
 
     const resize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -193,6 +197,8 @@ export default function BlackHole({ state, className }: Props) {
       gl.uniform2f(uCenter, st.cx, st.cy);
       gl.uniform1f(uScale, st.scale);
       gl.uniform1f(uZoom, st.zoom);
+      dark += ((isInk() ? 1 : 0) - dark) * 0.08;
+      gl.uniform1f(uDark, dark);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     });
 

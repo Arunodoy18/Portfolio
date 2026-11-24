@@ -1,9 +1,9 @@
 "use client";
 
 import Lenis from "lenis";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { profile } from "./data";
-import { mouse, onTick, prefersReducedMotion } from "./scroll";
+import { isInk, mouse, onTick, prefersReducedMotion, setTheme } from "./scroll";
 
 const NAV = [
   { id: "lens", label: "LENS" },
@@ -78,7 +78,10 @@ export default function Hud() {
             </a>
           ))}
         </nav>
-        <span className="font-mono text-[9.5px] tracking-[0.22em]">PLATE {plate.slice(0, 2)} / 06</span>
+        <span className="pointer-events-auto flex items-center gap-5 font-mono text-[9.5px] tracking-[0.22em]">
+          <ThemeToggle />
+          <span className="hidden sm:inline">PLATE {plate.slice(0, 2)} / 06</span>
+        </span>
       </header>
 
       <footer className="hud focus-in pointer-events-none fixed inset-x-0 bottom-0 z-50 flex items-end justify-between gap-6 px-[3.2vw] pb-5">
@@ -108,6 +111,42 @@ export default function Hud() {
       {/* page arrives out of focus, tinted, and resolves */}
       <div aria-hidden className="focus-tint pointer-events-none fixed inset-0 z-[95]" />
     </>
+  );
+}
+
+function subscribeTheme(cb: () => void) {
+  const mo = new MutationObserver(cb);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  // follow the system until the visitor has chosen
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  const onChange = (e: MediaQueryListEvent) => {
+    try {
+      if (localStorage.getItem("theme")) return;
+    } catch {}
+    document.documentElement.dataset.theme = e.matches ? "ink" : "paper";
+  };
+  mq.addEventListener("change", onChange);
+  return () => {
+    mo.disconnect();
+    mq.removeEventListener("change", onChange);
+  };
+}
+
+function ThemeToggle() {
+  const ink = useSyncExternalStore(subscribeTheme, isInk, () => false);
+  return (
+    <button
+      type="button"
+      data-cursor="hover"
+      aria-label={ink ? "Switch to day" : "Switch to night"}
+      onClick={() => setTheme(isInk() ? "paper" : "ink")}
+      className="flex items-center gap-1.5 tracking-[0.22em]"
+    >
+      <span className="relative inline-block h-[9px] w-[9px] overflow-hidden rounded-full border border-current">
+        <span className={`absolute inset-y-0 left-0 bg-current transition-all duration-500 ${ink ? "w-full" : "w-1/2"}`} />
+      </span>
+      {ink ? "NIGHT" : "DAY"}
+    </button>
   );
 }
 

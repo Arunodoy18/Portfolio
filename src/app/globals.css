@@ -11,8 +11,18 @@
   --font-cast: var(--font-archivo), Impact, "Arial Narrow", sans-serif;
 }
 
+/* night: the same page, printed in reverse */
+html[data-theme="ink"] {
+  --color-paper: #0a0a0c;
+  --color-ink: #ecebe6;
+  --color-steel: #93a3c0;
+  --imgtext: grayscale(1) contrast(0.85) brightness(2.1);
+  color-scheme: dark;
+}
 html {
+  --imgtext: grayscale(1) contrast(1.45) brightness(0.62);
   background: var(--color-paper);
+  transition: background-color 0.6s ease;
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -57,7 +67,7 @@ body {
   background-position: center;
   -webkit-background-clip: text;
   background-clip: text;
-  filter: grayscale(1) contrast(1.45) brightness(0.62);
+  filter: var(--imgtext);
 }
 
 /* HUD reads on both paper and ink */
@@ -166,6 +176,9 @@ body {
   background: #a061d1;
   mix-blend-mode: lighten;
   animation: tint-out 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+}
+html[data-theme="ink"] .focus-tint {
+  mix-blend-mode: darken;
 }
 
 @media (prefers-reduced-motion: reduce) {
