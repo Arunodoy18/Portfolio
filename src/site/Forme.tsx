@@ -2,8 +2,10 @@
 
 /**
  * 03 — THE OTHER SIDE, in three dimensions.
- * The manifesto's capitals take depth, fold into three axes, and the camera falls onto a walkway
- * made of the word ENGINEER, where a small figure can be walked around by dragging.
+ * The manifesto's capitals take depth and fold into three beams along X, Y and Z. The camera then
+ * falls onto the beams themselves: a small figure stands on the letters and can be walked across
+ * them, run, jump, hang on their walls, and turn gravity toward another beam. A radio waits at the
+ * far end of each beam; tune all three and the structure wakes.
  */
 import { useEffect, useRef } from "react";
 import type * as T from "three";
@@ -11,7 +13,6 @@ import { clamp, ease, isInk, lerp, range, useSectionProgress } from "./scroll";
 import { sound } from "./sound";
 
 const LINES = ["ENGINEERING AND ART", "SHOULD BE SEEN THROUGH", "THE SAME LENS."];
-const WORD = "ENGINEER";
 // a loose cluster of cells, the first thing the next plate resolves from
 const PIXELS: [number, number][] = [[2, 0], [2, 1], [1, 2], [2, 2], [3, 2], [0, 3], [2, 3], [3, 3], [1, 4], [3, 4], [4, 4], [2, 5], [4, 5], [5, 3]];
 const FALLS = [
@@ -20,6 +21,12 @@ const FALLS = [
   "A fall through the gaps. He is rebuilt at his mark.",
   "Stack overflow. He boots again where the ground was.",
 ];
+const STATIONS = ["Night drive", "Dhol and drone", "The long shot"];
+
+// the walkable world is the folded figure at 4x, shrunk back to the figure's size
+const S = 4; // letter size of the walkable beams
+const TOP = 0.55 * S; // their depth: the face he stands on
+const K = 1 / S; // world scale of the walkable copy
 
 type Runner = {
   root: T.Group;
@@ -67,6 +74,7 @@ export default function Forme() {
       const json = await fetch("/fonts/archivo-cast.typeface.json").then((r) => r.json());
       if (disposed || !canvas.current) return;
       const font = new FontLoader().parse(json);
+      const V3 = THREE.Vector3;
 
       // ---------------------------------------------------------------- renderer & scene
       const renderer = new THREE.WebGLRenderer({ canvas: canvas.current, antialias: true });
@@ -75,7 +83,7 @@ export default function Forme() {
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 400);
+      const camera = new THREE.PerspectiveCamera(35, 1, 0.02, 400);
       const D = 30; // camera distance for the flat, face-on opening
 
       const hemi = new THREE.HemisphereLight(0xffffff, 0x222226, 1.1);
@@ -83,11 +91,8 @@ export default function Forme() {
       const sun = new THREE.DirectionalLight(0xffffff, 2.2);
       sun.castShadow = true;
       sun.shadow.mapSize.set(2048, 2048);
-      sun.shadow.bias = -0.0004;
-      sun.shadow.camera.left = -14;
-      sun.shadow.camera.right = 14;
-      sun.shadow.camera.top = 10;
-      sun.shadow.camera.bottom = -10;
+      sun.shadow.bias = -0.0003;
+      sun.shadow.normalBias = 0.01;
       scene.add(sun, sun.target);
 
       // two materials per extrusion: [faces, sides]
@@ -95,7 +100,7 @@ export default function Forme() {
       const sideMat = new THREE.MeshStandardMaterial({ roughness: 0.7, metalness: 0.05 });
       const bodyMat = new THREE.MeshStandardMaterial({ color: 0x9a9a98, roughness: 0.42, metalness: 0.1 });
 
-      // ---------------------------------------------------------------- the three lines
+      // ---------------------------------------------------------------- act 1: the three lines
       const arms = new THREE.Group();
       scene.add(arms);
       const lineMeshes = LINES.map((text) => {
@@ -106,14 +111,16 @@ export default function Forme() {
         return { m, w: g.boundingBox!.max.x - g.boundingBox!.min.x, minX: g.boundingBox!.min.x };
       });
       // flat pose (matched to the DOM capitals) and the folded pose along X, Y and Z
-      const flat = lineMeshes.map(() => ({ pos: new THREE.Vector3(), k: 1 }));
+      const flat = lineMeshes.map(() => ({ pos: new V3(), k: 1 }));
       const GAP = 0.5;
       const folded = [
-        { pos: new THREE.Vector3(GAP, 0, 0), q: new THREE.Quaternion() },
-        { pos: new THREE.Vector3(0.62, GAP, 0), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, Math.PI / 2)) },
-        { pos: new THREE.Vector3(0, 0, GAP), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0)) },
+        { pos: new V3(GAP, 0, 0), q: new THREE.Quaternion() },
+        { pos: new V3(0.62, GAP, 0), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, Math.PI / 2)) },
+        { pos: new V3(0, 0, GAP), q: new THREE.Quaternion().setFromEuler(new THREE.Euler(0, -Math.PI / 2, 0)) },
       ];
       const ident = new THREE.Quaternion();
+      const SPIN_AXIS = new V3(1, 1, 1).normalize();
+      const SPIN_END = Math.PI * 0.9;
 
       const measureFlat = () => {
         const vw = window.innerWidth, vh = window.innerHeight;
@@ -129,7 +136,6 @@ export default function Forme() {
             flat[i].k = k;
             flat[i].pos.set((r.left - o.left - vw / 2) * upp - l.minX * k, (vh / 2 - (r.top - o.top + r.height / 2)) * upp - 0.344 * k, 0);
           } else {
-            // fallback: a centred stack
             const k = 1.6;
             flat[i].k = k;
             flat[i].pos.set((-l.w * k) / 2, (1 - i) * 1.4 * k - 0.344 * k, 0);
@@ -137,26 +143,15 @@ export default function Forme() {
         });
       };
 
-      // ---------------------------------------------------------------- the walkway
-      const S = 4; // letter size
-      const DEPTH = 1.4;
-      const walk = new THREE.Group();
-      scene.add(walk);
-      const wg = new TextGeometry(WORD, { font, size: S, depth: DEPTH, curveSegments: 10, bevelEnabled: false });
-      wg.computeBoundingBox();
-      const wordW = wg.boundingBox!.max.x;
-      const wordMesh = new THREE.Mesh(wg, [faceMat, sideMat]);
-      wordMesh.rotation.x = -Math.PI / 2; // lie flat: shape (x, y) -> world (x, -z), top face at y = DEPTH
-      wordMesh.receiveShadow = true;
-      wordMesh.castShadow = true;
-      walk.add(wordMesh);
-      const TOP = DEPTH;
+      // ---------------------------------------------------------------- act 2: the same figure, walkable
+      // world2 is an exact copy of the finished figure. Each beam carries a "frame" whose +Y is the
+      // face's normal; the figure lives in that frame, so on every beam "down" is into the letters.
+      const world2 = new THREE.Group();
+      world2.scale.setScalar(K);
+      world2.quaternion.setFromAxisAngle(SPIN_AXIS, SPIN_END);
+      world2.visible = false;
+      scene.add(world2);
 
-      // ground test against the actual letter outlines (with counters)
-      const polys = font.generateShapes(WORD, S).map((sh) => {
-        const pts = sh.extractPoints(10);
-        return { outer: pts.shape.map((v) => [v.x, v.y]), holes: pts.holes.map((h) => h.map((v) => [v.x, v.y])) };
-      });
       const inPoly = (x: number, y: number, poly: number[][]) => {
         let c = false;
         for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
@@ -165,101 +160,111 @@ export default function Forme() {
         }
         return c;
       };
-      const onLetter = (wx: number, wz: number) => {
-        const x = wx, y = -wz;
-        return polys.some((p) => inPoly(x, y, p.outer) && !p.holes.some((h) => inPoly(x, y, h)));
-      };
-      // his footprint: bridges the narrow spacing between letters, but not a real edge
-      const FOOT = 0.24;
-      const footing = (wx: number, wz: number) => {
-        if (onLetter(wx, wz)) return true;
-        for (let i = 0; i < 8; i++) {
-          const a = (i / 8) * Math.PI * 2;
-          if (onLetter(wx + Math.cos(a) * FOOT, wz + Math.sin(a) * FOOT) && onLetter(wx - Math.cos(a) * FOOT, wz - Math.sin(a) * FOOT)) return true;
-        }
-        return false;
-      };
-      const rings = polys
-        .flatMap((p) => [p.outer, ...p.holes])
-        .map((r) =>
-          r
-            .map(([x, y]) => [x, -y] as [number, number])
-            .filter((pt, i, a) => i === 0 || Math.hypot(pt[0] - a[i - 1][0], pt[1] - a[i - 1][1]) > 1e-4),
-        )
-        .filter((r) => r.length > 2);
-      // one wall segment: start, length, direction along it, and the outward normal (away from the solid)
-      const edgeAt = (ri: number, i: number) => {
-        const r = rings[ri];
-        const a = r[i], b = r[(i + 1) % r.length];
-        const dx = b[0] - a[0], dz = b[1] - a[1];
-        const len = Math.hypot(dx, dz) || 1e-6;
-        const tx = dx / len, tz = dz / len;
-        let nx = tz, nz = -tx;
-        if (onLetter(a[0] + dx / 2 + nx * 0.06, a[1] + dz / 2 + nz * 0.06)) {
-          nx = -nx;
-          nz = -nz;
-        }
-        return { a, len, tx, tz, nx, nz };
-      };
-      const nearestEdge = (x: number, z: number) => {
-        let best = { ri: 0, i: 0, s: 0, dist: Infinity };
-        rings.forEach((r, ri) => {
-          for (let i = 0; i < r.length; i++) {
-            const a = r[i], b = r[(i + 1) % r.length];
-            const dx = b[0] - a[0], dz = b[1] - a[1];
-            const l2 = dx * dx + dz * dz || 1e-9;
-            const t = clamp(((x - a[0]) * dx + (z - a[1]) * dz) / l2);
-            const d = Math.hypot(a[0] + dx * t - x, a[1] + dz * t - z);
-            if (d < best.dist) best = { ri, i, s: t * Math.sqrt(l2), dist: d };
-          }
+
+      const surfaces = LINES.map((text, si) => {
+        const geo = new TextGeometry(text, { font, size: S, depth: TOP, curveSegments: 8, bevelEnabled: false });
+        geo.computeBoundingBox();
+        const width = geo.boundingBox!.max.x;
+        const mesh = new THREE.Mesh(geo, [faceMat, sideMat]);
+        mesh.position.copy(folded[si].pos).multiplyScalar(S);
+        mesh.quaternion.copy(folded[si].q);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        world2.add(mesh);
+        const frame = new THREE.Group();
+        frame.rotation.x = Math.PI / 2; // frame (x, Y, Z) -> text (x, -Z, Y)
+        mesh.add(frame);
+
+        // ground test against the real outlines (with counters), in frame coordinates (x, z = -text y)
+        const polys = font.generateShapes(text, S).map((sh) => {
+          const pts = sh.extractPoints(8);
+          return { outer: pts.shape.map((v) => [v.x, v.y]), holes: pts.holes.map((h) => h.map((v) => [v.x, v.y])) };
         });
-        return best;
-      };
-
-      const solid = (wx: number, wz: number, r = 0.14) =>
-        onLetter(wx, wz) && onLetter(wx + r, wz) && onLetter(wx - r, wz) && onLetter(wx, wz + r) && onLetter(wx, wz - r);
-      // candidate standing spots, for respawning near where the camera is looking
-      const spots: [number, number][] = [];
-      for (let x = 0; x < wordW; x += 0.25) for (let z = -S; z < 0; z += 0.25) if (solid(x, z, 0.25)) spots.push([x, z]);
-      const nearestSpot = (x: number, z: number) => {
-        let best = spots[0], d = Infinity;
-        for (const s of spots) {
-          const dd = (s[0] - x) ** 2 + (s[1] - z) ** 2;
-          if (dd < d) {
-            d = dd;
-            best = s;
+        const onLetter = (x: number, z: number) => polys.some((p) => inPoly(x, -z, p.outer) && !p.holes.some((h) => inPoly(x, -z, h)));
+        const FOOT = 0.24;
+        const footing = (x: number, z: number) => {
+          if (onLetter(x, z)) return true;
+          for (let i = 0; i < 8; i++) {
+            const a = (i / 8) * Math.PI * 2;
+            if (onLetter(x + Math.cos(a) * FOOT, z + Math.sin(a) * FOOT) && onLetter(x - Math.cos(a) * FOOT, z - Math.sin(a) * FOOT)) return true;
           }
-        }
-        return best;
-      };
-
-      // a faint floor far below, for depth when he falls
-      const grid = new THREE.GridHelper(400, 200);
-      grid.position.y = -14;
-      (grid.material as T.Material).transparent = true;
-      (grid.material as T.Material).opacity = 0.18;
-      walk.add(grid);
+          return false;
+        };
+        const solid = (x: number, z: number, r = 0.14) =>
+          onLetter(x, z) && onLetter(x + r, z) && onLetter(x - r, z) && onLetter(x, z + r) && onLetter(x, z - r);
+        const rings = polys
+          .flatMap((p) => [p.outer, ...p.holes])
+          .map((r) => r.map(([x, y]) => [x, -y] as [number, number]).filter((pt, i, a) => i === 0 || Math.hypot(pt[0] - a[i - 1][0], pt[1] - a[i - 1][1]) > 1e-4))
+          .filter((r) => r.length > 2);
+        const edgeAt = (ri: number, i: number) => {
+          const r = rings[ri];
+          const a = r[i], b = r[(i + 1) % r.length];
+          const dx = b[0] - a[0], dz = b[1] - a[1];
+          const len = Math.hypot(dx, dz) || 1e-6;
+          const tx = dx / len, tz = dz / len;
+          let nx = tz, nz = -tx;
+          if (onLetter(a[0] + dx / 2 + nx * 0.06, a[1] + dz / 2 + nz * 0.06)) {
+            nx = -nx;
+            nz = -nz;
+          }
+          return { a, len, tx, tz, nx, nz };
+        };
+        const nearestEdge = (x: number, z: number) => {
+          let best = { ri: 0, i: 0, s: 0, dist: Infinity };
+          rings.forEach((r, ri) => {
+            for (let i = 0; i < r.length; i++) {
+              const a = r[i], b = r[(i + 1) % r.length];
+              const dx = b[0] - a[0], dz = b[1] - a[1];
+              const l2 = dx * dx + dz * dz || 1e-9;
+              const t = clamp(((x - a[0]) * dx + (z - a[1]) * dz) / l2);
+              const d = Math.hypot(a[0] + dx * t - x, a[1] + dz * t - z);
+              if (d < best.dist) best = { ri, i, s: t * Math.sqrt(l2), dist: d };
+            }
+          });
+          return best;
+        };
+        const spots: [number, number][] = [];
+        for (let x = 0; x < width; x += 0.25) for (let z = -S; z < 0; z += 0.25) if (solid(x, z, 0.25)) spots.push([x, z]);
+        const nearestSpot = (x: number, z: number) => {
+          let best = spots[0], d = Infinity;
+          for (const s of spots) {
+            const dd = (s[0] - x) ** 2 + (s[1] - z) ** 2;
+            if (dd < d) {
+              d = dd;
+              best = s;
+            }
+          }
+          return best;
+        };
+        return { mesh, frame, width, onLetter, footing, solid, rings, edgeAt, nearestEdge, nearestSpot };
+      });
+      const surfMeshes = surfaces.map((s) => s.mesh);
 
       // ---------------------------------------------------------------- the runner
       const runner = makeRunner(THREE, bodyMat);
-      walk.add(runner.root);
       const me = {
-        x: 0.6, z: -1.4, y: TOP, vy: 0, vx: 0, vz: 0, heading: Math.PI / 2, phase: 0,
-        safe: [0.6, -1.4] as [number, number], grounded: true, printed: 1, lastInput: -1e9, air: 0,
+        surf: 0, x: 0, z: -1.4, y: TOP, vy: 0, vx: 0, vz: 0, heading: Math.PI / 2, phase: 0,
+        safe: [0, -1.4] as [number, number], grounded: true, printed: 1, air: 0,
         mode: "down" as "down" | "wall", wr: 0, wi: 0, ws: 0, wh: 0, fwd: [0, 1] as [number, number],
       };
+      const place = (si: number) => {
+        me.surf = si;
+        surfaces[si].frame.add(runner.root);
+      };
       {
-        const s = nearestSpot(0.9, -1.6);
+        // he starts on the first beam, by "AND ART"
+        const s0 = surfaces[0];
+        const s = s0.nearestSpot(s0.width * 0.6, -1.4);
         me.x = s[0]; me.z = s[1]; me.safe = [s[0], s[1]];
+        place(0);
       }
 
-      // ---------------------------------------------------------------- three radios, hissing between stations
+      // ---------------------------------------------------------------- a radio at the far end of each beam
       const radioMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.5, metalness: 0.3 });
       const lampOff = new THREE.MeshBasicMaterial({ color: 0x555555 });
       const lampOn = new THREE.MeshBasicMaterial({ color: 0xff5a36 });
-      const STATIONS = ["Night drive", "Dhol and drone", "The long shot"];
-      const radios = [0.08, 0.5, 0.92].map((f, i) => {
-        const s = nearestSpot(f * wordW, -1.0 - (i % 2) * 0.9);
+      const radios = surfaces.map((sf, i) => {
+        const s = sf.nearestSpot(sf.width - 1.4, -1.2);
         const g = new THREE.Group();
         const body = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.3, 0.2), radioMat);
         body.position.y = 0.15;
@@ -273,9 +278,9 @@ export default function Forme() {
         antenna.rotation.z = -0.35;
         g.add(body, grill, lamp, antenna);
         g.position.set(s[0], TOP, s[1]);
-        g.rotation.y = 0.5;
-        walk.add(g);
-        return { x: s[0], z: s[1], g, lamp, tuned: false, t: 0, name: STATIONS[i] };
+        g.rotation.y = -0.6;
+        sf.frame.add(g);
+        return { surf: i, x: s[0], z: s[1], g, lamp, tuned: false, t: 0, name: STATIONS[i] };
       });
       let woken = false;
       let wake = 0;
@@ -344,7 +349,7 @@ export default function Forme() {
           if (soundBtn.current) soundBtn.current.textContent = m ? "SOUND OFF" : "SOUND ON";
         }
         if (["w", "a", "s", "d"].includes(k)) {
-          if (e.type === "keydown") keys.add(k);
+          if (downNow) keys.add(k);
           else keys.delete(k);
         }
         if (k === " ") {
@@ -382,13 +387,33 @@ export default function Forme() {
         themeInk = ink;
         const bg = new THREE.Color(ink ? 0x0a0a0c : 0xf4f4f1);
         scene.background = bg;
-        scene.fog = new THREE.Fog(bg, 30, 90);
+        scene.fog = new THREE.Fog(bg, 12, 60);
         faceMat.color.set(ink ? 0xf1f0ec : 0x0d0e11);
         faceMat.emissive.set(ink ? 0x7a7a78 : 0x000000);
         sideMat.color.set(ink ? 0x2b2b31 : 0x8d8e94);
         hemi.intensity = ink ? 1.0 : 1.3;
         bodyMat.color.set(ink ? 0x8f8f8c : 0xcfcfcb);
-        (grid.material as T.LineBasicMaterial).color = new THREE.Color(ink ? 0xffffff : 0x000000);
+      };
+
+      // ---------------------------------------------------------------- helpers between frames and the world
+      const toWorld = (si: number, x: number, y: number, z: number) => surfaces[si].frame.localToWorld(new V3(x, y, z));
+      const dirToWorld = (si: number, d: T.Vector3) => d.clone().applyQuaternion(surfaces[si].frame.getWorldQuaternion(new THREE.Quaternion()));
+      const dirToLocal = (si: number, d: T.Vector3) =>
+        d.clone().applyQuaternion(surfaces[si].frame.getWorldQuaternion(new THREE.Quaternion()).invert());
+
+      /** put him on another beam at a point given in world space, keeping where he was heading */
+      const moveTo = (si: number, world: T.Vector3, headingWorld: T.Vector3 | null) => {
+        const p = surfaces[si].frame.worldToLocal(world.clone());
+        const s = surfaces[si].footing(p.x, p.z) ? [p.x, p.z] : surfaces[si].nearestSpot(p.x, p.z);
+        place(si);
+        me.mode = "down";
+        me.x = s[0]; me.z = s[1]; me.y = TOP; me.vy = 0; me.vx = me.vz = 0;
+        me.grounded = true;
+        me.safe = [me.x, me.z];
+        if (headingWorld) {
+          const h = dirToLocal(si, headingWorld);
+          if (Math.hypot(h.x, h.z) > 0.1) me.heading = Math.atan2(h.x, h.z);
+        }
       };
 
       // ---------------------------------------------------------------- per frame
@@ -397,9 +422,10 @@ export default function Forme() {
       io.observe(el);
 
       const tmpQ = new THREE.Quaternion();
-      const look = new THREE.Vector3();
-      const camA = new THREE.Vector3(), camB = new THREE.Vector3(), lookA = new THREE.Vector3(), lookB = new THREE.Vector3();
-      const right = new THREE.Vector3(), fwd = new THREE.Vector3(), up = new THREE.Vector3(0, 1, 0);
+      const look = new V3();
+      const camA = new V3(), camB = new V3(), lookA = new V3(), lookB = new V3();
+      const follow = { pos: new V3(), look: new V3(), up: new V3(0, 1, 0), ready: false };
+      const ray = new THREE.Raycaster();
       let last = performance.now();
       let captionTimer = 0;
       let raf = 0;
@@ -408,7 +434,7 @@ export default function Forme() {
         if (!caption.current) return;
         caption.current.textContent = text;
         caption.current.style.opacity = "1";
-        captionTimer = 3.2;
+        captionTimer = 3.4;
       };
 
       const frame = (now: number) => {
@@ -419,75 +445,50 @@ export default function Forme() {
         applyTheme();
         const p = prog.current;
 
-        // ---- act 1: flat -> extruded -> folded into three axes
+        // ---- act 1: flat -> extruded -> folded into three axes -> turning
         const extr = ease(range(p, 0.02, 0.16));
         const fold = ease(range(p, 0.1, 0.34));
         const spin = range(p, 0.3, 0.46);
-        const toWalk = range(p, 0.42, 0.56);
-        arms.visible = toWalk < 0.5;
-        walk.visible = toWalk >= 0.5;
+        lineMeshes.forEach((l, i) => {
+          const st = clamp(fold * 1.4 - i * 0.2);
+          const f = flat[i], g = folded[i];
+          l.m.position.lerpVectors(f.pos, g.pos, st);
+          tmpQ.slerpQuaternions(ident, g.q, st);
+          l.m.quaternion.copy(tmpQ);
+          const k = lerp(f.k, 1, st);
+          l.m.scale.set(k, k, Math.max(0.002, lerp(0.002, 0.55, extr) * k));
+        });
+        arms.quaternion.setFromAxisAngle(SPIN_AXIS, spin * SPIN_END);
 
-        if (arms.visible) {
-          lineMeshes.forEach((l, i) => {
-            const st = clamp(fold * 1.4 - i * 0.2);
-            const f = flat[i], g = folded[i];
-            l.m.position.lerpVectors(f.pos, g.pos, st);
-            tmpQ.slerpQuaternions(ident, g.q, st);
-            l.m.quaternion.copy(tmpQ);
-            const k = lerp(f.k, 1, st);
-            l.m.scale.set(k, k, Math.max(0.002, lerp(0.002, 0.55, extr) * k));
-          });
-          // the whole figure turns slowly once assembled, then we dive at its centre
-          arms.rotation.set(0, 0, 0);
-          arms.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), spin * Math.PI * 0.9);
-          camA.set(0, 0, D);
-          lookA.set(0, 0, 0);
-          camB.set(1, 0.82, 1).normalize().multiplyScalar(26).add(new THREE.Vector3(2.2, 2.2, 2.2));
-          lookB.set(2.2, 2.2, 2.2);
-          const c = ease(range(p, 0.08, 0.34));
-          camera.position.lerpVectors(camA, camB, c);
-          look.lerpVectors(lookA, lookB, c);
-          // dive toward the centre
-          const dive = ease(range(p, 0.36, 0.5));
-          camera.position.lerp(lookB, dive * 0.85);
-          camera.lookAt(look);
-          sun.position.set(8, 14, 12);
-          sun.target.position.set(0, 0, 0);
-        }
+        // the walkable copy takes over the moment the figure stops turning
+        const playing = p >= 0.46;
+        arms.visible = !playing;
+        world2.visible = playing;
 
-        // ---- veil between the two acts
-        if (veil.current) {
-          const v = Math.sin(Math.PI * clamp((toWalk - 0.2) / 0.6)) * (toWalk > 0 && toWalk < 1 ? 1 : 0);
-          const out = range(p, 0.925, 0.958);
-          veil.current.style.opacity = `${Math.max(v, out)}`;
-        }
+        // camera for act 1
+        camA.set(0, 0, D);
+        lookA.set(0, 0, 0);
+        camB.set(1, 0.82, 1).normalize().multiplyScalar(26).add(new V3(2.2, 2.2, 2.2));
+        lookB.set(2.2, 2.2, 2.2);
+        const c = ease(range(p, 0.08, 0.34));
+        const act1Pos = new V3().lerpVectors(camA, camB, c);
+        const act1Look = new V3().lerpVectors(lookA, lookB, c);
+        act1Pos.lerp(lookB, ease(range(p, 0.36, 0.46)) * 0.55);
 
-        // ---- act 2: the walkway
+        // ---- act 2: walking on the figure
         const wasActive = walkActive;
-        walkActive = walk.visible && p < 0.97;
+        walkActive = playing && p < 0.97;
         if (wasActive && !walkActive) sound.silence();
         if (hint.current) hint.current.style.visibility = walkActive ? "visible" : "hidden";
+        if (readout.current) readout.current.style.visibility = walkActive ? "visible" : "hidden";
         if (soundBtn.current && soundBtn.current.dataset.muted !== String(sound.muted)) {
           soundBtn.current.dataset.muted = String(sound.muted);
           soundBtn.current.textContent = sound.muted ? "SOUND OFF" : "SOUND ON";
         }
-        if (readout.current) readout.current.style.visibility = walkActive ? "visible" : "hidden";
-        if (walk.visible) {
-          const pan = ease(range(p, 0.5, 0.95));
-          const cx = lerp(0.5, wordW - 3.5, pan);
-          const drop = 1 - ease(range(p, 0.48, 0.6));
-          look.set(cx + 1.4, 1.0, -2.0 + drop * 1.5);
-          camera.position.set(cx - 2.6, 6.2 + drop * 16, 5.4 + drop * 6);
-          // tall screens: step back so the word and the figure still fit
-          const back = Math.max(1, 1.3 / camera.aspect);
-          camera.position.sub(look).multiplyScalar(back).add(look);
-          camera.lookAt(look);
-          sun.position.set(cx - 6, 16, 9);
-          sun.target.position.set(cx, 0, -2);
 
-          // input -> intended direction on the ground, relative to the camera
-          right.setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
-          fwd.crossVectors(up, right).normalize();
+        const sf = surfaces[me.surf];
+        if (playing) {
+          // ---- input, mapped through the camera onto the face he stands on
           let ix = 0, iz = 0, mag = 0;
           let sprintDrag = false;
           if (drag.on) {
@@ -496,15 +497,13 @@ export default function Forme() {
             if (len > 6) {
               mag = clamp(len / 90);
               if (len > 170) sprintDrag = true;
-              // find the ground direction whose on-screen image points where the finger went
-              const at = new THREE.Vector3(me.x, TOP, me.z);
-              const o = at.clone().project(camera);
-              const ex = at.clone().add(new THREE.Vector3(1, 0, 0)).project(camera).sub(o);
-              const ez = at.clone().add(new THREE.Vector3(0, 0, 1)).project(camera).sub(o);
-              // screen y grows downward, NDC y grows upward
+              // the ground direction whose on-screen image points where the finger went
+              const o = toWorld(me.surf, me.x, TOP, me.z).project(camera);
+              const ex = toWorld(me.surf, me.x + 1, TOP, me.z).project(camera).sub(o);
+              const ez = toWorld(me.surf, me.x, TOP, me.z + 1).project(camera).sub(o);
               const sx = dx / len, sy = -dy / len;
               const det = ex.x * ez.y - ez.x * ex.y;
-              if (Math.abs(det) > 1e-6) {
+              if (Math.abs(det) > 1e-9) {
                 let a = (sx * ez.y - ez.x * sy) / det;
                 let b = (ex.x * sy - sx * ex.y) / det;
                 const n = Math.hypot(a, b) || 1;
@@ -518,54 +517,65 @@ export default function Forme() {
           const kx = (keys.has("d") ? 1 : 0) - (keys.has("a") ? 1 : 0);
           const kz = (keys.has("w") ? 1 : 0) - (keys.has("s") ? 1 : 0);
           if (kx || kz) {
+            // keys follow the beam: A / D along it, W / S up and down across the letters
             const l = Math.hypot(kx, kz);
-            ix = (right.x * kx + fwd.x * kz) / l;
-            iz = (right.z * kx + fwd.z * kz) / l;
+            ix = kx / l;
+            iz = -kz / l;
             mag = 1;
-          }
-          if (mag > 0) me.lastInput = now;
-
-          // nobody is steering and he has drifted out of shot: print him where we are looking
-          if (now - me.lastInput > 1800 && me.mode === "down" && me.grounded && Math.abs(me.x - (cx + 1.4)) > 5.5) {
-            const s = nearestSpot(cx + 1.4, -1.6);
-            me.x = s[0]; me.z = s[1]; me.y = TOP; me.vx = me.vz = 0; me.printed = 0;
           }
 
           const speed = 3.4;
           let sp = 0;
 
-          // ---- G: gravity toward the wall he faces, or back to the floor
+          // ---- G: gravity toward the surface he faces, or the wall he hangs from
           if (gravityQueued) {
             gravityQueued = false;
+            const fwdLocal = me.mode === "wall" ? new V3(0, 0, 0) : new V3(Math.sin(me.heading), 0, Math.cos(me.heading));
+            let handled = false;
             if (me.mode === "down" && me.grounded) {
-              const e = nearestEdge(me.x, me.z);
+              // look where he faces, a little above his feet, for another beam
+              const origin = toWorld(me.surf, me.x, TOP + 0.5, me.z);
+              const dirW = dirToWorld(me.surf, fwdLocal).normalize();
+              ray.set(origin, dirW);
+              ray.far = 6 * K;
+              const hit = ray.intersectObjects(surfMeshes, false).find((h) => h.object !== surfaces[me.surf].mesh);
+              if (hit) {
+                const si = surfMeshes.findIndex((m) => m === hit.object);
+                moveTo(si, hit.point, dirW);
+                me.printed = 0.4;
+                say(`Gravity turns toward ${LINES[si].replace(/\.$/, "")}.`);
+                handled = true;
+              }
+            }
+            if (!handled && me.mode === "down" && me.grounded) {
+              const e = sf.nearestEdge(me.x, me.z);
               if (e.dist < 0.6) {
-                const E = edgeAt(e.ri, e.i);
+                const E = sf.edgeAt(e.ri, e.i);
                 const facing = Math.sin(me.heading) * E.nx + Math.cos(me.heading) * E.nz;
                 if (facing > 0.15 || e.dist < 0.22) {
                   me.mode = "wall";
                   me.wr = e.ri; me.wi = e.i; me.ws = e.s; me.wh = TOP - 0.4;
                   me.fwd = [0, -1];
                   say("Gravity turns toward the wall. Down is sideways now.");
+                  handled = true;
                 }
-              } else {
-                say("Walk to the edge of a letter and face out, then press G.");
               }
-            } else if (me.mode === "wall") {
-              const E = edgeAt(me.wr, me.wi);
+              if (!handled) say("Face another beam, or the edge of a letter, then press G.");
+            } else if (!handled && me.mode === "wall") {
+              const E = sf.edgeAt(me.wr, me.wi);
               me.mode = "down";
               me.x = E.a[0] + E.tx * me.ws + E.nx * 0.35;
               me.z = E.a[1] + E.tz * me.ws + E.nz * 0.35;
               me.y = me.wh; me.vy = 0; me.vx = E.nx * 1.2; me.vz = E.nz * 1.2;
               me.grounded = false; me.air = 1;
-              say("Gravity returns to the floor.");
+              say("Gravity returns to the letters.");
             }
           }
 
           if (me.mode === "wall") {
-            // walking on the side of a letter: along the wall, and up or down it
-            const ring = rings[me.wr];
-            let E = edgeAt(me.wr, me.wi);
+            // on the side of a letter: along the wall, and up or down it
+            const ring = sf.rings[me.wr];
+            let E = sf.edgeAt(me.wr, me.wi);
             const along = (ix * E.tx + iz * E.tz) * mag;
             const climb = -(ix * E.nx + iz * E.nz) * mag; // push into the wall to climb
             const v = held.shift || sprintDrag ? 4.4 : 2.6;
@@ -575,37 +585,36 @@ export default function Forme() {
             while (me.ws > E.len && guard++ < 64) {
               me.ws -= E.len;
               me.wi = (me.wi + 1) % ring.length;
-              E = edgeAt(me.wr, me.wi);
+              E = sf.edgeAt(me.wr, me.wi);
             }
             while (me.ws < 0 && guard++ < 128) {
               me.wi = (me.wi - 1 + ring.length) % ring.length;
-              E = edgeAt(me.wr, me.wi);
+              E = sf.edgeAt(me.wr, me.wi);
               me.ws += E.len;
             }
             const px = E.a[0] + E.tx * me.ws, pz = E.a[1] + E.tz * me.ws;
             me.x = px; me.z = pz; me.y = me.wh;
             if (me.wh > TOP - 0.05) {
-              // over the lip: back onto the top of the letter
               me.mode = "down";
               me.x = px - E.nx * 0.3; me.z = pz - E.nz * 0.3; me.y = TOP;
               me.grounded = true; me.vx = me.vz = 0;
               me.heading = Math.atan2(-E.nx, -E.nz);
-              if (!footing(me.x, me.z)) { me.x = me.safe[0]; me.z = me.safe[1]; }
+              if (!sf.footing(me.x, me.z)) {
+                me.x = me.safe[0];
+                me.z = me.safe[1];
+              }
             } else if (me.wh < 0.05) {
-              // off the bottom edge: nothing below
               me.mode = "down";
               me.x = px + E.nx * 0.3; me.z = pz + E.nz * 0.3; me.y = 0; me.vy = 0; me.vx = me.vz = 0;
               me.grounded = false; me.air = 1;
             }
             if (me.mode === "wall") {
-              // stand out from the wall: up is the wall's normal, forward is where he is going
               const mv = Math.hypot(along, climb);
               if (mv > 0.05) me.fwd = [along / mv, climb / mv];
-              const up3 = new THREE.Vector3(E.nx, 0, E.nz);
-              const f3 = new THREE.Vector3(E.tx * me.fwd[0], me.fwd[1], E.tz * me.fwd[0]).normalize();
-              const x3 = new THREE.Vector3().crossVectors(up3, f3).normalize();
-              const basis = new THREE.Matrix4().makeBasis(x3, up3, f3);
-              runner.root.quaternion.setFromRotationMatrix(basis);
+              const up3 = new V3(E.nx, 0, E.nz);
+              const f3 = new V3(E.tx * me.fwd[0], me.fwd[1], E.tz * me.fwd[0]).normalize();
+              const x3 = new V3().crossVectors(up3, f3).normalize();
+              runner.root.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(x3, up3, f3));
               runner.root.position.set(px, me.wh, pz);
               sp = mv * v;
               me.phase += dt * (2.2 + clamp(sp / speed) * 10);
@@ -614,7 +623,6 @@ export default function Forme() {
               animateRunner(runner, me.phase, clamp(sp / speed), now / 1000, true);
             }
           } else {
-            const speed = 3.4;
             const top = held.shift || sprintDrag ? 6.6 : speed;
             const ax = ix * mag * top, az = iz * mag * top;
             const k = me.grounded ? 1 - Math.exp(-dt * 12) : 1 - Math.exp(-dt * 1.5);
@@ -628,22 +636,40 @@ export default function Forme() {
               me.grounded = false;
               me.air = 0;
             }
-            jumpQueued = false;
 
             if (me.grounded) {
-              if (footing(me.x, me.z)) {
+              if (sf.footing(me.x, me.z)) {
                 me.y = TOP;
-                if (solid(me.x, me.z)) me.safe = [me.x, me.z];
+                if (sf.solid(me.x, me.z)) me.safe = [me.x, me.z];
               } else {
-                me.grounded = false;
-                me.vy = 0;
+                // off this beam: is another beam's face right here, in the same plane?
+                const w = toWorld(me.surf, me.x, TOP, me.z);
+                let moved = false;
+                for (let si = 0; si < surfaces.length && !moved; si++) {
+                  if (si === me.surf) continue;
+                  const q = surfaces[si].frame.worldToLocal(w.clone());
+                  if (Math.abs(q.y - TOP) < 0.08 && surfaces[si].footing(q.x, q.z)) {
+                    const hw = dirToWorld(me.surf, new V3(Math.sin(me.heading), 0, Math.cos(me.heading)));
+                    const vw3 = dirToWorld(me.surf, new V3(me.vx, 0, me.vz));
+                    place(si);
+                    me.x = q.x; me.z = q.z;
+                    const h = dirToLocal(si, hw);
+                    me.heading = Math.atan2(h.x, h.z);
+                    const v2 = dirToLocal(si, vw3);
+                    me.vx = v2.x; me.vz = v2.z;
+                    moved = true;
+                  }
+                }
+                if (!moved) {
+                  me.grounded = false;
+                  me.vy = 0;
+                }
               }
             } else {
               me.air += dt;
-              // holding jump keeps him rising a little longer
               me.vy -= (held.space && me.vy > 0 && me.air < 0.38 ? 9 : 24) * dt;
               me.y += me.vy * dt;
-              if (me.vy < 0 && me.y <= TOP && me.y > TOP - 0.35 && footing(me.x, me.z)) {
+              if (me.vy < 0 && me.y <= TOP && me.y > TOP - 0.35 && sf.footing(me.x, me.z)) {
                 me.y = TOP;
                 me.vy = 0;
                 me.grounded = true;
@@ -656,7 +682,6 @@ export default function Forme() {
               }
             }
 
-            // pose
             sp = Math.hypot(me.vx, me.vz);
             const run = clamp(sp / speed);
             if (sp > 0.15) {
@@ -669,15 +694,16 @@ export default function Forme() {
             me.printed = Math.min(1, me.printed + dt * 2.2);
             runner.root.position.set(me.x, me.y, me.z);
             runner.root.rotation.set(0, me.heading, 0);
-            const pr = ease(me.printed);
-            runner.root.scale.setScalar(0.95 * pr);
+            runner.root.scale.setScalar(0.95 * ease(me.printed));
             animateRunner(runner, me.phase, me.grounded ? run : 0.25, now / 1000, me.grounded);
           }
+          jumpQueued = false;
 
           // ---- radios
+          const surfNow = surfaces[me.surf];
           let near = -1, nearD = Infinity;
           radios.forEach((r, i) => {
-            const d = Math.hypot(r.x - me.x, r.z - me.z);
+            const d = r.surf === me.surf ? Math.hypot(r.x - me.x, r.z - me.z) : Infinity;
             if (d < nearD) {
               nearD = d;
               near = i;
@@ -685,9 +711,9 @@ export default function Forme() {
             r.lamp.material = r.tuned || (r.t > 0 && Math.sin(now / 90) > 0) ? lampOn : lampOff;
             r.g.rotation.z = r.tuned ? Math.sin(now / 160 + i) * 0.03 : 0; // a tuned radio hums
           });
-          const nr = radios[near];
-          const canTune = nr && !nr.tuned && nearD < 1.4 && me.grounded && me.mode === "down";
-          if (canTune && (held.f || promptHeld.current)) {
+          const nr = near >= 0 ? radios[near] : null;
+          const canTune = !!nr && !nr.tuned && nearD < 1.4 && me.grounded && me.mode === "down";
+          if (nr && canTune && (held.f || promptHeld.current)) {
             nr.t = Math.min(1, nr.t + dt / 1.3);
             if (nr.t >= 1) {
               nr.tuned = true;
@@ -705,8 +731,8 @@ export default function Forme() {
           if (prompt.current) {
             const show = walkActive && canTune;
             prompt.current.style.visibility = show ? "visible" : "hidden";
-            if (show) {
-              const v = new THREE.Vector3(nr.x, TOP + 0.9, nr.z).project(camera);
+            if (show && nr) {
+              const v = toWorld(nr.surf, nr.x, TOP + 0.9, nr.z).project(camera);
               prompt.current.style.transform = `translate(${((v.x + 1) / 2) * vw}px, ${((1 - v.y) / 2) * vh}px) translate(-50%, -100%)`;
               if (promptBar.current) promptBar.current.style.transform = `scaleX(${nr.t})`;
             }
@@ -716,14 +742,14 @@ export default function Forme() {
             wake = Math.max(0, wake - dt * 0.12);
             const pulse = (0.5 + 0.5 * Math.sin(now / 260)) * wake;
             faceMat.emissiveIntensity = 1 + pulse * 1.6;
-            wordMesh.position.y = Math.sin(now / 400) * 0.06 * wake;
+            world2.position.y = Math.sin(now / 400) * 0.02 * wake;
           }
 
           // ---- sound follows him around the radios
-          if (sound.started) {
+          if (sound.started && walkActive) {
             const lv = (i: number) => {
               const r = radios[i];
-              const d = Math.hypot(r.x - me.x, r.z - me.z);
+              const d = r.surf === me.surf ? Math.hypot(r.x - me.x, r.z - me.z) : 99;
               return r.tuned ? clamp(1 - d / 6) * 0.95 : r.t * 0.7;
             };
             const radio = [lv(0), lv(1), lv(2)];
@@ -733,11 +759,59 @@ export default function Forme() {
           }
 
           if (readout.current) {
-            readout.current.textContent = `X ${me.x.toFixed(1).padStart(5)}  Z ${(-me.z).toFixed(1).padStart(4)}  ${
+            readout.current.textContent = `${LINES[me.surf].replace(/\.$/, "")}\nX ${me.x.toFixed(1).padStart(5)}  Z ${(-me.z).toFixed(1).padStart(4)}  ${
               me.mode === "wall" ? "ON A WALL" : !me.grounded ? (me.vy > 0 ? "JUMPING" : "FALLING") : sp > 4.6 ? "SPRINTING" : sp > 0.3 ? "RUNNING" : "STANDING"
             }${woken ? "  ·  AWAKE" : ""}`;
           }
+
+          // ---- the follow camera: behind and above him, in the frame of the beam he is on
+          const fw = surfNow.frame;
+          const target = toWorld(me.surf, me.x, me.y + 0.55, me.z);
+          const want = fw.localToWorld(new V3(me.x - 4.2, me.y + 5.4, me.z + 7.2));
+          const upW = dirToWorld(me.surf, new V3(0, 1, 0)).normalize();
+          if (!follow.ready) {
+            follow.pos.copy(want);
+            follow.look.copy(target);
+            follow.up.copy(upW);
+            follow.ready = true;
+          }
+          const kc = 1 - Math.exp(-dt * 4);
+          follow.pos.lerp(want, kc);
+          follow.look.lerp(target, 1 - Math.exp(-dt * 8));
+          follow.up.lerp(upW, kc).normalize();
+
+          // shadows: a small light box that travels with him
+          const sunAt = target.clone().add(upW.clone().multiplyScalar(2)).add(dirToWorld(me.surf, new V3(-0.8, 0, 0.6)));
+          sun.position.copy(sunAt);
+          sun.target.position.copy(target);
+          const sc = sun.shadow.camera;
+          sc.left = -1.6; sc.right = 1.6; sc.top = 1.6; sc.bottom = -1.6; sc.near = 0.01; sc.far = 6;
+          sc.updateProjectionMatrix();
+        } else {
+          follow.ready = false;
+          sun.position.set(8, 14, 12);
+          sun.target.position.set(0, 0, 0);
+          const sc = sun.shadow.camera;
+          sc.left = -14; sc.right = 14; sc.top = 10; sc.bottom = -10; sc.near = 0.5; sc.far = 60;
+          sc.updateProjectionMatrix();
+          if (prompt.current) prompt.current.style.visibility = "hidden";
         }
+
+        // ---- one continuous camera: act 1, then a dive down onto him
+        const dive = ease(range(p, 0.46, 0.56));
+        if (playing && follow.ready) {
+          camera.position.lerpVectors(act1Pos, follow.pos, dive);
+          look.lerpVectors(act1Look, follow.look, dive);
+          camera.up.set(0, 1, 0).lerp(follow.up, dive).normalize();
+        } else {
+          camera.position.copy(act1Pos);
+          look.copy(act1Look);
+          camera.up.set(0, 1, 0);
+        }
+        camera.lookAt(look);
+
+        // ---- the way out
+        if (veil.current) veil.current.style.opacity = `${range(p, 0.925, 0.958)}`;
 
         if (captionTimer > 0) {
           captionTimer -= dt;
@@ -758,11 +832,11 @@ export default function Forme() {
         el.removeEventListener("touchmove", onTouchMove);
         window.removeEventListener("keydown", onKey);
         window.removeEventListener("keyup", onKey);
+        sound.silence();
         scene.traverse((o) => {
           const m = o as T.Mesh;
           if (m.geometry) m.geometry.dispose();
         });
-        sound.silence();
         radioMat.dispose();
         lampOff.dispose();
         lampOn.dispose();
@@ -782,7 +856,11 @@ export default function Forme() {
   return (
     <section ref={section} id="other-side" data-plate="03 — THE OTHER SIDE" className="relative z-10 -mt-[100vh] h-[820vh]">
       <div ref={stage} className="sticky top-0 h-[100svh] overflow-hidden bg-paper" style={{ visibility: "hidden" }}>
-        <canvas ref={canvas} className="absolute inset-0 h-full w-full" aria-label="Engineering and art should be seen through the same lens. A walkway made of the word ENGINEER, with a small figure you can walk by dragging." />
+        <canvas
+          ref={canvas}
+          className="absolute inset-0 h-full w-full"
+          aria-label="Engineering and art should be seen through the same lens: three beams of letters, and a small figure you can walk across them."
+        />
         <div ref={veil} aria-hidden className="pointer-events-none absolute inset-0 bg-paper opacity-0" />
         <div ref={pixels} aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 h-[30vh] w-[30vh] -translate-x-1/2 -translate-y-1/2">
           {PIXELS.map(([x, y], i) => (
@@ -798,7 +876,7 @@ export default function Forme() {
         <div
           ref={readout}
           aria-hidden
-          className="pointer-events-none absolute left-[3.2vw] top-[12vh] whitespace-pre font-mono text-[9.5px] tracking-[0.18em] text-ink/60"
+          className="pointer-events-none absolute left-[3.2vw] top-[12vh] whitespace-pre font-mono text-[9.5px] leading-relaxed tracking-[0.18em] text-ink/60"
           style={{ visibility: "hidden" }}
         />
         <div
@@ -813,16 +891,18 @@ export default function Forme() {
             <dd>RUN</dd>
             <dt><Key wide>SPACE</Key></dt>
             <dd>JUMP · HOLD TO RISE</dd>
+            <dt><Key>G</Key></dt>
+            <dd>TURN GRAVITY TOWARD WHAT HE FACES</dd>
             <dt><Key>F</Key></dt>
             <dd>HOLD BY A RADIO TO TUNE IT</dd>
             <dt><Key>M</Key></dt>
             <dd>SOUND</dd>
-            <dt><Key>G</Key></dt>
-            <dd>TURN GRAVITY TOWARD A WALL</dd>
           </dl>
           <p className="md:hidden">REST A THUMB, THEN DRAG TO WALK · DRAG FAR TO RUN · TAP THREE TIMES TO TURN GRAVITY</p>
           <p className="mt-3 flex items-center gap-3">
-            <span>RADIOS <span ref={radioCount}>0 / 3</span></span>
+            <span>
+              RADIOS <span ref={radioCount}>0 / 3</span> · ONE AT THE END OF EACH BEAM
+            </span>
             <button
               ref={soundBtn}
               type="button"
@@ -881,7 +961,6 @@ function makeRunner(THREE: typeof import("three"), mat: T.Material): Runner {
     return m;
   };
   const root = new THREE.Group();
-  root.scale.setScalar(1);
   const hips = new THREE.Group();
   hips.position.y = 0.5;
   root.add(hips);
@@ -929,8 +1008,6 @@ function makeRunner(THREE: typeof import("three"), mat: T.Material): Runner {
     elbow.add(fore);
     arms.push({ shoulder, elbow, side });
   }
-  // the whole figure is about one unit tall; letters are four
-  root.scale.setScalar(0.9);
   return { root, hips, legs, arms };
 }
 
