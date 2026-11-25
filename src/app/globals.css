@@ -181,7 +181,26 @@ html[data-theme="ink"] .focus-tint {
   mix-blend-mode: darken;
 }
 
+/* taste tiles flicker on like a screen warming up */
+@keyframes tile-flicker {
+  0% { opacity: 0; transform: translateY(14px); }
+  30% { opacity: 0.8; }
+  40% { opacity: 0.15; }
+  55% { opacity: 1; }
+  65% { opacity: 0.45; }
+  100% { opacity: 1; transform: none; }
+}
+.tile {
+  opacity: 0;
+}
+.tile.tile-in {
+  animation: tile-flicker 0.7s steps(12, end) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .tile {
+    opacity: 1;
+  }
   .focus-in,
   .focus-tint {
     animation: none;

@@ -214,14 +214,31 @@ export type Note = {
 };
 
 export const notes: Note[] = [
-  { id: "N-01", kind: "Essay", title: "Silence is a signal", body: "Every packet in Zone says when it will speak again, so a phone that went quiet can be told apart from one that was destroyed.", href: "https://github.com/Arunodoy18/TheZone", link: "Read the source", year: "2026", image: "/work/zone.jpg", x: 110, y: 40 },
-  { id: "N-02", kind: "Photographs", title: "Where the network forgets", body: "The hills of Sikkim, where a dropped signal is ordinary and offline-first is not a feature but a starting point.", year: "2026", image: "/work/hills.jpg", x: 640, y: 110 },
-  { id: "N-03", kind: "Essay", title: "Talking, not tapping", body: "Cadence builds a speaker, not a streak: real conversation, a voice that answers, and a score on every sentence.", href: "https://github.com/Arunodoy18/Cadence", link: "Read the source", year: "2026", image: "/work/cadence.jpg", x: 1420, y: 560 },
-  { id: "N-04", kind: "Essay", title: "Hints before answers", body: "A tutor that asks the next question instead of handing over the solution. Nakung sits beside the problem, not on top of it.", href: "https://github.com/Arunodoy18/Nakung", link: "Read the source", year: "2025", image: "/work/nakung.jpg", x: 2180, y: 600 },
-  { id: "N-05", kind: "Essay", title: "Bring your own model", body: "Code review should not lock you into one vendor. Your-Reviewer takes any LLM and your own MCP servers.", href: "https://github.com/Arunodoy18/Your-reviewer", link: "Read the source", year: "2026", x: 90, y: 960 },
-  { id: "N-06", kind: "Photographs", title: "The long way up", body: "Stone steps and tea gardens. The places all of this gets written from.", year: "2026", image: "/work/steps.jpg", x: 660, y: 990, w: 300 },
-  { id: "N-07", kind: "Essay", title: "Calibrated, not assumed", body: "RedZone fits its hazard weights against historical loss, and solves relocation as an optimisation problem.", href: "https://github.com/Arunodoy18/SIH_2026", link: "Read the source", year: "2026", x: 90, y: 1560 },
-  { id: "N-08", kind: "Essay", title: "A photo becomes a plan", body: "Nura turns a photo, a barcode or a few typed words into a day of meals, with targets safe for a child.", href: "https://github.com/Arunodoy18/NutTrack", link: "Read the source", year: "2026", image: "/work/nura.jpg", x: 2470, y: 1500 },
-  { id: "N-09", kind: "Essay", title: "One engine, three readers", body: "A student, a campus and a city read the same carbon numbers. Vaayu writes them once.", href: "https://github.com/Arunodoy18/campusCarbon", link: "Read the source", year: "2026", x: 1080, y: 2040 },
-  { id: "N-10", kind: "Essay", title: "Snap it, sort it", body: "Wastifi classifies waste from a single photo and says how sure it is, so nobody trusts a guess.", href: "https://wastifi.netlify.app/", link: "Visit", year: "2025", image: "/work/wastifi.jpg", x: 1720, y: 2040 },
+  { id: "N-01", kind: "Essay", title: "Silence is a signal", body: "In a disaster the scary thing isn't a message. It's a phone that stops talking. So every Zone packet says when it will speak again.", href: "https://github.com/Arunodoy18/TheZone", link: "Read the source", year: "2026", image: "/work/zone.jpg", x: 110, y: 40 },
+  { id: "N-02", kind: "Photographs", title: "Where the network forgets", body: "I study in the hills of Sikkim. Up here a dropped signal isn't an outage, it's the weather. That's why my things work offline.", year: "2026", image: "/work/hills.jpg", x: 640, y: 110 },
+  { id: "N-03", kind: "Essay", title: "Talking, not tapping", body: "A streak teaches you to open an app. It doesn't teach you to speak. Cadence puts you in a real conversation from day one.", href: "https://github.com/Arunodoy18/Cadence", link: "Read the source", year: "2026", image: "/work/cadence.jpg", x: 1420, y: 560 },
+  { id: "N-04", kind: "Essay", title: "Hints before answers", body: "The fastest way to stop learning is to be handed the answer. Nakung sits beside the problem and asks the next good question.", href: "https://github.com/Arunodoy18/Nakung", link: "Read the source", year: "2025", image: "/work/nakung.jpg", x: 2180, y: 600 },
+  { id: "N-05", kind: "Essay", title: "Bring your own model", body: "My code reviews shouldn't depend on one company's mood. Your-Reviewer works with whatever model, and whatever tools, you trust.", href: "https://github.com/Arunodoy18/Your-reviewer", link: "Read the source", year: "2026", x: 90, y: 960 },
+  { id: "N-06", kind: "Photographs", title: "The long way up", body: "Stone steps, tea gardens, too much green. The kind of walk where the ideas on this page sort themselves out.", year: "2026", image: "/work/steps.jpg", x: 660, y: 990, w: 300 },
+  { id: "N-07", kind: "Essay", title: "Calibrated, not assumed", body: "When someone may move their home because of your number, the weights come from history, not a hunch. That was RedZone's one rule.", href: "https://github.com/Arunodoy18/SIH_2026", link: "Read the source", year: "2026", x: 90, y: 1560 },
+  { id: "N-08", kind: "Essay", title: "A photo becomes a plan", body: "Nobody has the patience to log every meal. Nura takes a photo, a barcode or a sentence, and keeps a child's targets safe.", href: "https://github.com/Arunodoy18/NutTrack", link: "Read the source", year: "2026", image: "/work/nura.jpg", x: 2470, y: 1500 },
+  { id: "N-09", kind: "Essay", title: "One engine, three readers", body: "A student, a campus and a city all want the same carbon number, told differently. Vaayu does the maths once and tells it three ways.", href: "https://github.com/Arunodoy18/campusCarbon", link: "Read the source", year: "2026", x: 1080, y: 2040 },
+  { id: "N-10", kind: "Essay", title: "Snap it, sort it", body: "A bin is a two-second decision. Wastifi makes the call from a photo, and says how sure it is, so you can disagree with it.", href: "https://wastifi.netlify.app/", link: "Visit", year: "2025", image: "/work/wastifi.jpg", x: 1720, y: 2040 },
 ];
+
+/** Things I keep going back to. */
+export const taste = [
+  { kind: "Game", title: "GTA V", meta: "Rockstar · 2013" },
+  { kind: "Game", title: "GTA VI", meta: "Rockstar · 2026" },
+  { kind: "Game", title: "BGMI", meta: "Krafton · 2021" },
+  { kind: "Game", title: "Free Fire", meta: "Garena · 2017" },
+  { kind: "Game", title: "Call of Duty", meta: "Activision · series" },
+  { kind: "Music", title: "Haryanvi covers", meta: "on repeat" },
+  { kind: "Music", title: "Bhaag Milkha Bhaag", meta: "soundtrack · 2013" },
+  { kind: "Music", title: "Love Me", meta: "on repeat" },
+  { kind: "Film", title: "F1", meta: "Joseph Kosinski · 2025" },
+  { kind: "Film", title: "Oppenheimer", meta: "Christopher Nolan · 2023" },
+  { kind: "Film", title: "Avengers: Endgame", meta: "Russo brothers · 2019" },
+  { kind: "Film", title: "Avengers: Doomsday", meta: "Russo brothers · 2026" },
+  { kind: "Film", title: "Ramayana", meta: "Nitesh Tiwari · 2026" },
+] as const;

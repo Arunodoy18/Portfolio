@@ -3,7 +3,7 @@
 import Lenis from "lenis";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { profile } from "./data";
-import { isInk, mouse, onTick, prefersReducedMotion, setTheme } from "./scroll";
+import { isInk, mouse, onTick, prefersReducedMotion, setTheme, themeForNow } from "./scroll";
 
 const NAV = [
   { id: "lens", label: "LENS" },
@@ -117,18 +117,18 @@ export default function Hud() {
 function subscribeTheme(cb: () => void) {
   const mo = new MutationObserver(cb);
   mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  // follow the system until the visitor has chosen
-  const mq = window.matchMedia("(prefers-color-scheme: dark)");
-  const onChange = (e: MediaQueryListEvent) => {
+  // follow the clock until the visitor has chosen: dusk turns the page to night on its own
+  const follow = () => {
     try {
-      if (localStorage.getItem("theme")) return;
+      if (sessionStorage.getItem("theme")) return;
     } catch {}
-    document.documentElement.dataset.theme = e.matches ? "ink" : "paper";
+    const t = themeForNow();
+    if (document.documentElement.dataset.theme !== t) document.documentElement.dataset.theme = t;
   };
-  mq.addEventListener("change", onChange);
+  const id = window.setInterval(follow, 30000);
   return () => {
     mo.disconnect();
-    mq.removeEventListener("change", onChange);
+    clearInterval(id);
   };
 }
 

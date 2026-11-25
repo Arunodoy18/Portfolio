@@ -5,6 +5,7 @@ import Notes from "@/site/Notes";
 import Opening from "@/site/Opening";
 import Forme from "@/site/Forme";
 import Practice from "@/site/Practice";
+import Taste from "@/site/Taste";
 import Works from "@/site/Works";
 import { profile, projects } from "@/site/data";
 
@@ -33,6 +34,7 @@ export default function Home() {
         <Bio />
         <Works />
         <Practice />
+        <Taste />
         <Notes />
       </main>
     </>

@@ -106,7 +106,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("theme");if(t!=="ink"&&t!=="paper")t=matchMedia("(prefers-color-scheme: dark)").matches?"ink":"paper";document.documentElement.dataset.theme=t}catch(e){}`,
+            // day or night by the visitor's own clock (night: 19:00 - 05:59); a manual choice lasts for this visit only
+            __html: `try{localStorage.removeItem("theme");var t=sessionStorage.getItem("theme");if(t!=="ink"&&t!=="paper"){var h=new Date().getHours();t=h>=19||h<6?"ink":"paper"}document.documentElement.dataset.theme=t}catch(e){}`,
           }}
         />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rootStructuredData) }} />

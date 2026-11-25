@@ -37,10 +37,13 @@ if (typeof window !== "undefined") {
 
 export const isInk = () => typeof document !== "undefined" && document.documentElement.dataset.theme === "ink";
 
+/** night from 19:00 until 05:59, by the visitor's own clock */
+export const themeForNow = (d = new Date()): "ink" | "paper" => (d.getHours() >= 19 || d.getHours() < 6 ? "ink" : "paper");
+
 export function setTheme(t: "ink" | "paper") {
   document.documentElement.dataset.theme = t;
   try {
-    localStorage.setItem("theme", t);
+    sessionStorage.setItem("theme", t);
   } catch {}
 }
 
