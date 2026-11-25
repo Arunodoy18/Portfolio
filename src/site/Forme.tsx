@@ -179,6 +179,43 @@ export default function Forme() {
         }
         return false;
       };
+      const rings = polys
+        .flatMap((p) => [p.outer, ...p.holes])
+        .map((r) =>
+          r
+            .map(([x, y]) => [x, -y] as [number, number])
+            .filter((pt, i, a) => i === 0 || Math.hypot(pt[0] - a[i - 1][0], pt[1] - a[i - 1][1]) > 1e-4),
+        )
+        .filter((r) => r.length > 2);
+      // one wall segment: start, length, direction along it, and the outward normal (away from the solid)
+      const edgeAt = (ri: number, i: number) => {
+        const r = rings[ri];
+        const a = r[i], b = r[(i + 1) % r.length];
+        const dx = b[0] - a[0], dz = b[1] - a[1];
+        const len = Math.hypot(dx, dz) || 1e-6;
+        const tx = dx / len, tz = dz / len;
+        let nx = tz, nz = -tx;
+        if (onLetter(a[0] + dx / 2 + nx * 0.06, a[1] + dz / 2 + nz * 0.06)) {
+          nx = -nx;
+          nz = -nz;
+        }
+        return { a, len, tx, tz, nx, nz };
+      };
+      const nearestEdge = (x: number, z: number) => {
+        let best = { ri: 0, i: 0, s: 0, dist: Infinity };
+        rings.forEach((r, ri) => {
+          for (let i = 0; i < r.length; i++) {
+            const a = r[i], b = r[(i + 1) % r.length];
+            const dx = b[0] - a[0], dz = b[1] - a[1];
+            const l2 = dx * dx + dz * dz || 1e-9;
+            const t = clamp(((x - a[0]) * dx + (z - a[1]) * dz) / l2);
+            const d = Math.hypot(a[0] + dx * t - x, a[1] + dz * t - z);
+            if (d < best.dist) best = { ri, i, s: t * Math.sqrt(l2), dist: d };
+          }
+        });
+        return best;
+      };
+
       const solid = (wx: number, wz: number, r = 0.14) =>
         onLetter(wx, wz) && onLetter(wx + r, wz) && onLetter(wx - r, wz) && onLetter(wx, wz + r) && onLetter(wx, wz - r);
       // candidate standing spots, for respawning near where the camera is looking
@@ -209,6 +246,7 @@ export default function Forme() {
       const me = {
         x: 0.6, z: -1.4, y: TOP, vy: 0, vx: 0, vz: 0, heading: Math.PI / 2, phase: 0,
         safe: [0.6, -1.4] as [number, number], grounded: true, printed: 1, lastInput: -1e9, air: 0,
+        mode: "down" as "down" | "wall", wr: 0, wi: 0, ws: 0, wh: 0, fwd: [0, 1] as [number, number],
       };
       {
         const s = nearestSpot(0.9, -1.6);
@@ -247,6 +285,8 @@ export default function Forme() {
       const keys = new Set<string>();
       let walkActive = false;
       let jumpQueued = false;
+      let gravityQueued = false;
+      const taps: number[] = [];
       const el = canvas.current;
 
       const onDown = (e: PointerEvent) => {
@@ -258,6 +298,13 @@ export default function Forme() {
           drag.y0 = drag.y = e.clientY;
         };
         if (e.pointerType === "touch") {
+          const t = performance.now();
+          taps.push(t);
+          while (taps.length && t - taps[0] > 650) taps.shift();
+          if (taps.length >= 3) {
+            taps.length = 0;
+            gravityQueued = true;
+          }
           // rest a thumb, then drag: a quick swipe still scrolls the page
           drag.x0 = drag.x = e.clientX;
           drag.y0 = drag.y = e.clientY;
@@ -291,6 +338,7 @@ export default function Forme() {
         if (downNow) sound.start();
         if (k === "shift") held.shift = downNow;
         if (k === "f") held.f = downNow;
+        if (k === "g" && downNow && !e.repeat) gravityQueued = true;
         if (k === "m" && downNow) {
           const m = sound.toggle();
           if (soundBtn.current) soundBtn.current.textContent = m ? "SOUND OFF" : "SOUND ON";
@@ -478,69 +526,153 @@ export default function Forme() {
           if (mag > 0) me.lastInput = now;
 
           // nobody is steering and he has drifted out of shot: print him where we are looking
-          if (now - me.lastInput > 1800 && me.grounded && Math.abs(me.x - (cx + 1.4)) > 5.5) {
+          if (now - me.lastInput > 1800 && me.mode === "down" && me.grounded && Math.abs(me.x - (cx + 1.4)) > 5.5) {
             const s = nearestSpot(cx + 1.4, -1.6);
             me.x = s[0]; me.z = s[1]; me.y = TOP; me.vx = me.vz = 0; me.printed = 0;
           }
 
           const speed = 3.4;
-          const top = held.shift || sprintDrag ? 6.6 : speed;
-          const ax = ix * mag * top, az = iz * mag * top;
-          const k = me.grounded ? 1 - Math.exp(-dt * 12) : 1 - Math.exp(-dt * 1.5);
-          me.vx += (ax - me.vx) * k;
-          me.vz += (az - me.vz) * k;
-          me.x += me.vx * dt;
-          me.z += me.vz * dt;
+          let sp = 0;
 
-          if (jumpQueued && me.grounded) {
-            me.vy = 6.4;
-            me.grounded = false;
-            me.air = 0;
+          // ---- G: gravity toward the wall he faces, or back to the floor
+          if (gravityQueued) {
+            gravityQueued = false;
+            if (me.mode === "down" && me.grounded) {
+              const e = nearestEdge(me.x, me.z);
+              if (e.dist < 0.6) {
+                const E = edgeAt(e.ri, e.i);
+                const facing = Math.sin(me.heading) * E.nx + Math.cos(me.heading) * E.nz;
+                if (facing > 0.15 || e.dist < 0.22) {
+                  me.mode = "wall";
+                  me.wr = e.ri; me.wi = e.i; me.ws = e.s; me.wh = TOP - 0.4;
+                  me.fwd = [0, -1];
+                  say("Gravity turns toward the wall. Down is sideways now.");
+                }
+              } else {
+                say("Walk to the edge of a letter and face out, then press G.");
+              }
+            } else if (me.mode === "wall") {
+              const E = edgeAt(me.wr, me.wi);
+              me.mode = "down";
+              me.x = E.a[0] + E.tx * me.ws + E.nx * 0.35;
+              me.z = E.a[1] + E.tz * me.ws + E.nz * 0.35;
+              me.y = me.wh; me.vy = 0; me.vx = E.nx * 1.2; me.vz = E.nz * 1.2;
+              me.grounded = false; me.air = 1;
+              say("Gravity returns to the floor.");
+            }
           }
-          jumpQueued = false;
 
-          if (me.grounded) {
-            if (footing(me.x, me.z)) {
-              me.y = TOP;
-              if (solid(me.x, me.z)) me.safe = [me.x, me.z];
-            } else {
-              me.grounded = false;
-              me.vy = 0;
+          if (me.mode === "wall") {
+            // walking on the side of a letter: along the wall, and up or down it
+            const ring = rings[me.wr];
+            let E = edgeAt(me.wr, me.wi);
+            const along = (ix * E.tx + iz * E.tz) * mag;
+            const climb = -(ix * E.nx + iz * E.nz) * mag; // push into the wall to climb
+            const v = held.shift || sprintDrag ? 4.4 : 2.6;
+            me.ws += along * v * dt;
+            me.wh += climb * v * dt;
+            let guard = 0;
+            while (me.ws > E.len && guard++ < 64) {
+              me.ws -= E.len;
+              me.wi = (me.wi + 1) % ring.length;
+              E = edgeAt(me.wr, me.wi);
+            }
+            while (me.ws < 0 && guard++ < 128) {
+              me.wi = (me.wi - 1 + ring.length) % ring.length;
+              E = edgeAt(me.wr, me.wi);
+              me.ws += E.len;
+            }
+            const px = E.a[0] + E.tx * me.ws, pz = E.a[1] + E.tz * me.ws;
+            me.x = px; me.z = pz; me.y = me.wh;
+            if (me.wh > TOP - 0.05) {
+              // over the lip: back onto the top of the letter
+              me.mode = "down";
+              me.x = px - E.nx * 0.3; me.z = pz - E.nz * 0.3; me.y = TOP;
+              me.grounded = true; me.vx = me.vz = 0;
+              me.heading = Math.atan2(-E.nx, -E.nz);
+              if (!footing(me.x, me.z)) { me.x = me.safe[0]; me.z = me.safe[1]; }
+            } else if (me.wh < 0.05) {
+              // off the bottom edge: nothing below
+              me.mode = "down";
+              me.x = px + E.nx * 0.3; me.z = pz + E.nz * 0.3; me.y = 0; me.vy = 0; me.vx = me.vz = 0;
+              me.grounded = false; me.air = 1;
+            }
+            if (me.mode === "wall") {
+              // stand out from the wall: up is the wall's normal, forward is where he is going
+              const mv = Math.hypot(along, climb);
+              if (mv > 0.05) me.fwd = [along / mv, climb / mv];
+              const up3 = new THREE.Vector3(E.nx, 0, E.nz);
+              const f3 = new THREE.Vector3(E.tx * me.fwd[0], me.fwd[1], E.tz * me.fwd[0]).normalize();
+              const x3 = new THREE.Vector3().crossVectors(up3, f3).normalize();
+              const basis = new THREE.Matrix4().makeBasis(x3, up3, f3);
+              runner.root.quaternion.setFromRotationMatrix(basis);
+              runner.root.position.set(px, me.wh, pz);
+              sp = mv * v;
+              me.phase += dt * (2.2 + clamp(sp / speed) * 10);
+              me.printed = Math.min(1, me.printed + dt * 2.2);
+              runner.root.scale.setScalar(0.95 * ease(me.printed));
+              animateRunner(runner, me.phase, clamp(sp / speed), now / 1000, true);
             }
           } else {
-            me.air += dt;
-            // holding jump keeps him rising a little longer
-            me.vy -= (held.space && me.vy > 0 && me.air < 0.38 ? 9 : 24) * dt;
-            me.y += me.vy * dt;
-            if (me.vy < 0 && me.y <= TOP && me.y > TOP - 0.35 && footing(me.x, me.z)) {
-              me.y = TOP;
-              me.vy = 0;
-              me.grounded = true;
-            }
-            if (me.y < -16) {
-              me.x = me.safe[0]; me.z = me.safe[1]; me.y = TOP; me.vy = 0; me.vx = me.vz = 0;
-              me.grounded = true;
-              me.printed = 0;
-              say(FALLS[Math.floor(Math.random() * FALLS.length)]);
-            }
-          }
+            const speed = 3.4;
+            const top = held.shift || sprintDrag ? 6.6 : speed;
+            const ax = ix * mag * top, az = iz * mag * top;
+            const k = me.grounded ? 1 - Math.exp(-dt * 12) : 1 - Math.exp(-dt * 1.5);
+            me.vx += (ax - me.vx) * k;
+            me.vz += (az - me.vz) * k;
+            me.x += me.vx * dt;
+            me.z += me.vz * dt;
 
-          // pose
-          const sp = Math.hypot(me.vx, me.vz);
-          const run = clamp(sp / speed);
-          if (sp > 0.15) {
-            const target = Math.atan2(me.vx, me.vz);
-            let d = target - me.heading;
-            d = Math.atan2(Math.sin(d), Math.cos(d));
-            me.heading += d * (1 - Math.exp(-dt * 14));
+            if (jumpQueued && me.grounded) {
+              me.vy = 6.4;
+              me.grounded = false;
+              me.air = 0;
+            }
+            jumpQueued = false;
+
+            if (me.grounded) {
+              if (footing(me.x, me.z)) {
+                me.y = TOP;
+                if (solid(me.x, me.z)) me.safe = [me.x, me.z];
+              } else {
+                me.grounded = false;
+                me.vy = 0;
+              }
+            } else {
+              me.air += dt;
+              // holding jump keeps him rising a little longer
+              me.vy -= (held.space && me.vy > 0 && me.air < 0.38 ? 9 : 24) * dt;
+              me.y += me.vy * dt;
+              if (me.vy < 0 && me.y <= TOP && me.y > TOP - 0.35 && footing(me.x, me.z)) {
+                me.y = TOP;
+                me.vy = 0;
+                me.grounded = true;
+              }
+              if (me.y < -16) {
+                me.x = me.safe[0]; me.z = me.safe[1]; me.y = TOP; me.vy = 0; me.vx = me.vz = 0;
+                me.grounded = true;
+                me.printed = 0;
+                say(FALLS[Math.floor(Math.random() * FALLS.length)]);
+              }
+            }
+
+            // pose
+            sp = Math.hypot(me.vx, me.vz);
+            const run = clamp(sp / speed);
+            if (sp > 0.15) {
+              const target = Math.atan2(me.vx, me.vz);
+              let d = target - me.heading;
+              d = Math.atan2(Math.sin(d), Math.cos(d));
+              me.heading += d * (1 - Math.exp(-dt * 14));
+            }
+            me.phase += dt * (2.2 + run * 10 + Math.max(0, sp - speed) * 2.4);
+            me.printed = Math.min(1, me.printed + dt * 2.2);
+            runner.root.position.set(me.x, me.y, me.z);
+            runner.root.rotation.set(0, me.heading, 0);
+            const pr = ease(me.printed);
+            runner.root.scale.setScalar(0.95 * pr);
+            animateRunner(runner, me.phase, me.grounded ? run : 0.25, now / 1000, me.grounded);
           }
-          me.phase += dt * (2.2 + run * 10 + Math.max(0, sp - speed) * 2.4);
-          me.printed = Math.min(1, me.printed + dt * 2.2);
-          runner.root.position.set(me.x, me.y, me.z);
-          runner.root.rotation.y = me.heading;
-          const pr = ease(me.printed);
-          runner.root.scale.setScalar(0.95 * pr);
-          animateRunner(runner, me.phase, me.grounded ? run : 0.25, now / 1000, me.grounded);
 
           // ---- radios
           let near = -1, nearD = Infinity;
@@ -554,7 +686,7 @@ export default function Forme() {
             r.g.rotation.z = r.tuned ? Math.sin(now / 160 + i) * 0.03 : 0; // a tuned radio hums
           });
           const nr = radios[near];
-          const canTune = nr && !nr.tuned && nearD < 1.4 && me.grounded;
+          const canTune = nr && !nr.tuned && nearD < 1.4 && me.grounded && me.mode === "down";
           if (canTune && (held.f || promptHeld.current)) {
             nr.t = Math.min(1, nr.t + dt / 1.3);
             if (nr.t >= 1) {
@@ -602,7 +734,7 @@ export default function Forme() {
 
           if (readout.current) {
             readout.current.textContent = `X ${me.x.toFixed(1).padStart(5)}  Z ${(-me.z).toFixed(1).padStart(4)}  ${
-              !me.grounded ? (me.vy > 0 ? "JUMPING" : "FALLING") : sp > 4.6 ? "SPRINTING" : run > 0.1 ? "RUNNING" : "STANDING"
+              me.mode === "wall" ? "ON A WALL" : !me.grounded ? (me.vy > 0 ? "JUMPING" : "FALLING") : sp > 4.6 ? "SPRINTING" : sp > 0.3 ? "RUNNING" : "STANDING"
             }${woken ? "  ·  AWAKE" : ""}`;
           }
         }
@@ -685,8 +817,10 @@ export default function Forme() {
             <dd>HOLD BY A RADIO TO TUNE IT</dd>
             <dt><Key>M</Key></dt>
             <dd>SOUND</dd>
+            <dt><Key>G</Key></dt>
+            <dd>TURN GRAVITY TOWARD A WALL</dd>
           </dl>
-          <p className="md:hidden">REST A THUMB, THEN DRAG TO WALK · DRAG FAR TO RUN</p>
+          <p className="md:hidden">REST A THUMB, THEN DRAG TO WALK · DRAG FAR TO RUN · TAP THREE TIMES TO TURN GRAVITY</p>
           <p className="mt-3 flex items-center gap-3">
             <span>RADIOS <span ref={radioCount}>0 / 3</span></span>
             <button
