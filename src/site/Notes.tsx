@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { profile } from "./data";
 import Plane from "./Plane";
 
@@ -129,36 +129,81 @@ function Footer() {
   );
 }
 
-/** a grid pulled into a well, with the well's rings: drawn once */
+/** a grid pulled into a well; the well drifts toward the cursor when it is over the drawing */
 export function Wormhole({ className = "" }: { className?: string }) {
-  const lines: string[] = [];
-  const cx = 50, cy = 62;
-  const warp = (x: number, y: number) => {
-    const dx = x - cx, dy = y - cy;
-    const r = Math.hypot(dx, dy) + 0.001;
-    const pull = 260 / (r * r + 60);
-    return [x - dx * pull * 0.9, y - dy * pull * 0.9 + pull * 6];
-  };
-  for (let i = 0; i <= 20; i++) {
-    const v = i * 5;
-    const h: string[] = [], w: string[] = [];
-    for (let j = 0; j <= 40; j++) {
-      const t = j * 2.5;
-      const [x1, y1] = warp(t, v);
-      const [x2, y2] = warp(v, t);
-      h.push(`${x1.toFixed(2)},${y1.toFixed(2)}`);
-      w.push(`${x2.toFixed(2)},${y2.toFixed(2)}`);
+  const svg = useRef<SVGSVGElement>(null);
+  const restX = 50, restY = 62;
+
+  const build = (cx: number, cy: number) => {
+    const warp = (x: number, y: number) => {
+      const dx = x - cx, dy = y - cy;
+      const r = Math.hypot(dx, dy) + 0.001;
+      const pull = 260 / (r * r + 60);
+      return [x - dx * pull * 0.9, y - dy * pull * 0.9 + pull * 6];
+    };
+    const lines: string[] = [];
+    for (let i = 0; i <= 20; i++) {
+      const v = i * 5;
+      const h: string[] = [], w: string[] = [];
+      for (let j = 0; j <= 40; j++) {
+        const t = j * 2.5;
+        const [x1, y1] = warp(t, v);
+        const [x2, y2] = warp(v, t);
+        h.push(`${x1.toFixed(2)},${y1.toFixed(2)}`);
+        w.push(`${x2.toFixed(2)},${y2.toFixed(2)}`);
+      }
+      lines.push(h.join(" "), w.join(" "));
     }
-    lines.push(h.join(" "), w.join(" "));
-  }
+    return lines;
+  };
+  const initial = build(restX, restY);
+
+  useEffect(() => {
+    const el = svg.current!;
+    const lines = Array.from(el.querySelectorAll("polyline"));
+    const rings = Array.from(el.querySelectorAll("ellipse"));
+    let visible = false;
+    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting));
+    io.observe(el);
+    const c = { x: restX, y: restY };
+    const target = { x: restX, y: restY };
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect();
+      const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+      target.x = inside ? ((e.clientX - r.left) / r.width) * 100 : restX;
+      target.y = inside ? ((e.clientY - r.top) / r.height) * 100 : restY;
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    let raf = 0;
+    const loop = () => {
+      raf = requestAnimationFrame(loop);
+      if (!visible) return;
+      const nx = c.x + (target.x - c.x) * 0.08, ny = c.y + (target.y - c.y) * 0.08;
+      if (Math.abs(nx - c.x) + Math.abs(ny - c.y) < 0.02) return;
+      c.x = nx;
+      c.y = ny;
+      build(c.x, c.y).forEach((pts, i) => lines[i]?.setAttribute("points", pts));
+      rings.forEach((r) => {
+        r.setAttribute("cx", c.x.toFixed(2));
+        r.setAttribute("cy", (c.y + 3).toFixed(2));
+      });
+    };
+    raf = requestAnimationFrame(loop);
+    return () => {
+      cancelAnimationFrame(raf);
+      io.disconnect();
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+
   return (
-    <svg viewBox="0 0 100 100" preserveAspectRatio="none" className={className} aria-hidden>
+    <svg ref={svg} viewBox="0 0 100 100" preserveAspectRatio="none" className={className} aria-hidden>
       <g fill="none" stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke">
-        {lines.map((pts, i) => (
+        {initial.map((pts, i) => (
           <polyline key={i} points={pts} vectorEffect="non-scaling-stroke" strokeDasharray={i % 4 === 0 ? "0" : "1.5 2.5"} />
         ))}
         {[2, 4, 7, 11].map((r, i) => (
-          <ellipse key={r} cx={cx} cy={cy + 3} rx={r} ry={r * 0.55} vectorEffect="non-scaling-stroke" opacity={1 - i * 0.18} />
+          <ellipse key={r} cx={restX} cy={restY + 3} rx={r} ry={r * 0.55} vectorEffect="non-scaling-stroke" opacity={1 - i * 0.18} />
         ))}
       </g>
     </svg>

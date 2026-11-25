@@ -5,6 +5,9 @@ import { profile } from "./data";
 import { Wormhole } from "./Notes";
 import { easeOut, range, useSectionProgress } from "./scroll";
 
+// where each panel's seed pixel sits (percent of the panel)
+const SEEDS: [number, number][] = [[10, 70], [70, 20], [20, 30], [60, 60], [80, 80], [5, 10]];
+
 const STEPS = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64, 96, 160];
 
 export default function Bio() {
@@ -64,10 +67,16 @@ export default function Bio() {
     if (sampled.current) sampled.current.textContent = n >= 160 ? "FULL" : `${n} × ${n}`;
     reveal.current?.querySelectorAll<HTMLElement>("[data-r]").forEach((el) => {
       const d = Number(el.dataset.r);
-      const t = easeOut(range(p, -0.02 + d * 0.06, 0.18 + d * 0.06));
-      el.style.opacity = `${t}`;
-      el.style.transform = `translateY(${(1 - t) * 40}px)`;
-      el.style.clipPath = `inset(0 0 ${(1 - t) * 100}% 0)`;
+      // each panel grows out of a single pixel, in steps, like the image resolving
+      const raw = easeOut(range(p, -0.02 + d * 0.06, 0.2 + d * 0.06));
+      const t = raw >= 1 ? 1 : Math.floor(raw * 9) / 9;
+      const sx = SEEDS[d % SEEDS.length][0], sy = SEEDS[d % SEEDS.length][1];
+      const cell = 6; // % size of the seed pixel
+      const top = sy * (1 - t), left = sx * (1 - t);
+      const bottom = (100 - sy - cell) * (1 - t), right = (100 - sx - cell) * (1 - t);
+      el.style.opacity = raw > 0 ? "1" : "0";
+      el.style.transform = "";
+      el.style.clipPath = t >= 1 ? "none" : `inset(${top}% ${right}% ${bottom}% ${left}%)`;
     });
   });
 

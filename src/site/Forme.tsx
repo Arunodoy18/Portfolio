@@ -8,6 +8,7 @@
 import { useEffect, useRef } from "react";
 import type * as T from "three";
 import { clamp, ease, isInk, lerp, range, useSectionProgress } from "./scroll";
+import { sound } from "./sound";
 
 const LINES = ["ENGINEERING AND ART", "SHOULD BE SEEN THROUGH", "THE SAME LENS."];
 const WORD = "ENGINEER";
@@ -37,6 +38,11 @@ export default function Forme() {
   const readout = useRef<HTMLDivElement>(null);
   const prog = useRef(0);
   const pixels = useRef<HTMLDivElement>(null);
+  const prompt = useRef<HTMLButtonElement>(null);
+  const promptBar = useRef<HTMLSpanElement>(null);
+  const radioCount = useRef<HTMLSpanElement>(null);
+  const soundBtn = useRef<HTMLButtonElement>(null);
+  const promptHeld = useRef(false);
 
   useSectionProgress(section, (p) => {
     prog.current = p;
@@ -202,12 +208,39 @@ export default function Forme() {
       walk.add(runner.root);
       const me = {
         x: 0.6, z: -1.4, y: TOP, vy: 0, vx: 0, vz: 0, heading: Math.PI / 2, phase: 0,
-        safe: [0.6, -1.4] as [number, number], grounded: true, printed: 1, lastInput: -1e9,
+        safe: [0.6, -1.4] as [number, number], grounded: true, printed: 1, lastInput: -1e9, air: 0,
       };
       {
         const s = nearestSpot(0.9, -1.6);
         me.x = s[0]; me.z = s[1]; me.safe = [s[0], s[1]];
       }
+
+      // ---------------------------------------------------------------- three radios, hissing between stations
+      const radioMat = new THREE.MeshStandardMaterial({ color: 0x3a3a3e, roughness: 0.5, metalness: 0.3 });
+      const lampOff = new THREE.MeshBasicMaterial({ color: 0x555555 });
+      const lampOn = new THREE.MeshBasicMaterial({ color: 0xff5a36 });
+      const STATIONS = ["Night drive", "Dhol and drone", "The long shot"];
+      const radios = [0.08, 0.5, 0.92].map((f, i) => {
+        const s = nearestSpot(f * wordW, -1.0 - (i % 2) * 0.9);
+        const g = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.46, 0.3, 0.2), radioMat);
+        body.position.y = 0.15;
+        body.castShadow = true;
+        const grill = new THREE.Mesh(new THREE.CircleGeometry(0.08, 20), lampOff);
+        grill.position.set(-0.1, 0.16, 0.101);
+        const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.025, 10, 8), lampOff);
+        lamp.position.set(0.13, 0.22, 0.101);
+        const antenna = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.5), radioMat);
+        antenna.position.set(0.16, 0.5, 0);
+        antenna.rotation.z = -0.35;
+        g.add(body, grill, lamp, antenna);
+        g.position.set(s[0], TOP, s[1]);
+        g.rotation.y = 0.5;
+        walk.add(g);
+        return { x: s[0], z: s[1], g, lamp, tuned: false, t: 0, name: STATIONS[i] };
+      });
+      let woken = false;
+      let wake = 0;
 
       // ---------------------------------------------------------------- input
       const drag = { on: false, x0: 0, y0: 0, x: 0, y: 0, pending: 0 as number | 0 };
@@ -218,11 +251,11 @@ export default function Forme() {
 
       const onDown = (e: PointerEvent) => {
         if (!walkActive) return;
+        sound.start();
         const start = () => {
           drag.on = true;
           drag.x0 = drag.x = e.clientX;
           drag.y0 = drag.y = e.clientY;
-          hint.current?.classList.add("opacity-0");
         };
         if (e.pointerType === "touch") {
           // rest a thumb, then drag: a quick swipe still scrolls the page
@@ -250,17 +283,26 @@ export default function Forme() {
       const onTouchMove = (e: TouchEvent) => {
         if (drag.on) e.preventDefault();
       };
+      const held = { shift: false, space: false, f: false };
       const onKey = (e: KeyboardEvent) => {
         if (!walkActive) return;
         const k = e.key.toLowerCase();
+        const downNow = e.type === "keydown";
+        if (downNow) sound.start();
+        if (k === "shift") held.shift = downNow;
+        if (k === "f") held.f = downNow;
+        if (k === "m" && downNow) {
+          const m = sound.toggle();
+          if (soundBtn.current) soundBtn.current.textContent = m ? "SOUND OFF" : "SOUND ON";
+        }
         if (["w", "a", "s", "d"].includes(k)) {
           if (e.type === "keydown") keys.add(k);
           else keys.delete(k);
-          hint.current?.classList.add("opacity-0");
         }
-        if (k === " " && e.type === "keydown") {
+        if (k === " ") {
           e.preventDefault();
-          jumpQueued = true;
+          if (downNow && !held.space) jumpQueued = true;
+          held.space = downNow;
         }
       };
       el.addEventListener("pointerdown", onDown);
@@ -373,8 +415,14 @@ export default function Forme() {
         }
 
         // ---- act 2: the walkway
+        const wasActive = walkActive;
         walkActive = walk.visible && p < 0.97;
+        if (wasActive && !walkActive) sound.silence();
         if (hint.current) hint.current.style.visibility = walkActive ? "visible" : "hidden";
+        if (soundBtn.current && soundBtn.current.dataset.muted !== String(sound.muted)) {
+          soundBtn.current.dataset.muted = String(sound.muted);
+          soundBtn.current.textContent = sound.muted ? "SOUND OFF" : "SOUND ON";
+        }
         if (readout.current) readout.current.style.visibility = walkActive ? "visible" : "hidden";
         if (walk.visible) {
           const pan = ease(range(p, 0.5, 0.95));
@@ -393,11 +441,13 @@ export default function Forme() {
           right.setFromMatrixColumn(camera.matrixWorld, 0).setY(0).normalize();
           fwd.crossVectors(up, right).normalize();
           let ix = 0, iz = 0, mag = 0;
+          let sprintDrag = false;
           if (drag.on) {
             const dx = drag.x - drag.x0, dy = drag.y - drag.y0;
             const len = Math.hypot(dx, dy);
             if (len > 6) {
               mag = clamp(len / 90);
+              if (len > 170) sprintDrag = true;
               // find the ground direction whose on-screen image points where the finger went
               const at = new THREE.Vector3(me.x, TOP, me.z);
               const o = at.clone().project(camera);
@@ -434,7 +484,8 @@ export default function Forme() {
           }
 
           const speed = 3.4;
-          const ax = ix * mag * speed, az = iz * mag * speed;
+          const top = held.shift || sprintDrag ? 6.6 : speed;
+          const ax = ix * mag * top, az = iz * mag * top;
           const k = me.grounded ? 1 - Math.exp(-dt * 12) : 1 - Math.exp(-dt * 1.5);
           me.vx += (ax - me.vx) * k;
           me.vz += (az - me.vz) * k;
@@ -442,8 +493,9 @@ export default function Forme() {
           me.z += me.vz * dt;
 
           if (jumpQueued && me.grounded) {
-            me.vy = 7;
+            me.vy = 6.4;
             me.grounded = false;
+            me.air = 0;
           }
           jumpQueued = false;
 
@@ -456,7 +508,9 @@ export default function Forme() {
               me.vy = 0;
             }
           } else {
-            me.vy -= 24 * dt;
+            me.air += dt;
+            // holding jump keeps him rising a little longer
+            me.vy -= (held.space && me.vy > 0 && me.air < 0.38 ? 9 : 24) * dt;
             me.y += me.vy * dt;
             if (me.vy < 0 && me.y <= TOP && me.y > TOP - 0.35 && footing(me.x, me.z)) {
               me.y = TOP;
@@ -480,7 +534,7 @@ export default function Forme() {
             d = Math.atan2(Math.sin(d), Math.cos(d));
             me.heading += d * (1 - Math.exp(-dt * 14));
           }
-          me.phase += dt * (2.2 + run * 10);
+          me.phase += dt * (2.2 + run * 10 + Math.max(0, sp - speed) * 2.4);
           me.printed = Math.min(1, me.printed + dt * 2.2);
           runner.root.position.set(me.x, me.y, me.z);
           runner.root.rotation.y = me.heading;
@@ -488,10 +542,68 @@ export default function Forme() {
           runner.root.scale.setScalar(0.95 * pr);
           animateRunner(runner, me.phase, me.grounded ? run : 0.25, now / 1000, me.grounded);
 
+          // ---- radios
+          let near = -1, nearD = Infinity;
+          radios.forEach((r, i) => {
+            const d = Math.hypot(r.x - me.x, r.z - me.z);
+            if (d < nearD) {
+              nearD = d;
+              near = i;
+            }
+            r.lamp.material = r.tuned || (r.t > 0 && Math.sin(now / 90) > 0) ? lampOn : lampOff;
+            r.g.rotation.z = r.tuned ? Math.sin(now / 160 + i) * 0.03 : 0; // a tuned radio hums
+          });
+          const nr = radios[near];
+          const canTune = nr && !nr.tuned && nearD < 1.4 && me.grounded;
+          if (canTune && (held.f || promptHeld.current)) {
+            nr.t = Math.min(1, nr.t + dt / 1.3);
+            if (nr.t >= 1) {
+              nr.tuned = true;
+              const found = radios.filter((r) => r.tuned).length;
+              say(found < 3 ? `${nr.name}. ${found} of 3 stations found.` : "Three stations found. The structure wakes.");
+              if (radioCount.current) radioCount.current.textContent = `${found} / 3`;
+              if (found === 3 && !woken) {
+                woken = true;
+                wake = 1;
+              }
+            }
+          } else if (nr && !nr.tuned) {
+            nr.t = Math.max(0, nr.t - dt * 0.6);
+          }
+          if (prompt.current) {
+            const show = walkActive && canTune;
+            prompt.current.style.visibility = show ? "visible" : "hidden";
+            if (show) {
+              const v = new THREE.Vector3(nr.x, TOP + 0.9, nr.z).project(camera);
+              prompt.current.style.transform = `translate(${((v.x + 1) / 2) * vw}px, ${((1 - v.y) / 2) * vh}px) translate(-50%, -100%)`;
+              if (promptBar.current) promptBar.current.style.transform = `scaleX(${nr.t})`;
+            }
+          }
+          // the structure wakes: the letters breathe light for a while
+          if (wake > 0) {
+            wake = Math.max(0, wake - dt * 0.12);
+            const pulse = (0.5 + 0.5 * Math.sin(now / 260)) * wake;
+            faceMat.emissiveIntensity = 1 + pulse * 1.6;
+            wordMesh.position.y = Math.sin(now / 400) * 0.06 * wake;
+          }
+
+          // ---- sound follows him around the radios
+          if (sound.started) {
+            const lv = (i: number) => {
+              const r = radios[i];
+              const d = Math.hypot(r.x - me.x, r.z - me.z);
+              return r.tuned ? clamp(1 - d / 6) * 0.95 : r.t * 0.7;
+            };
+            const radio = [lv(0), lv(1), lv(2)];
+            const loud = Math.max(...radio);
+            const hiss = nr && !nr.tuned ? clamp(1 - nearD / 3.5) * (1 - nr.t) * 0.55 : 0;
+            sound.set({ walkway: 0.6 * (1 - loud * 0.7), "radio-1": radio[0], "radio-2": radio[1], "radio-3": radio[2], static: hiss });
+          }
+
           if (readout.current) {
             readout.current.textContent = `X ${me.x.toFixed(1).padStart(5)}  Z ${(-me.z).toFixed(1).padStart(4)}  ${
-              !me.grounded ? (me.vy > 0 ? "JUMPING" : "FALLING") : run > 0.1 ? "RUNNING" : "STANDING"
-            }`;
+              !me.grounded ? (me.vy > 0 ? "JUMPING" : "FALLING") : sp > 4.6 ? "SPRINTING" : run > 0.1 ? "RUNNING" : "STANDING"
+            }${woken ? "  ·  AWAKE" : ""}`;
           }
         }
 
@@ -518,6 +630,10 @@ export default function Forme() {
           const m = o as T.Mesh;
           if (m.geometry) m.geometry.dispose();
         });
+        sound.silence();
+        radioMat.dispose();
+        lampOff.dispose();
+        lampOn.dispose();
         faceMat.dispose();
         sideMat.dispose();
         bodyMat.dispose();
@@ -555,13 +671,56 @@ export default function Forme() {
         />
         <div
           ref={hint}
-          aria-hidden
-          className="pointer-events-none absolute bottom-[11vh] left-1/2 -translate-x-1/2 text-center font-mono text-[9.5px] tracking-[0.22em] text-ink/70 transition-opacity duration-700"
+          className="absolute bottom-[9vh] left-[3.2vw] font-mono text-[9.5px] tracking-[0.18em] text-ink/75"
           style={{ visibility: "hidden" }}
         >
-          <span className="hidden md:inline">DRAG TO WALK · WASD · SPACE TO JUMP</span>
-          <span className="md:hidden">REST A THUMB, THEN DRAG TO WALK</span>
+          <dl className="hidden grid-cols-[auto_1fr] items-center gap-x-4 gap-y-1.5 md:grid">
+            <dt><Key>W</Key><Key>A</Key><Key>S</Key><Key>D</Key></dt>
+            <dd>WALK · OR DRAG</dd>
+            <dt><Key wide>SHIFT</Key></dt>
+            <dd>RUN</dd>
+            <dt><Key wide>SPACE</Key></dt>
+            <dd>JUMP · HOLD TO RISE</dd>
+            <dt><Key>F</Key></dt>
+            <dd>HOLD BY A RADIO TO TUNE IT</dd>
+            <dt><Key>M</Key></dt>
+            <dd>SOUND</dd>
+          </dl>
+          <p className="md:hidden">REST A THUMB, THEN DRAG TO WALK · DRAG FAR TO RUN</p>
+          <p className="mt-3 flex items-center gap-3">
+            <span>RADIOS <span ref={radioCount}>0 / 3</span></span>
+            <button
+              ref={soundBtn}
+              type="button"
+              data-cursor="hover"
+              onClick={(e) => {
+                const m = sound.toggle();
+                e.currentTarget.textContent = m ? "SOUND OFF" : "SOUND ON";
+              }}
+              className="border border-ink/40 px-2 py-0.5 hover:bg-ink hover:text-paper"
+            >
+              SOUND ON
+            </button>
+          </p>
         </div>
+        <button
+          ref={prompt}
+          type="button"
+          onPointerDown={() => {
+            promptHeld.current = true;
+            sound.start();
+          }}
+          onPointerUp={() => (promptHeld.current = false)}
+          onPointerLeave={() => (promptHeld.current = false)}
+          className="absolute left-0 top-0 border border-ink bg-paper px-2.5 py-1.5 font-mono text-[9.5px] tracking-[0.2em] text-ink"
+          style={{ visibility: "hidden" }}
+        >
+          <span className="hidden md:inline">HOLD F TO TUNE</span>
+          <span className="md:hidden">HOLD TO TUNE</span>
+          <span className="mt-1 block h-[2px] w-full bg-ink/15">
+            <span ref={promptBar} className="block h-full origin-left bg-ink" style={{ transform: "scaleX(0)" }} />
+          </span>
+        </button>
         <p
           ref={caption}
           aria-live="polite"
@@ -569,6 +728,14 @@ export default function Forme() {
         />
       </div>
     </section>
+  );
+}
+
+function Key({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
+  return (
+    <span className={`mr-1 inline-flex h-[18px] items-center justify-center border border-ink/50 px-1 ${wide ? "min-w-[44px]" : "min-w-[18px]"}`}>
+      {children}
+    </span>
   );
 }
 

@@ -26,18 +26,28 @@ const OUTLINE =
   "L 1250 860 L 1480 1090 L 2720 1090 L 2780 1150 L 2780 1360 L 2720 1420 L 1000 1420 L 940 1480 L 940 1920 L 1000 1980 " +
   "L 2340 1980 L 2400 1920 L 2400 1710 L 2340 1650 L 1500 1650";
 
-// the camera's itinerary: progress, centre x, centre y, zoom
+// the camera's itinerary: progress, centre x, centre y, zoom.
+// first the four words, each filling the screen; then the whole plane; then the notes, the same way round; then the whole plane again.
+// zoom -1: fit the whole plane; -2: fit one word to the screen
 const PATH: [number, number, number, number][] = [
-  [0.0, 2080, -260, 1],
-  [0.1, 2080, 200, 1],
-  [0.2, 780, 330, 0.92],
-  [0.31, 900, 700, 1],
-  [0.42, 2050, 820, 0.9],
-  [0.53, 2250, 1260, 1],
-  [0.63, 760, 1200, 0.92],
-  [0.74, 1650, 1820, 1],
-  [0.84, 1700, 2120, 0.92],
-  [0.94, 1500, 1150, -1], // -1: fit the whole plane
+  [0.0, 1900, -300, -2],
+  [0.06, 2060, 190, -2],
+  [0.11, 2060, 190, -2],
+  [0.17, 920, 690, -2],
+  [0.21, 920, 690, -2],
+  [0.27, 2260, 1250, -2],
+  [0.31, 2260, 1250, -2],
+  [0.37, 1640, 1810, -2],
+  [0.41, 1640, 1810, -2],
+  [0.47, 1500, 1150, -1],
+  [0.53, 1500, 1150, -1],
+  [0.59, 760, 330, 0.95],
+  [0.65, 1950, 720, 0.95],
+  [0.71, 680, 1160, 0.95],
+  [0.77, 520, 1760, 0.95],
+  [0.83, 2620, 1720, 0.95],
+  [0.89, 1700, 2160, 0.95],
+  [0.95, 1500, 1150, -1],
   [1.0, 1500, 1150, -1],
 ];
 
@@ -65,8 +75,10 @@ export default function Plane() {
     const [p0, x0, y0, z0] = PATH[i];
     const [p1, x1, y1, z1] = PATH[i + 1];
     const t = ease(clamp((p - p0) / Math.max(1e-6, p1 - p0)));
-    const za = z0 < 0 ? fit : z0;
-    const zb = z1 < 0 ? fit : z1;
+    const word = (vw * 0.9) / 1250 / base;
+    const zoomOf = (z: number) => (z === -1 ? fit : z === -2 ? word : z);
+    const za = zoomOf(z0);
+    const zb = zoomOf(z1);
     const tx = lerp(x0, x1, t);
     const ty = lerp(y0, y1, t);
     const tz = lerp(za, zb, t);
