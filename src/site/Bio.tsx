@@ -123,7 +123,7 @@ export default function Bio() {
             <dt className="text-ink/45">YEARS</dt>
             <dd>{profile.years}</dd>
             <dt className="text-ink/45">NOW</dt>
-            <dd>SHIPPING &amp; OPEN SOURCE</dd>
+            <dd>FOUNDER, ZONE · AI AUTOMATION, BUILDC3</dd>
           </dl>
         </div>
 

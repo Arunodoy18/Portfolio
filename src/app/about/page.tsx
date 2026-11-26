@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SubPage from "@/site/SubPage";
-import { faqs, practice, profile, projects } from "@/site/data";
-import { breadcrumbs, fullName, graph, jobTitle, personId, personSchema, shortBio, siteUrl } from "@/site/seo";
+import { experience, faqs, practice, profile, projects, recognition } from "@/site/data";
+import { breadcrumbs, fullName, graph, jobTitle, personId, personSchema, shortBio, siteUrl, zoneOrg } from "@/site/seo";
 
 export const metadata: Metadata = {
   title: { absolute: `About ${fullName} — ${jobTitle}` },
@@ -30,6 +30,7 @@ const schema = graph(
     isPartOf: { "@id": `${siteUrl}/#website` },
   },
   personSchema,
+  zoneOrg,
   {
     "@type": "FAQPage",
     mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
@@ -72,6 +73,41 @@ export default function AboutPage() {
           <figcaption className="mt-2 font-mono text-[10px] tracking-[0.18em] text-ink/50">{profile.place.toUpperCase()}</figcaption>
         </figure>
       </div>
+
+      <h2 className="cast mt-16 text-[clamp(28px,3vw,44px)] leading-none">Experience</h2>
+      <ol className="mt-5 divide-y divide-ink/15 border-y border-ink/15">
+        {experience.map((e) => (
+          <li key={e.org} className="grid gap-3 py-6 md:grid-cols-[220px_1fr]">
+            <div className="font-mono text-[11px] tracking-[0.12em] text-ink/60">
+              <p>{e.when.toUpperCase()}</p>
+              <p className="mt-1">{e.where.toUpperCase()}</p>
+            </div>
+            <div>
+              <h3 className="text-[19px] font-medium">
+                {e.role},{" "}
+                <a href={e.href} className="underline" rel="noopener">
+                  {e.org}
+                </a>
+              </h3>
+              <ul className="mt-2 space-y-1.5 text-[15px] leading-relaxed text-ink/80">
+                {e.points.map((pt) => (
+                  <li key={pt}>{pt}</li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <h2 className="cast mt-16 text-[clamp(28px,3vw,44px)] leading-none">Recognition</h2>
+      <ul className="mt-5 grid gap-4 sm:grid-cols-2">
+        {recognition.map((r) => (
+          <li key={r.title} className="border border-ink/20 p-4">
+            <p className="font-medium">{r.title}</p>
+            <p className="mt-1 text-[14px] text-ink/70">{r.detail}</p>
+          </li>
+        ))}
+      </ul>
 
       <h2 className="cast mt-16 text-[clamp(28px,3vw,44px)] leading-none">What I work with</h2>
       <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 font-mono text-[11px] tracking-[0.1em]">

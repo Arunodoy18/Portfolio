@@ -3,7 +3,7 @@
  * the person, the website, and helpers for breadcrumbs. Every page links back to the
  * same @id so all the structured data describes one entity.
  */
-import { practice, profile, projects } from "./data";
+import { practice, profile, projects, recognition } from "./data";
 
 export const siteUrl = "https://aruno.buildc3.tech";
 export const personId = `${siteUrl}/#person`;
@@ -12,7 +12,7 @@ export const websiteId = `${siteUrl}/#website`;
 export const fullName = "Arunodoy Banerjee";
 export const jobTitle = "Software Engineer (Backend & AI)";
 export const shortBio =
-  "Arunodoy Banerjee is a backend-focused software engineer from India and a Computer Science (AI & ML) student at Sikkim Manipal Institute of Technology, building offline-first Android apps, AI developer tools and the systems underneath them.";
+  "Arunodoy Banerjee is a backend and AI software engineer from India: founder of Zone, an incubated offline disaster-communication app, an AI automation developer at buildc3.tech, and a Computer Science (AI & ML) student at Sikkim Manipal Institute of Technology.";
 
 export const sameAs = [profile.github, profile.linkedin, profile.leetcode];
 
@@ -59,7 +59,32 @@ export const personSchema = {
     ...practice.groups.flatMap((g) => g.items),
   ],
   sameAs,
+  worksFor: [
+    { "@type": "Organization", name: "buildc3.tech", url: "https://buildc3.tech", description: "AI Automation Developer, 2025 – present" },
+    { "@id": `${siteUrl}/#zone` },
+  ],
+  award: recognition.slice(0, 2).map((r) => `${r.title}: ${r.detail}`),
+  hasCredential: {
+    "@type": "EducationalOccupationalCredential",
+    name: "Advanced Software Engineering Job Simulation",
+    credentialCategory: "certificate",
+    recognizedBy: { "@type": "Organization", name: "Walmart Global Tech" },
+    dateCreated: "2026-07",
+  },
   makesOffer: { "@type": "Offer", description: "Open to internships, collaborations and engineering roles" },
+};
+
+/** Zone, the company: founded by him, incubated at AIC-SMUTBI */
+export const zoneOrg = {
+  "@type": "Organization",
+  "@id": `${siteUrl}/#zone`,
+  name: "Zone",
+  url: "https://zone-thezone.vercel.app/",
+  description: "An offline disaster-communication app: phones relay distress packets over a Bluetooth LE mesh when towers and the internet fail.",
+  founder: { "@id": personId },
+  foundingDate: "2026-07",
+  foundingLocation: { "@type": "Place", name: "Sikkim Manipal Institute of Technology, Rangpo, Sikkim, India" },
+  sameAs: ["https://github.com/Arunodoy18/TheZone"],
 };
 
 export const websiteSchema = {

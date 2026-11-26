@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
-import { fullName, graph, personSchema, siteUrl, websiteSchema } from "@/site/seo";
+import { fullName, graph, personSchema, siteUrl, websiteSchema, zoneOrg } from "@/site/seo";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const newsreader = Newsreader({
@@ -16,12 +16,12 @@ const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono"
 
 const title = `${fullName} — Software Engineer (Backend & AI)`;
 const description =
-  "Arunodoy Banerjee is a backend and AI software engineer from India building offline-first Android apps, AI developer tools and browser extensions: Zone, Cadence, Nura, Meow AI, Nakung AI, Your-Reviewer and more.";
+  "Arunodoy Banerjee is a backend and AI software engineer from India, founder of Zone (incubated at AIC-SMUTBI) and AI automation developer at buildc3.tech. He builds offline-first Android apps, AI developer tools and browser extensions.";
 
 // the person every page is about; the CI guard looks for this declaration here
 const personNode = { ...personSchema, "@type": "Person" };
 
-const rootStructuredData = graph(websiteSchema, personNode);
+const rootStructuredData = graph(websiteSchema, personNode, zoneOrg);
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -44,6 +44,10 @@ export const metadata: Metadata = {
     "Nura nutrition app",
     "Meow AI Chrome extension",
     "Nakung AI LeetCode extension",
+    "Zone founder",
+    "AIC-SMUTBI",
+    "buildc3",
+    "LeadRadar",
     "Portfolio",
   ],
   alternates: { canonical: `${siteUrl}/` },

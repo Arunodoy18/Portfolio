@@ -27,6 +27,7 @@ const seoTitle: Record<string, string> = {
   primer: "Primer — AI Reading Tutor for Kids",
   youinst: "YouInst — Autonomous Shorts & Reels Studio",
   wastifi: "Wastifi — AI Waste Classification App",
+  leadradar: "LeadRadar — AI Outreach Automation SaaS",
 };
 
 const kindLabel = { App: "app", Extension: "browser extension", Platform: "platform", System: "system", Agent: "AI agent" } as const;

@@ -30,7 +30,7 @@ export default function ContactPage() {
     { label: "Email", href: `mailto:${profile.email}`, note: profile.email },
     { label: "GitHub", href: profile.github, note: "Arunodoy18" },
     { label: "LinkedIn", href: profile.linkedin, note: "arunodoy-banerjee" },
-    { label: "LeetCode", href: profile.leetcode, note: "Arunodoy45" },
+    { label: "LeetCode", href: profile.leetcode, note: "Arunodoy_45" },
   ];
   return (
     <SubPage

@@ -1,5 +1,5 @@
 /** Plain-text descriptions of the site for AI answer engines, built from the same data as the pages. */
-import { faqs, notes, practice, profile, projectDetails, projects, taste } from "./data";
+import { experience, faqs, notes, practice, profile, projectDetails, projects, recognition, taste } from "./data";
 import { fullName, jobTitle, shortBio, siteUrl } from "./seo";
 
 const links = `- Website: ${siteUrl}/
@@ -61,6 +61,12 @@ ${shortBio}
 - Education: ${profile.school}, ${profile.years}
 - Open to: internships, collaborations and engineering roles; preparing for GSoC 2026
 ${links.replace(/^- /gm, "- ")}
+
+## Experience
+${experience.map((e) => `### ${e.role}, ${e.org} (${e.when}, ${e.where})\n${e.points.map((pt) => `- ${pt}`).join("\n")}`).join("\n\n")}
+
+## Recognition
+${recognition.map((r) => `- ${r.title}: ${r.detail}`).join("\n")}
 
 ## Skills
 ${practice.groups.map((g) => `- ${g.label}: ${g.items.join(", ")}`).join("\n")}

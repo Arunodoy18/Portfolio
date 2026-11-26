@@ -5,7 +5,7 @@ export const profile = {
   email: "barun4927@gmail.com",
   github: "https://github.com/Arunodoy18",
   linkedin: "https://www.linkedin.com/in/arunodoy-banerjee-214251342/",
-  leetcode: "https://leetcode.com/u/Arunodoy45",
+  leetcode: "https://leetcode.com/u/Arunodoy_45/",
   place: "Rangpo, Sikkim, India",
   placeShort: "RANGPO",
   coords: "27.17°N · 88.53°E",
@@ -148,6 +148,18 @@ export const projects: Project[] = [
     glyph: "rings",
   },
   {
+    slug: "leadradar",
+    name: "LeadRadar",
+    kind: "Platform",
+    year: "2026",
+    line: "Outreach that finds the right people and knows when they reply.",
+    body:
+      "A multi-tenant SaaS that sources and scores B2B leads, writes personalised email sequences, follows up on schedule and routes hot replies with an LLM classifier, with each tenant's data isolated by Postgres Row-Level Security.",
+    stack: ["Next.js", "Supabase", "Apollo.io", "OpenAI", "Stripe"],
+    code: "https://github.com/Arunodoy18/Leadplease",
+    glyph: "grid",
+  },
+  {
     slug: "primer",
     name: "Primer",
     kind: "App",
@@ -254,6 +266,8 @@ export const projectDetails: Record<string, { platform: string; category: string
       "One APK with three modes chosen on first launch: Citizen, Responder and Map (for an emergency operations centre).",
       "A trapped person's phone broadcasts a 31-byte packet over Bluetooth Low Energy. Any phone in range copies it and rebroadcasts it with a hop count; duplicates are dropped by content hash, so the signal walks out of the zone in a rescuer's pocket.",
       "Every packet declares when the sender will transmit next, so the network can tell a phone that went quiet from a phone that was destroyed.",
+      "Heartbeat-based silence detection, barometric floor-level triage and cell-loss mapping help rescuers decide where to look first.",
+      "Founded by Arunodoy Banerjee; selected for the IIC-SMIT pre-incubation cohort 2026–27 and now incubated at the Atal Incubation Centre (AIC-SMUTBI).",
       "Built for Avinya 2026, problem statements on ground-zero communication blackout and post-disaster information fog.",
     ],
   },
@@ -267,13 +281,17 @@ export const projectDetails: Record<string, { platform: string; category: string
       "Neural text-to-speech voices, speech-to-text with Whisper, and pronunciation scoring with Azure Pronunciation Assessment.",
       "A native Android app (Capacitor) whose screens ship inside the APK; only sign-in, conversation, speech and progress sync use the network.",
       "The API runs on Next.js with a Neon Postgres database, and the APK is rebuilt automatically on every push.",
+      "Active-recall drills and spaced-repetition progression; grown to more than 200 active users through daily spoken practice.",
     ],
   },
   nura: {
     platform: "Android",
     category: "HealthApplication",
     facts: [
-      "An Android app for nutrition tracking for the whole family.",
+      "An Android app for nutrition tracking for the whole family, first launched as DietBuddy.",
+      "Analyses meal photos with the Gemini vision API to estimate macro- and micronutrients, with personalised goals, streaks and progress analytics.",
+      "FridgeRaider turns a photo of the fridge into recipes, and meals can be logged by voice.",
+      "Packaged as an Android app through a Trusted Web Activity and distributed as a direct-download APK, reaching more than 100 active users, with a Razorpay subscription.",
       "Log food with a photo, a barcode or a few typed words; Nura works out calories and macros.",
       "Offline-first, with child-safe targets, meal plans and reminders driven by native Android alarms.",
       "Syncs with Health Connect.",
@@ -342,7 +360,8 @@ export const projectDetails: Record<string, { platform: string; category: string
       "An AI career operating system that takes a job seeker from resume to interview pipeline.",
       "Resume parsing and structured editing, weighted ATS scoring, and semantic job matching that explains itself.",
       "AI resume tailoring, career roadmaps and skill-gap analysis.",
-      "Built with Next.js, Prisma and Neon Postgres, OpenAI chat and embeddings, Razorpay subscriptions and scheduled functions.",
+      "An embeddings-based matching pipeline cut irrelevant matches by 60%, and Redis caching and rate limiting cut database load by 45% at peak.",
+      "Built with Next.js, Prisma and Neon Postgres, OpenAI and Groq, Razorpay subscriptions and scheduled functions.",
     ],
   },
   primer: {
@@ -365,6 +384,16 @@ export const projectDetails: Record<string, { platform: string; category: string
       "Uploads to YouTube Shorts with OAuth, with multi-user accounts.",
     ],
   },
+  leadradar: {
+    platform: "Web",
+    category: "BusinessApplication",
+    facts: [
+      "A multi-tenant outreach automation SaaS built at buildc3.tech.",
+      "Lead sourcing and enrichment through Apollo.io, with every lead scored on geography, decision-making power, company size, industry fit and buying signals.",
+      "A scheduled outreach engine sends AI-personalised email sequences and follow-ups, and an LLM classifier routes hot replies automatically.",
+      "Tenant isolation is enforced with PostgreSQL Row-Level Security, and billing is synced from Stripe webhooks.",
+    ],
+  },
   wastifi: {
     platform: "Web",
     category: "LifestyleApplication",
@@ -381,15 +410,23 @@ export const projectDetails: Record<string, { platform: string; category: string
 export const faqs = [
   {
     q: "Who is Arunodoy Banerjee?",
-    a: "Arunodoy Banerjee is a backend-focused software engineer from India and a Computer Science (AI & ML) student at Sikkim Manipal Institute of Technology. He builds offline-first Android apps, AI developer tools, browser extensions and the systems underneath them.",
+    a: "Arunodoy Banerjee is a backend and AI software engineer from India, the founder of Zone, an AI automation developer at buildc3.tech, and a Computer Science (AI & ML) student at Sikkim Manipal Institute of Technology. He builds offline-first Android apps, AI developer tools, browser extensions and the systems underneath them.",
   },
   {
     q: "What has Arunodoy Banerjee built?",
     a: "His projects include Zone, an offline Bluetooth mesh network for disasters; Cadence, a speaking-first language-learning app; Nura, family nutrition tracking on Android; Meow AI and Nakung AI, Chrome extensions for developers; Your-Reviewer, open-source AI code review; RedZone, hazard and relocation planning for Sikkim; and Vaayu, a carbon-footprint platform.",
   },
   {
+    q: "What has Arunodoy Banerjee achieved?",
+    a: "He founded Zone, which was selected for the IIC-SMIT pre-incubation cohort 2026–27 and is now incubated at the Atal Incubation Centre (AIC-SMUTBI). He was runner-up at Devopia, a 24-hour hackathon with Dell; his apps Cadence and Nura have more than 200 and 100 active users; and he holds the Walmart Global Tech Advanced Software Engineering job simulation certificate.",
+  },
+  {
+    q: "Where does Arunodoy Banerjee work?",
+    a: "He is an AI automation developer at buildc3.tech (since 2025), designing LLM-powered automation for lead handling, outreach and developer productivity, and the founder of Zone, an offline disaster-communication app.",
+  },
+  {
     q: "What does Arunodoy Banerjee work with?",
-    a: "Java, Python, TypeScript, Kotlin, C and C++ and SQL; Spring Boot, FastAPI, Next.js, React and Jetpack Compose; Postgres, Redis, Celery and Docker on Azure and Google Cloud; and large language models, retrieval, MCP and agents.",
+    a: "Python, Java, Kotlin, TypeScript, JavaScript, C++ and SQL; Spring Boot, FastAPI, Next.js, React, Node.js and Jetpack Compose; PostgreSQL, Supabase, Neon, Redis and Docker on Azure, Vercel and Netlify; and LLMs, RAG, vector embeddings, prompt engineering, MCP and agents.",
   },
   {
     q: "Where is Arunodoy Banerjee based?",
@@ -403,4 +440,39 @@ export const faqs = [
     q: "What is Zone by Arunodoy Banerjee?",
     a: "Zone is a native Android app that lets phones pass a tiny distress signal from hand to hand over Bluetooth when every network is down, with no servers and no internet, until it walks out of the disaster zone in someone's pocket.",
   },
+];
+
+/** From the resume: roles and recognition, shown on /about and used in structured data. */
+export const experience = [
+  {
+    role: "Founder",
+    org: "Zone",
+    href: "https://zone-thezone.vercel.app/",
+    when: "Jul 2026 – present",
+    where: "SMIT, Sikkim",
+    points: [
+      "Founded and building Zone, a native Android app that keeps phones talking when cell towers and the internet fail, relaying 31-byte distress packets over a Bluetooth LE store-and-forward mesh.",
+      "Heartbeat-based silence detection, barometric floor-level triage and cell-loss mapping to guide rescuers. Selected for IIC-SMIT pre-incubation and incubated at AIC-SMUTBI.",
+    ],
+  },
+  {
+    role: "AI Automation Developer",
+    org: "buildc3.tech",
+    href: "https://buildc3.tech",
+    when: "2025 – present",
+    where: "Remote",
+    points: [
+      "Designs and ships LLM-powered automation for client and in-house products: lead handling, outreach and developer productivity.",
+      "Built a WhatsApp RAG agent that answers inbound questions from a vector-embedded knowledge base and qualifies leads automatically.",
+      "Architected LeadRadar, a multi-tenant outreach automation SaaS with PostgreSQL Row-Level Security and Stripe-synced billing.",
+      "Shipped two AI browser extensions, Meow AI and Nakung AI, that bring LLM help into developer workflows.",
+    ],
+  },
+];
+
+export const recognition = [
+  { title: "Hackathon runner-up, Devopia (Dell)", detail: "Second place building an AI-driven solution in 24 hours." },
+  { title: "Startup incubation, Zone", detail: "IIC-SMIT Pre-Incubation Cohort 2026–27; now incubated at the Atal Incubation Centre (AIC-SMUTBI)." },
+  { title: "Walmart Global Tech, Advanced Software Engineering", detail: "Job simulation certificate (Forage), July 2026." },
+  { title: "Competitive programming", detail: "Consistent LeetCode practice in data structures and algorithms." },
 ];

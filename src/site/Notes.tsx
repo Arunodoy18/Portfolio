@@ -36,7 +36,7 @@ function Contact() {
   const tiles = [
     { label: "GitHub", href: profile.github, note: "Arunodoy18" },
     { label: "LinkedIn", href: profile.linkedin, note: "arunodoy-banerjee" },
-    { label: "LeetCode", href: profile.leetcode, note: "Arunodoy45" },
+    { label: "LeetCode", href: profile.leetcode, note: "Arunodoy_45" },
   ];
   return (
     <section id="contact" data-plate="05 — RESOLUTION" className="relative overflow-hidden bg-paper px-[3.2vw] pb-[12vh] pt-[14vh] text-ink">
