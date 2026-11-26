@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SubPage from "@/site/SubPage";
+import { breadcrumbs, graph, personId, siteUrl as SITE } from "@/site/seo";
 import { profile, projects } from "@/site/data";
 
 const siteUrl = "https://aruno.buildc3.tech";
@@ -32,6 +33,15 @@ export default function OpenSourcePage() {
       title="IN THE OPEN"
       lead="Most of what I build is public. Small, reviewable pull requests; documentation people can actually onboard from; tools that make other developers faster."
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: graph(
+            { "@type": "WebPage", "@id": `${SITE}/open-source`, url: `${SITE}/open-source`, name: "Open source · Arunodoy Banerjee", about: { "@id": personId } },
+            breadcrumbs([{ name: "Open source", path: "/open-source" }]),
+          ),
+        }}
+      />
       <p className="mb-8 max-w-[60ch] text-[15px] leading-relaxed text-ink/80">
         I am preparing for GSoC 2026, with a focus on developer tooling, reliability and contributor onboarding. Everything below
         has its source on <a className="underline" href={profile.github}>GitHub</a>.

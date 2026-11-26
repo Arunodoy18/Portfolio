@@ -242,3 +242,165 @@ export const taste = [
   { kind: "Film", title: "Avengers: Doomsday", meta: "Russo brothers · 2026" },
   { kind: "Film", title: "Ramayana", meta: "Nitesh Tiwari · 2026" },
 ] as const;
+
+/** Facts for each project page, taken from the projects' own READMEs. Used by /projects/[slug] and the structured data. */
+export const projectDetails: Record<string, { platform: string; category: string; facts: string[] }> = {
+  zone: {
+    platform: "Android",
+    category: "CommunicationApplication",
+    facts: [
+      "A native Android app (Kotlin and Jetpack Compose) that forms an offline Bluetooth store-carry-forward mesh between phones during a disaster.",
+      "No servers, no internet, no analytics and no downloaded map tiles: it runs the same in airplane mode.",
+      "One APK with three modes chosen on first launch: Citizen, Responder and Map (for an emergency operations centre).",
+      "A trapped person's phone broadcasts a 31-byte packet over Bluetooth Low Energy. Any phone in range copies it and rebroadcasts it with a hop count; duplicates are dropped by content hash, so the signal walks out of the zone in a rescuer's pocket.",
+      "Every packet declares when the sender will transmit next, so the network can tell a phone that went quiet from a phone that was destroyed.",
+      "Built for Avinya 2026, problem statements on ground-zero communication blackout and post-disaster information fog.",
+    ],
+  },
+  cadence: {
+    platform: "Android",
+    category: "EducationalApplication",
+    facts: [
+      "A language-learning app built around speaking: \"Duolingo builds a habit. Cadence builds a speaker.\"",
+      "Conversation with an AI partner from the first lesson, with gentle corrections on every sentence.",
+      "Indian languages including Hindi, Marathi, Gujarati, Assamese, Malayalam and Kannada.",
+      "Neural text-to-speech voices, speech-to-text with Whisper, and pronunciation scoring with Azure Pronunciation Assessment.",
+      "A native Android app (Capacitor) whose screens ship inside the APK; only sign-in, conversation, speech and progress sync use the network.",
+      "The API runs on Next.js with a Neon Postgres database, and the APK is rebuilt automatically on every push.",
+    ],
+  },
+  nura: {
+    platform: "Android",
+    category: "HealthApplication",
+    facts: [
+      "An Android app for nutrition tracking for the whole family.",
+      "Log food with a photo, a barcode or a few typed words; Nura works out calories and macros.",
+      "Offline-first, with child-safe targets, meal plans and reminders driven by native Android alarms.",
+      "Syncs with Health Connect.",
+      "Built with Next.js 16, Drizzle ORM and Neon Postgres, with Gemini and Groq for the AI scans and Upstash Redis for rate limiting.",
+      "The download page includes a live demo that runs the real food database, nutrition engine and meal planner in the browser.",
+    ],
+  },
+  meow: {
+    platform: "Chrome",
+    category: "DeveloperApplication",
+    facts: [
+      "A zero-setup Chrome extension: a universal AI copilot for developers and technical learners.",
+      "It detects what kind of page you are on and adapts: senior-level pull request review on GitHub and GitLab, hint-first tutoring on LeetCode, HackerRank, CodeChef and Codeforces.",
+      "On StackOverflow it highlights the real answer and its caveats; on LinkedIn and job boards it gives career and skill-gap advice.",
+      "Plain-language breakdowns of research papers on arXiv and Google Scholar, and quick-start notes on documentation sites.",
+      "A side chat panel with multi-turn memory, backed by Cloudflare Workers.",
+    ],
+  },
+  nakung: {
+    platform: "Chrome",
+    category: "EducationalApplication",
+    facts: [
+      "A Chrome extension that turns every LeetCode problem into a place to be taught, not told.",
+      "A floating button opens a side-panel chat that recognises the problem you are solving.",
+      "Partner mode guides with Socratic questions; Reviewer mode questions you like a FAANG-level interviewer.",
+      "Powered by Llama 3.3 70B through Groq, behind a small serverless backend on Vercel.",
+      "Keeps conversation history and highlights code, with one-click copy.",
+    ],
+  },
+  "your-reviewer": {
+    platform: "Web",
+    category: "DeveloperApplication",
+    facts: [
+      "An open-source AI code review hub where you bring your own model: OpenAI, Claude, Groq or an open model.",
+      "Connect your own Model Context Protocol (MCP) servers so the reviewing agent can use your internal tools.",
+      "GitHub webhooks: raise a pull request and the agent analyses the diff and posts inline comments.",
+      "A Python FastAPI backend with SQLAlchemy and asynchronous workers on Redis and Celery; a React and Tailwind front end.",
+      "A VS Code extension is in progress.",
+    ],
+  },
+  redzone: {
+    platform: "Web",
+    category: "GovernmentApplication",
+    facts: [
+      "Decision support for a District Disaster Management Authority in Sikkim, built for Smart India Hackathon 2026.",
+      "Multi-hazard red zones (landslide, glacial lake outburst flood, seismic and flash flood) with weights calibrated on historical disaster loss rather than assumed.",
+      "Landslide susceptibility from a RandomForest model; seismic hazard anchored to the 2011 magnitude 6.9 Sikkim earthquake.",
+      "Carrying capacity and relocation priority per habitation; relocation solved as a capacitated assignment problem with SciPy and HiGHS.",
+      "A 25-year cost-benefit view per settlement and an AI-drafted report narrative, built with Python, GeoPandas, scikit-learn and FastAPI.",
+    ],
+  },
+  vaayu: {
+    platform: "Web",
+    category: "LifestyleApplication",
+    facts: [
+      "A carbon-footprint platform for India, built bottom-up.",
+      "One calculation engine serves three roles: an individual logging daily habits, a campus with a dashboard, and a city or government body reading a region.",
+      "Every logged day becomes one anonymised row in a dataset that does not exist today.",
+      "Built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, Prisma and PostgreSQL, with Auth.js campus-email sign-in.",
+    ],
+  },
+  talentsync: {
+    platform: "Web",
+    category: "BusinessApplication",
+    facts: [
+      "An AI career operating system that takes a job seeker from resume to interview pipeline.",
+      "Resume parsing and structured editing, weighted ATS scoring, and semantic job matching that explains itself.",
+      "AI resume tailoring, career roadmaps and skill-gap analysis.",
+      "Built with Next.js, Prisma and Neon Postgres, OpenAI chat and embeddings, Razorpay subscriptions and scheduled functions.",
+    ],
+  },
+  primer: {
+    platform: "Android, iOS",
+    category: "EducationalApplication",
+    facts: [
+      "An AI reading tutor for children aged five to nine.",
+      "It listens to a child read aloud, scores accuracy, and writes the next story at their level, seeded with the words they struggled with.",
+      "A parent dashboard shows streaks, accuracy trends and history.",
+      "Built with Expo and React Native in TypeScript.",
+    ],
+  },
+  youinst: {
+    platform: "Web",
+    category: "MultimediaApplication",
+    facts: [
+      "An autonomous studio that produces YouTube Shorts and Instagram Reels end to end.",
+      "Writes 30 to 40 second scripts with a Groq LLM, voices them with Edge TTS and scores the hook for retention.",
+      "Word-level captions from Whisper timestamps, burned in with ffmpeg, over AI-matched backgrounds.",
+      "Uploads to YouTube Shorts with OAuth, with multi-user accounts.",
+    ],
+  },
+  wastifi: {
+    platform: "Web",
+    category: "LifestyleApplication",
+    facts: [
+      "AI waste classification from a single photo, with confidence-aware recommendations.",
+      "Five categories: recyclable, organic, electronic, hazardous and general.",
+      "User dashboards, driver verification, map-based pickup tracking and environmental impact analytics.",
+      "Built with FastAPI, React and PostgreSQL.",
+    ],
+  },
+};
+
+/** Questions people (and answer engines) ask, answered plainly. Used on /about with FAQPage structured data. */
+export const faqs = [
+  {
+    q: "Who is Arunodoy Banerjee?",
+    a: "Arunodoy Banerjee is a backend-focused software engineer from India and a Computer Science (AI & ML) student at Sikkim Manipal Institute of Technology. He builds offline-first Android apps, AI developer tools, browser extensions and the systems underneath them.",
+  },
+  {
+    q: "What has Arunodoy Banerjee built?",
+    a: "His projects include Zone, an offline Bluetooth mesh network for disasters; Cadence, a speaking-first language-learning app; Nura, family nutrition tracking on Android; Meow AI and Nakung AI, Chrome extensions for developers; Your-Reviewer, open-source AI code review; RedZone, hazard and relocation planning for Sikkim; and Vaayu, a carbon-footprint platform.",
+  },
+  {
+    q: "What does Arunodoy Banerjee work with?",
+    a: "Java, Python, TypeScript, Kotlin, C and C++ and SQL; Spring Boot, FastAPI, Next.js, React and Jetpack Compose; Postgres, Redis, Celery and Docker on Azure and Google Cloud; and large language models, retrieval, MCP and agents.",
+  },
+  {
+    q: "Where is Arunodoy Banerjee based?",
+    a: "He studies at Sikkim Manipal Institute of Technology in Rangpo, Sikkim, India (2024 to 2028).",
+  },
+  {
+    q: "Is Arunodoy Banerjee open to internships or collaboration?",
+    a: "Yes. He is open to internships, collaborations and engineering roles, and is preparing for Google Summer of Code 2026. The best way to reach him is by email at barun4927@gmail.com.",
+  },
+  {
+    q: "What is Zone by Arunodoy Banerjee?",
+    a: "Zone is a native Android app that lets phones pass a tiny distress signal from hand to hand over Bluetooth when every network is down, with no servers and no internet, until it walks out of the disaster zone in someone's pocket.",
+  },
+];

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SubPage from "@/site/SubPage";
+import { breadcrumbs, graph, personId, siteUrl as SITE } from "@/site/seo";
 import { profile } from "@/site/data";
 
 const siteUrl = "https://aruno.buildc3.tech";
@@ -37,6 +38,15 @@ export default function ContactPage() {
       title="CONTACT"
       lead="If it has to work when everything else doesn't, write to me. Open to internships, collaborations and engineering roles."
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: graph(
+            { "@type": "ContactPage", "@id": `${SITE}/contact`, url: `${SITE}/contact`, name: "Contact · Arunodoy Banerjee", about: { "@id": personId } },
+            breadcrumbs([{ name: "Contact", path: "/contact" }]),
+          ),
+        }}
+      />
       <ul>
         {links.map((l) => (
           <li key={l.label} className="border-t border-ink/15">

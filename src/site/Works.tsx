@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import Glyph from "./Glyph";
 import { Wormhole } from "./Notes";
 import { projects, type Project } from "./data";
@@ -96,6 +97,9 @@ function Entry({ p, i, index }: { p: Project; i: number; index: number }) {
             ))}
           </div>
           <div className="mt-5 flex gap-5 border-t border-paper/15 pt-3 font-mono text-[10px] tracking-[0.2em]">
+            <Link href={`/projects/${p.slug}`} data-cursor="hover" className="link-u">
+              DETAILS →
+            </Link>
             {p.live && (
               <a href={p.live} target="_blank" rel="noreferrer" data-cursor="hover" className="link-u">
                 VISIT ↗

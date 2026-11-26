@@ -71,7 +71,7 @@ export default function Opening() {
   const intro = useRef<HTMLDivElement>(null);
   const word = useRef<HTMLSpanElement>(null);
   const flyer = useRef<HTMLDivElement>(null);
-  const head = useRef<HTMLHeadingElement>(null);
+  const head = useRef<HTMLParagraphElement>(null);
   const tail = useRef<HTMLSpanElement>(null);
   const art = useRef<HTMLParagraphElement>(null);
   const welcome = useRef<HTMLDivElement>(null);
@@ -232,7 +232,7 @@ export default function Opening() {
         </div>
 
         {/* headline */}
-        <h1
+        <p
           ref={head}
           aria-label={`Engineering, as art — ${profile.first} ${profile.last}`}
           className="cast absolute left-[3.2vw] top-[11vh] whitespace-nowrap text-[clamp(44px,7.4vw,150px)] leading-none text-ink opacity-0"
@@ -243,7 +243,7 @@ export default function Opening() {
           <span ref={tail} aria-hidden className="inline-block" style={{ clipPath: "inset(-50% 100% -50% 0)" }}>
             <Letters text="ING," />
           </span>
-        </h1>
+        </p>
 
         <p
           ref={art}

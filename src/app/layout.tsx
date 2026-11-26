@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
+import { fullName, graph, personSchema, siteUrl, websiteSchema } from "@/site/seo";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const newsreader = Newsreader({
@@ -13,83 +14,59 @@ const newsreader = Newsreader({
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
 
-const siteUrl = "https://aruno.buildc3.tech";
-const personId = `${siteUrl}#person`;
-const webSiteId = `${siteUrl}#website`;
-const title = "Arunodoy Banerjee — Engineering, as art";
+const title = `${fullName} — Software Engineer (Backend & AI)`;
 const description =
-  "Arunodoy Banerjee is a backend-focused engineer building offline mesh networks, AI developer tools, Android apps and the systems underneath them: Zone, Cadence, Nura, Meow AI, Nakung AI and more.";
+  "Arunodoy Banerjee is a backend and AI software engineer from India building offline-first Android apps, AI developer tools and browser extensions: Zone, Cadence, Nura, Meow AI, Nakung AI, Your-Reviewer and more.";
 
-const webSiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "@id": webSiteId,
-  name: "Arunodoy Banerjee",
-  url: siteUrl,
-  inLanguage: "en",
-  description,
-  publisher: { "@id": personId },
-};
+// the person every page is about; the CI guard looks for this declaration here
+const personNode = { ...personSchema, "@type": "Person" };
 
-const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "@id": personId,
-  name: "Arunodoy Banerjee",
-  jobTitle: "Software Engineer",
-  description,
-  url: siteUrl,
-  image: `${siteUrl}/work/portrait.jpg`,
-  alumniOf: { "@type": "CollegeOrUniversity", name: "Sikkim Manipal Institute of Technology" },
-  sameAs: ["https://github.com/Arunodoy18", "https://www.linkedin.com/in/arunodoy-banerjee-214251342/"],
-  knowsAbout: [
-    "Backend Engineering",
-    "Distributed Systems",
-    "Java",
-    "Spring Boot",
-    "Python",
-    "FastAPI",
-    "Android",
-    "Bluetooth Mesh Networking",
-    "Large Language Models",
-    "Browser Extensions",
-  ],
-};
-
-const rootStructuredData = {
-  "@context": "https://schema.org",
-  "@graph": [webSiteSchema, personSchema],
-};
+const rootStructuredData = graph(websiteSchema, personNode);
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: title, template: "%s | Arunodoy Banerjee" },
+  title: { default: title, template: `%s | ${fullName}` },
   description,
+  applicationName: fullName,
+  authors: [{ name: fullName, url: siteUrl }],
+  creator: fullName,
+  publisher: fullName,
+  category: "technology",
   keywords: [
     "Arunodoy Banerjee",
+    "Arunodoy",
     "Software Engineer",
     "Backend Developer",
-    "Zone offline mesh",
-    "Cadence",
-    "Nura",
-    "Meow AI",
-    "Nakung AI",
+    "AI Engineer",
+    "Sikkim Manipal Institute of Technology",
+    "Zone offline mesh network",
+    "Cadence language app",
+    "Nura nutrition app",
+    "Meow AI Chrome extension",
+    "Nakung AI LeetCode extension",
     "Portfolio",
   ],
-  alternates: { canonical: siteUrl },
+  alternates: { canonical: `${siteUrl}/` },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   openGraph: {
     type: "website",
-    url: siteUrl,
-    title,
+    url: `${siteUrl}/`,
+    title: `${fullName} — Engineering, as art`,
     description,
-    siteName: "Arunodoy Banerjee",
-    images: [{ url: `${siteUrl}/og.jpg`, width: 1200, height: 630, alt: "Engineering, as art — Arunodoy Banerjee" }],
+    siteName: fullName,
+    locale: "en_IN",
+    images: [{ url: `${siteUrl}/og.jpg`, width: 1200, height: 630, alt: `Engineering, as art — ${fullName}` }],
   },
   twitter: {
     card: "summary_large_image",
-    title,
+    title: `${fullName} — Engineering, as art`,
     description,
     images: [`${siteUrl}/og.jpg`],
+  },
+  // filled in from the environment once the site is verified in Google Search Console / Bing Webmaster Tools
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } : undefined,
   },
 };
 
@@ -110,7 +87,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             __html: `try{localStorage.removeItem("theme");var t=sessionStorage.getItem("theme");if(t!=="ink"&&t!=="paper"){var h=new Date().getHours();t=h>=19||h<6?"ink":"paper"}document.documentElement.dataset.theme=t}catch(e){}`,
           }}
         />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(rootStructuredData) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: rootStructuredData }} />
       </head>
       <body>{children}</body>
     </html>

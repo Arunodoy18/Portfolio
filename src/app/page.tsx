@@ -16,6 +16,7 @@ export default function Home() {
       <main className="focus-in">
         {/* plain-text layer for screen readers and crawlers */}
         <div className="sr-only">
+          <h1>Arunodoy Banerjee — Software Engineer (Backend &amp; AI)</h1>
           <p>
             {profile.first} {profile.last} is a backend-focused software engineer from {profile.place}, studying Computer
             Science (AI &amp; ML) at Sikkim Manipal Institute of Technology and preparing for GSoC 2026.
@@ -23,7 +24,7 @@ export default function Home() {
           <ul>
             {projects.map((p) => (
               <li key={p.slug}>
-                {p.name}: {p.line}
+                <a href={`/projects/${p.slug}`}>{p.name}</a>: {p.line}
               </li>
             ))}
           </ul>
