@@ -69,7 +69,7 @@ export const metadata: Metadata = {
   },
   // filled in from the environment once the site is verified in Google Search Console / Bing Webmaster Tools
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "S2mFQRe62roIki_4vRx8SpJuTx_CoiLfkQ5CtYJRteQ",
     other: process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION } : undefined,
   },
 };
