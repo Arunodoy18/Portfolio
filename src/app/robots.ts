@@ -4,7 +4,7 @@ import { siteUrl } from "@/site/seo";
 export const dynamic = "force-static";
 
 // search engines and AI answer engines are all welcome.
-// (the old resume PDF is kept out of results by an X-Robots-Tag noindex header in netlify.toml,
+// (the resume PDF is kept out of results by an X-Robots-Tag noindex header in netlify.toml,
 // which crawlers can only see if they are allowed to fetch it)
 const AI_CRAWLERS = [
   "GPTBot",

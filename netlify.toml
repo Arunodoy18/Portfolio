@@ -42,8 +42,16 @@
     Content-Type = "text/plain; charset=utf-8"
     Cache-Control = "public, max-age=3600"
 
-# the old resume (it contains a phone number): keep it out of search results
+# the resume is there to download, but it carries a phone number: keep it out of search results
 [[headers]]
-  for = "/ARUNODOY.pdf"
+  for = "/Arunodoy_Banerjee_Resume.pdf"
   [headers.values]
-    X-Robots-Tag = "noindex, nofollow, noarchive"
+    X-Robots-Tag = "noindex, noarchive"
+    Content-Disposition = "inline; filename=\"Arunodoy_Banerjee_Resume.pdf\""
+
+# the old resume address now points at the current one
+[[redirects]]
+  from = "/ARUNODOY.pdf"
+  to = "/Arunodoy_Banerjee_Resume.pdf"
+  status = 301
+  force = true

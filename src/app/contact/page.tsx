@@ -31,6 +31,7 @@ export default function ContactPage() {
     { label: "GitHub", href: profile.github, note: "Arunodoy18" },
     { label: "LinkedIn", href: profile.linkedin, note: "arunodoy-banerjee" },
     { label: "LeetCode", href: profile.leetcode, note: "Arunodoy_45" },
+    { label: "Resume", href: profile.resume, note: "PDF · download" },
   ];
   return (
     <SubPage

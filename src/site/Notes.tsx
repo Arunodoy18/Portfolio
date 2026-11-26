@@ -37,6 +37,7 @@ function Contact() {
     { label: "GitHub", href: profile.github, note: "Arunodoy18" },
     { label: "LinkedIn", href: profile.linkedin, note: "arunodoy-banerjee" },
     { label: "LeetCode", href: profile.leetcode, note: "Arunodoy_45" },
+    { label: "Resume", href: profile.resume, note: "PDF · download" },
   ];
   return (
     <section id="contact" data-plate="05 — RESOLUTION" className="relative overflow-hidden bg-paper px-[3.2vw] pb-[12vh] pt-[14vh] text-ink">
@@ -91,7 +92,7 @@ function Contact() {
         </div>
 
         {/* the tiles */}
-        <ul className="grid grid-cols-3 gap-[1.2vw] pt-[6vh] md:col-span-7">
+        <ul className="grid grid-cols-2 gap-[1.2vw] pt-[6vh] sm:grid-cols-4 md:col-span-7">
           {tiles.map((t) => (
             <li key={t.label}>
               <a href={t.href} target="_blank" rel="noreferrer" data-cursor="hover" className="group block">

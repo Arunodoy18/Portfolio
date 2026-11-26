@@ -63,6 +63,12 @@ export default function AboutPage() {
             <Link className="underline" href="/projects">projects page</Link>.
           </p>
           <p>
+            <a className="underline" href={profile.resume}>
+              Download my resume (PDF)
+            </a>
+            .
+          </p>
+          <p>
             I study Computer Science (AI &amp; ML) at Sikkim Manipal Institute of Technology, {profile.years}, contribute to open source
             and am preparing for GSoC 2026.
           </p>

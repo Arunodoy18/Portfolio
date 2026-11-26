@@ -3,6 +3,7 @@ export const profile = {
   last: "BANERJEE",
   role: "ENGINEER",
   email: "barun4927@gmail.com",
+  resume: "/Arunodoy_Banerjee_Resume.pdf",
   github: "https://github.com/Arunodoy18",
   linkedin: "https://www.linkedin.com/in/arunodoy-banerjee-214251342/",
   leetcode: "https://leetcode.com/u/Arunodoy_45/",
