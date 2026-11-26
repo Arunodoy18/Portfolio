@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import SubPage from "@/site/SubPage";
-import { projectDetails, projects } from "@/site/data";
-import { breadcrumbs, fullName, graph, personId, projectUrl, siteUrl } from "@/site/seo";
+import { metaDescriptions, projectDetails, projects, webp } from "@/site/data";
+import { alternatesFor, breadcrumbs, fullName, graph, personId, projectUrl, siteUrl } from "@/site/seo";
 
 export const dynamicParams = false;
 
@@ -15,19 +15,19 @@ type Params = { params: Promise<{ slug: string }> };
 
 // short, search-shaped titles (Google shows about 60 characters)
 const seoTitle: Record<string, string> = {
-  zone: "Zone — Offline Bluetooth Mesh Network App",
-  cadence: "Cadence — Speaking-First Language Learning App",
-  nura: "Nura — Family Nutrition Tracking App",
+  zone: "Zone — Offline Bluetooth Mesh App",
+  cadence: "Cadence — Speaking-First Language App",
+  nura: "Nura — Family Nutrition Tracker App",
   meow: "Meow AI — AI Copilot Chrome Extension",
-  nakung: "Nakung AI — LeetCode AI Tutor Extension",
-  "your-reviewer": "Your-Reviewer — Open-Source AI Code Review",
-  redzone: "RedZone — Disaster Hazard & Relocation Planning",
-  vaayu: "Vaayu — Carbon Footprint Platform for India",
-  talentsync: "TalentSync — AI Career Operating System",
+  nakung: "Nakung AI — LeetCode AI Tutor",
+  "your-reviewer": "Your-Reviewer — AI Code Review Tool",
+  redzone: "RedZone — Disaster Relocation Planning",
+  vaayu: "Vaayu — Carbon Footprint Platform",
+  talentsync: "TalentSync — AI Career Platform",
   primer: "Primer — AI Reading Tutor for Kids",
-  youinst: "YouInst — Autonomous Shorts & Reels Studio",
-  wastifi: "Wastifi — AI Waste Classification App",
-  leadradar: "LeadRadar — AI Outreach Automation SaaS",
+  youinst: "YouInst — AI Shorts & Reels Studio",
+  wastifi: "Wastifi — AI Waste Classification",
+  leadradar: "LeadRadar — AI Outreach Automation",
 };
 
 const kindLabel = { App: "app", Extension: "browser extension", Platform: "platform", System: "system", Agent: "AI agent" } as const;
@@ -44,12 +44,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!p) return {};
   const d = projectDetails[slug];
   const title = seoTitle[slug] ?? `${p.name} — ${p.line.replace(/\.$/, "")}`;
-  const description = `${p.name} is ${describe(p.kind, d?.platform)} by ${fullName}. ${p.body}`.slice(0, 300);
+  const description = metaDescriptions[slug] ?? `${p.name} is ${describe(p.kind, d?.platform)} by ${fullName}. ${p.line}`;
   const image = p.image ? `${siteUrl}${p.image}` : `${siteUrl}/og.jpg`;
   return {
     title,
     description,
-    alternates: { canonical: projectUrl(slug) },
+    alternates: alternatesFor(`/projects/${slug}`),
     keywords: [p.name, `${p.name} app`, fullName, ...p.stack],
     openGraph: { type: "article", url: projectUrl(slug), title: `${p.name} · ${fullName}`, description, images: [{ url: image, alt: `${p.name} by ${fullName}` }] },
     twitter: { card: "summary_large_image", title: `${p.name} · ${fullName}`, description, images: [image] },
@@ -106,7 +106,7 @@ export default async function ProjectPage({ params }: Params) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: graph(page, app, faq, breadcrumbs([{ name: "Projects", path: "/projects" }, { name: p.name, path: `/projects/${slug}` }])) }}
       />
-      <nav aria-label="Breadcrumb" className="-mt-8 mb-10 font-mono text-[10px] tracking-[0.18em] text-ink/50">
+      <nav aria-label="Breadcrumb" className="-mt-8 mb-10 font-mono text-[10px] tracking-[0.18em] text-ink/65">
         <Link href="/" className="link-u">HOME</Link> / <Link href="/projects" className="link-u">PROJECTS</Link> / <span className="text-ink">{p.name.toUpperCase()}</span>
       </nav>
 
@@ -114,8 +114,11 @@ export default async function ProjectPage({ params }: Params) {
         <div>
           <p className="max-w-[62ch] text-[17px] leading-relaxed text-ink/85">{p.body}</p>
           {p.image && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={p.image} alt={`${p.name} by ${fullName}: screenshot`} width={1440} height={900} className="mt-8 w-full border border-ink/15" loading="lazy" />
+             
+            <picture>
+              <source srcSet={webp(p.image)} type="image/webp" />
+              <img src={p.image} alt={`${p.name} by ${fullName}: screenshot`} width={1440} height={900} className="mt-8 w-full border border-ink/15" loading="lazy" decoding="async" />
+            </picture>
           )}
           {d && (
             <>
@@ -144,23 +147,23 @@ export default async function ProjectPage({ params }: Params) {
 
         <aside className="space-y-6 font-mono text-[11px] tracking-[0.12em]">
           <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
-            <dt className="text-ink/45">TYPE</dt>
+            <dt className="text-ink/65">TYPE</dt>
             <dd>{p.kind.toUpperCase()}</dd>
             {d && (
               <>
-                <dt className="text-ink/45">RUNS ON</dt>
+                <dt className="text-ink/65">RUNS ON</dt>
                 <dd>{d.platform.toUpperCase()}</dd>
               </>
             )}
-            <dt className="text-ink/45">YEAR</dt>
+            <dt className="text-ink/65">YEAR</dt>
             <dd>{p.year}</dd>
-            <dt className="text-ink/45">BY</dt>
+            <dt className="text-ink/65">BY</dt>
             <dd>
               <Link href="/about" className="link-u">{fullName.toUpperCase()}</Link>
             </dd>
           </dl>
           <div>
-            <p className="text-ink/45">STACK</p>
+            <p className="text-ink/65">STACK</p>
             <ul className="mt-2 space-y-1">
               {p.stack.map((s) => (
                 <li key={s}>{s.toUpperCase()}</li>
@@ -183,7 +186,7 @@ export default async function ProjectPage({ params }: Params) {
       </div>
 
       <section className="mt-20 border-t border-ink/15 pt-8">
-        <h2 className="font-mono text-[10px] tracking-[0.25em] text-ink/50">MORE WORK BY {fullName.toUpperCase()}</h2>
+        <h2 className="font-mono text-[10px] tracking-[0.25em] text-ink/65">MORE WORK BY {fullName.toUpperCase()}</h2>
         <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2 md:grid-cols-3">
           {others.map((o) => (
             <li key={o.slug}>

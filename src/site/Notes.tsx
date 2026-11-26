@@ -48,14 +48,14 @@ function Contact() {
         <div className="relative flex flex-col justify-center bg-ink px-[2.4vw] py-[4vh] text-paper md:col-span-9">
           <h2 className="cast text-[clamp(40px,7.4vw,150px)] leading-[0.86]">
             <span className="block">Full resolution</span>
-            <span className="block text-paper/45">is a conversation</span>
+            <span className="block text-paper/65">is a conversation</span>
           </h2>
-          <p className="mt-5 font-mono text-[10px] tracking-[0.22em] text-paper/55">05 — RESOLUTION · OPEN TO INTERNSHIPS, COLLABORATIONS &amp; HARD PROBLEMS</p>
+          <p className="mt-5 font-mono text-[10px] tracking-[0.22em] text-paper/65">05 — RESOLUTION · OPEN TO INTERNSHIPS, COLLABORATIONS &amp; HARD PROBLEMS</p>
         </div>
         <figure className="relative min-h-[30vh] overflow-hidden bg-ink md:col-span-3">
           <div
             className="absolute inset-0 bg-cover bg-top grayscale contrast-125 transition duration-700 hover:grayscale-0"
-            style={{ backgroundImage: "url(/work/contact.jpg)" }}
+            data-bg="/work/contact.webp"
             role="img"
             aria-label={`${profile.first} ${profile.last} in the hills of Sikkim`}
           />
@@ -84,7 +84,7 @@ function Contact() {
             >
               {copied ? "COPIED" : "COPY ADDRESS"}
             </button>
-            <span className="self-center font-mono text-[9.5px] tracking-[0.18em] text-ink/50">REPLIES WITHIN A DAY</span>
+            <span className="self-center font-mono text-[9.5px] tracking-[0.18em] text-ink/65">REPLIES WITHIN A DAY</span>
           </div>
           <p className="mt-8 max-w-[34ch] font-serif text-[clamp(15px,1.25vw,19px)] italic leading-snug text-ink/70">
             If it has to work when everything else doesn&rsquo;t, write to me. I read every message.
@@ -114,11 +114,15 @@ function Footer() {
   const time = useLocalTime();
   return (
     <footer className="relative bg-paper px-[3.2vw] pb-8 pt-6 text-ink">
-      <div className="flex flex-col gap-3 border-t border-ink/15 pt-4 font-mono text-[10px] tracking-[0.18em] text-ink/55 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-3 border-t border-ink/15 pt-4 font-mono text-[10px] tracking-[0.18em] text-ink/65 md:flex-row md:items-center md:justify-between">
         <span>
           <span className="tabular-nums text-ink">{time}</span> · LOCAL TIME IN {profile.place.toUpperCase()}
         </span>
-        <span>SET IN ARCHIVO, NEWSREADER &amp; GEIST</span>
+        <span className="flex gap-4">
+          <a href="/notes" className="link-u">NOTES</a>
+          <a href="/privacy" className="link-u">PRIVACY</a>
+          <span>SET IN ARCHIVO, NEWSREADER &amp; GEIST</span>
+        </span>
         <span>
           © {new Date().getFullYear()} {profile.first} {profile.last}
         </span>

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import SubPage from "@/site/SubPage";
-import { experience, faqs, practice, profile, projects, recognition } from "@/site/data";
-import { breadcrumbs, fullName, graph, jobTitle, personId, personSchema, shortBio, siteUrl, zoneOrg } from "@/site/seo";
+import { experience, faqs, metaDescriptions, practice, profile, projects, recognition } from "@/site/data";
+import { alternatesFor, breadcrumbs, fullName, graph, jobTitle, personId, personSchema, shortBio, siteUrl, zoneOrg } from "@/site/seo";
 
 export const metadata: Metadata = {
   title: { absolute: `About ${fullName} — ${jobTitle}` },
-  description: shortBio,
-  alternates: { canonical: `${siteUrl}/about` },
+  description: metaDescriptions.about,
+  alternates: alternatesFor("/about"),
   openGraph: {
     type: "profile",
     url: `${siteUrl}/about`,
@@ -74,9 +74,12 @@ export default function AboutPage() {
           </p>
         </div>
         <figure>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/work/portrait.jpg" alt={`${fullName}, standing on stone steps in a garden in Sikkim`} width={720} height={960} className="w-full grayscale" />
-          <figcaption className="mt-2 font-mono text-[10px] tracking-[0.18em] text-ink/50">{profile.place.toUpperCase()}</figcaption>
+          { }
+          <picture>
+            <source srcSet="/work/portrait.webp" type="image/webp" />
+            <img src="/work/portrait.jpg" alt={`${fullName}, standing on stone steps in a garden in Sikkim`} width={720} height={960} className="w-full grayscale" decoding="async" />
+          </picture>
+          <figcaption className="mt-2 font-mono text-[10px] tracking-[0.18em] text-ink/65">{profile.place.toUpperCase()}</figcaption>
         </figure>
       </div>
 
@@ -119,11 +122,11 @@ export default function AboutPage() {
       <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 font-mono text-[11px] tracking-[0.1em]">
         {practice.groups.map((g) => (
           <div key={g.label} className="contents">
-            <dt className="text-ink/45">{g.label.toUpperCase()}</dt>
+            <dt className="text-ink/65">{g.label.toUpperCase()}</dt>
             <dd>{g.items.join(" · ")}</dd>
           </div>
         ))}
-        <dt className="text-ink/45">BASED IN</dt>
+        <dt className="text-ink/65">BASED IN</dt>
         <dd>{profile.place}</dd>
       </dl>
 

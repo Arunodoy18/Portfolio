@@ -33,7 +33,7 @@
 [[headers]]
   for = "/work/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800"
+    Cache-Control = "public, max-age=2592000"
 
 # plain-text guides for AI answer engines
 [[headers]]
@@ -48,6 +48,127 @@
   [headers.values]
     X-Robots-Tag = "noindex, noarchive"
     Content-Disposition = "inline; filename=\"Arunodoy_Banerjee_Resume.pdf\""
+
+# one address per page: the .html copies point at the clean URLs
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/about.html"
+  to = "/about"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects.html"
+  to = "/projects"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contact.html"
+  to = "/contact"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/open-source.html"
+  to = "/open-source"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/notes.html"
+  to = "/notes"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/privacy.html"
+  to = "/privacy"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/zone.html"
+  to = "/projects/zone"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/cadence.html"
+  to = "/projects/cadence"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/nura.html"
+  to = "/projects/nura"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/meow.html"
+  to = "/projects/meow"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/nakung.html"
+  to = "/projects/nakung"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/your-reviewer.html"
+  to = "/projects/your-reviewer"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/redzone.html"
+  to = "/projects/redzone"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/vaayu.html"
+  to = "/projects/vaayu"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/talentsync.html"
+  to = "/projects/talentsync"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/leadradar.html"
+  to = "/projects/leadradar"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/primer.html"
+  to = "/projects/primer"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/youinst.html"
+  to = "/projects/youinst"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/projects/wastifi.html"
+  to = "/projects/wastifi"
+  status = 301
+  force = true
 
 # the old resume address now points at the current one
 [[redirects]]

@@ -111,6 +111,12 @@ export function breadcrumbs(items: { name: string; path: string }[]) {
   };
 }
 
+/** canonical URL plus hreflang (English, and x-default for everyone else) */
+export const alternatesFor = (path: string) => {
+  const url = `${siteUrl}${path === "/" ? "/" : path}`;
+  return { canonical: url, languages: { en: url, "x-default": url } };
+};
+
 export const projectUrl = (slug: string) => `${siteUrl}/projects/${slug}`;
 
 export const projectList = {

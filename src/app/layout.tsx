@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, Geist, Geist_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
-import { fullName, graph, personSchema, siteUrl, websiteSchema, zoneOrg } from "@/site/seo";
+import { metaDescriptions } from "@/site/data";
+import { alternatesFor, fullName, graph, personSchema, siteUrl, websiteSchema, zoneOrg } from "@/site/seo";
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 const newsreader = Newsreader({
@@ -15,8 +16,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "sw
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });
 
 const title = `${fullName} — Software Engineer (Backend & AI)`;
-const description =
-  "Arunodoy Banerjee is a backend and AI software engineer from India, founder of Zone (incubated at AIC-SMUTBI) and AI automation developer at buildc3.tech. He builds offline-first Android apps, AI developer tools and browser extensions.";
+const description = metaDescriptions.home;
 
 // the person every page is about; the CI guard looks for this declaration here
 const personNode = { ...personSchema, "@type": "Person" };
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     "LeadRadar",
     "Portfolio",
   ],
-  alternates: { canonical: `${siteUrl}/` },
+  alternates: alternatesFor("/"),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   openGraph: {
     type: "website",

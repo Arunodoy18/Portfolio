@@ -20,7 +20,7 @@ export default function Bio() {
 
   useEffect(() => {
     const i = new Image();
-    i.src = "/work/portrait.jpg";
+    i.src = "/work/portrait.webp";
     i.onload = () => {
       img.current = i;
       lastN.current = 0;
@@ -89,7 +89,7 @@ export default function Bio() {
 
         {/* dotted field */}
         <div data-r="2" className="relative col-span-5 hidden border border-ink/10 md:block">
-          <Wormhole className="absolute inset-0 h-full w-full text-ink/45" />
+          <Wormhole className="absolute inset-0 h-full w-full text-ink/65" />
           <div className="absolute right-3 top-3 text-right font-mono text-[9px] leading-relaxed tracking-[0.18em] text-ink/60">
             {profile.place.toUpperCase()}
             <br />
@@ -102,7 +102,7 @@ export default function Bio() {
 
         {/* portrait */}
         <figure data-r="1" className="relative col-span-6 aspect-[3/4] md:col-span-3 md:aspect-auto">
-          <canvas ref={canvas} className="h-full w-full bg-ink/5" aria-label={`Portrait of ${profile.first} ${profile.last}`} />
+          <canvas ref={canvas} role="img" className="h-full w-full bg-ink/5" aria-label={`Portrait of ${profile.first} ${profile.last}`} />
           <figcaption className="absolute -bottom-6 left-0 font-mono text-[9px] tracking-[0.2em] text-ink/60">
             SAMPLED AT <span ref={sampled}>1 × 1</span>
           </figcaption>
@@ -111,25 +111,25 @@ export default function Bio() {
         {/* field notes */}
         <div data-r="3" className="col-span-6 flex flex-col justify-between font-mono text-[10px] leading-relaxed text-ink/75 md:col-span-3">
           <div>
-            <p className="mb-3 tracking-[0.2em] text-ink/50">FIELD NOTES</p>
+            <p className="mb-3 tracking-[0.2em] text-ink/65">FIELD NOTES</p>
             <p>Backend-first. Java, Python and distributed systems by trade; Android, extensions and agents when the problem calls for it.</p>
             <p className="mt-3">I build software for the moments it is needed most: when the network is gone, when the page is confusing, when the habit needs to become a skill.</p>
           </div>
           <dl className="mt-6 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-[9px] tracking-[0.12em]">
-            <dt className="text-ink/45">STUDY</dt>
+            <dt className="text-ink/65">STUDY</dt>
             <dd>B.TECH CSE · AI &amp; ML</dd>
-            <dt className="text-ink/45">AT</dt>
+            <dt className="text-ink/65">AT</dt>
             <dd>SMIT, {profile.placeShort}</dd>
-            <dt className="text-ink/45">YEARS</dt>
+            <dt className="text-ink/65">YEARS</dt>
             <dd>{profile.years}</dd>
-            <dt className="text-ink/45">NOW</dt>
+            <dt className="text-ink/65">NOW</dt>
             <dd>FOUNDER, ZONE · AI AUTOMATION, BUILDC3</dd>
           </dl>
         </div>
 
         {/* dark panel */}
         <div data-r="4" className="relative col-span-12 min-h-[34vh] overflow-hidden bg-ink text-paper md:col-span-6 md:min-h-0">
-          <div className="absolute inset-0 bg-cover bg-center opacity-25 blur-[2px] grayscale" style={{ backgroundImage: "url(/work/zone.jpg)" }} />
+          <div className="absolute inset-0 bg-cover bg-center opacity-25 blur-[2px] grayscale" data-bg="/work/zone.webp" />
           <div className="absolute left-4 top-4 font-mono text-[9px] leading-relaxed tracking-[0.18em] text-paper/80">
             <p>ROLE · {profile.role}</p>
             <p>FOCUS · BACKEND · SYSTEMS · AI</p>

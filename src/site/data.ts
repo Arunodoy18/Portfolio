@@ -105,11 +105,10 @@ export const projects: Project[] = [
     name: "Your-Reviewer",
     kind: "Platform",
     year: "2026",
-    line: "Open-source AI code review. Bring your own model.",
+    line: "AI code review. Bring your own model.",
     body:
       "Plug in any LLM, connect your own MCP servers and let an agent review every pull request through GitHub webhooks. FastAPI with async workers on the back, React on the front, a VS Code extension on the way.",
     stack: ["FastAPI", "Celery", "Redis", "React", "MCP"],
-    code: "https://github.com/Arunodoy18/Your-reviewer",
     glyph: "diamond",
   },
   {
@@ -145,7 +144,6 @@ export const projects: Project[] = [
     body:
       "Resume parsing, weighted ATS scoring, semantic job matching with explanations, AI tailoring and skill-gap roadmaps, with subscriptions and scheduled jobs running underneath.",
     stack: ["Next.js", "OpenAI", "Prisma", "Razorpay"],
-    code: "https://github.com/Arunodoy18/TalentSync",
     glyph: "rings",
   },
   {
@@ -209,7 +207,10 @@ export const practice = {
   ],
 };
 
-export const images = ["/work/zone.jpg", "/work/nura.jpg", "/work/cadence.jpg", "/work/nakung.jpg", "/work/wastifi.jpg", "/work/zone-install.jpg"];
+/** the on-page copy of an image: smaller WebP next to the JPEG kept for social cards */
+export const webp = (path: string) => path.replace(/\.jpe?g$/, ".webp");
+
+export const images = ["/work/zone.webp", "/work/nura.webp", "/work/cadence.webp", "/work/nakung.webp", "/work/wastifi.webp", "/work/zone-install.webp"];
 
 /** Notes on the plane: short pieces about the work, each placed by hand on a 3000 x 2300 board. */
 export type Note = {
@@ -227,16 +228,16 @@ export type Note = {
 };
 
 export const notes: Note[] = [
-  { id: "N-01", kind: "Essay", title: "Silence is a signal", body: "In a disaster the scary thing isn't a message. It's a phone that stops talking. So every Zone packet says when it will speak again.", href: "https://github.com/Arunodoy18/TheZone", link: "Read the source", year: "2026", image: "/work/zone.jpg", x: 110, y: 40 },
-  { id: "N-02", kind: "Photographs", title: "Where the network forgets", body: "I study in the hills of Sikkim. Up here a dropped signal isn't an outage, it's the weather. That's why my things work offline.", year: "2026", image: "/work/hills.jpg", x: 640, y: 110 },
-  { id: "N-03", kind: "Essay", title: "Talking, not tapping", body: "A streak teaches you to open an app. It doesn't teach you to speak. Cadence puts you in a real conversation from day one.", href: "https://github.com/Arunodoy18/Cadence", link: "Read the source", year: "2026", image: "/work/cadence.jpg", x: 1420, y: 560 },
-  { id: "N-04", kind: "Essay", title: "Hints before answers", body: "The fastest way to stop learning is to be handed the answer. Nakung sits beside the problem and asks the next good question.", href: "https://github.com/Arunodoy18/Nakung", link: "Read the source", year: "2025", image: "/work/nakung.jpg", x: 2180, y: 600 },
-  { id: "N-05", kind: "Essay", title: "Bring your own model", body: "My code reviews shouldn't depend on one company's mood. Your-Reviewer works with whatever model, and whatever tools, you trust.", href: "https://github.com/Arunodoy18/Your-reviewer", link: "Read the source", year: "2026", x: 90, y: 960 },
-  { id: "N-06", kind: "Photographs", title: "The long way up", body: "Stone steps, tea gardens, too much green. The kind of walk where the ideas on this page sort themselves out.", year: "2026", image: "/work/steps.jpg", x: 660, y: 990, w: 300 },
+  { id: "N-01", kind: "Essay", title: "Silence is a signal", body: "In a disaster the scary thing isn't a message. It's a phone that stops talking. So every Zone packet says when it will speak again.", href: "https://github.com/Arunodoy18/TheZone", link: "Read the source", year: "2026", image: "/work/zone.webp", x: 110, y: 40 },
+  { id: "N-02", kind: "Photographs", title: "Where the network forgets", body: "I study in the hills of Sikkim. Up here a dropped signal isn't an outage, it's the weather. That's why my things work offline.", year: "2026", image: "/work/hills.webp", x: 640, y: 110 },
+  { id: "N-03", kind: "Essay", title: "Talking, not tapping", body: "A streak teaches you to open an app. It doesn't teach you to speak. Cadence puts you in a real conversation from day one.", href: "https://github.com/Arunodoy18/Cadence", link: "Read the source", year: "2026", image: "/work/cadence.webp", x: 1420, y: 560 },
+  { id: "N-04", kind: "Essay", title: "Hints before answers", body: "The fastest way to stop learning is to be handed the answer. Nakung sits beside the problem and asks the next good question.", href: "https://github.com/Arunodoy18/Nakung", link: "Read the source", year: "2025", image: "/work/nakung.webp", x: 2180, y: 600 },
+  { id: "N-05", kind: "Essay", title: "Bring your own model", body: "My code reviews shouldn't depend on one company's mood. Your-Reviewer works with whatever model, and whatever tools, you trust.", href: "/projects/your-reviewer", link: "Read more", year: "2026", x: 90, y: 960 },
+  { id: "N-06", kind: "Photographs", title: "The long way up", body: "Stone steps, tea gardens, too much green. The kind of walk where the ideas on this page sort themselves out.", year: "2026", image: "/work/steps.webp", x: 660, y: 990, w: 300 },
   { id: "N-07", kind: "Essay", title: "Calibrated, not assumed", body: "When someone may move their home because of your number, the weights come from history, not a hunch. That was RedZone's one rule.", href: "https://github.com/Arunodoy18/SIH_2026", link: "Read the source", year: "2026", x: 90, y: 1560 },
-  { id: "N-08", kind: "Essay", title: "A photo becomes a plan", body: "Nobody has the patience to log every meal. Nura takes a photo, a barcode or a sentence, and keeps a child's targets safe.", href: "https://github.com/Arunodoy18/NutTrack", link: "Read the source", year: "2026", image: "/work/nura.jpg", x: 2470, y: 1500 },
+  { id: "N-08", kind: "Essay", title: "A photo becomes a plan", body: "Nobody has the patience to log every meal. Nura takes a photo, a barcode or a sentence, and keeps a child's targets safe.", href: "https://github.com/Arunodoy18/NutTrack", link: "Read the source", year: "2026", image: "/work/nura.webp", x: 2470, y: 1500 },
   { id: "N-09", kind: "Essay", title: "One engine, three readers", body: "A student, a campus and a city all want the same carbon number, told differently. Vaayu does the maths once and tells it three ways.", href: "https://github.com/Arunodoy18/campusCarbon", link: "Read the source", year: "2026", x: 1080, y: 2040 },
-  { id: "N-10", kind: "Essay", title: "Snap it, sort it", body: "A bin is a two-second decision. Wastifi makes the call from a photo, and says how sure it is, so you can disagree with it.", href: "https://wastifi.netlify.app/", link: "Visit", year: "2025", image: "/work/wastifi.jpg", x: 1720, y: 2040 },
+  { id: "N-10", kind: "Essay", title: "Snap it, sort it", body: "A bin is a two-second decision. Wastifi makes the call from a photo, and says how sure it is, so you can disagree with it.", href: "https://wastifi.netlify.app/", link: "Visit", year: "2025", image: "/work/wastifi.webp", x: 1720, y: 2040 },
 ];
 
 /** Things I keep going back to. */
@@ -257,6 +258,30 @@ export const taste = [
 ] as const;
 
 /** Facts for each project page, taken from the projects' own READMEs. Used by /projects/[slug] and the structured data. */
+/** Meta descriptions, written to fit a search snippet (about 150 characters). */
+export const metaDescriptions: Record<string, string> = {
+  home: "Arunodoy Banerjee: backend & AI engineer from Sikkim, India. Founder of Zone, an offline mesh app. Android apps, AI tools and extensions.",
+  about: "Who Arunodoy Banerjee is: founder of Zone, AI automation developer at buildc3.tech, CS (AI & ML) student at SMIT, Sikkim. Experience and skills.",
+  projects: "13 projects by Arunodoy Banerjee: Zone, Cadence, Nura, Meow AI, Nakung AI, LeadRadar and more, from Android apps to AI tools.",
+  contact: "Contact Arunodoy Banerjee for internships, collaborations and engineering roles: email, GitHub, LinkedIn, LeetCode and resume.",
+  "open-source": "Open-source work by Arunodoy Banerjee on GitHub: Zone, Cadence, Nura, Meow AI, Nakung AI, RedZone and more.",
+  notes: "Short notes by Arunodoy Banerjee on building software for offline India, AI tutoring, code review and more.",
+  privacy: "Privacy at aruno.buildc3.tech: no analytics, no tracking cookies. What the site stores in your browser and why.",
+  zone: "Zone is an offline Android app: phones relay a 31-byte SOS over a Bluetooth mesh when towers fail. Incubated at AIC-SMUTBI.",
+  cadence: "Cadence is a speaking-first language app for Indian languages: real AI conversation and pronunciation scoring. 200+ active users.",
+  nura: "Nura (DietBuddy) is an Android nutrition tracker: log meals by photo, barcode or voice, with child-safe targets. 100+ users.",
+  meow: "Meow AI is a Chrome extension that adapts to the page: PR review on GitHub, hint-first DSA help on LeetCode, and more.",
+  nakung: "Nakung AI is a Chrome extension that tutors you on LeetCode with Socratic hints or a FAANG-style mock interviewer.",
+  "your-reviewer": "Your-Reviewer is an AI code review hub: bring your own LLM and MCP servers, with inline GitHub pull request reviews.",
+  redzone: "RedZone maps hazard red zones and plans relocation for Sikkim's disaster authority, with calibrated risk and optimisation.",
+  vaayu: "Vaayu is a carbon-footprint platform for India: one engine for individuals, campuses and cities, building an open dataset.",
+  talentsync: "TalentSync is an AI career platform: resume parsing, ATS scoring and semantic job matching with 60% fewer irrelevant matches.",
+  primer: "Primer is an AI reading tutor for kids aged 5 to 9: it listens, scores accuracy and writes the next story at their level.",
+  youinst: "YouInst is an autonomous studio that writes, voices, captions and uploads YouTube Shorts and Reels end to end.",
+  wastifi: "Wastifi classifies waste from one photo into five categories, with confidence scores, pickup tracking and impact analytics.",
+  leadradar: "LeadRadar is a multi-tenant AI outreach SaaS: Apollo.io lead scoring, automated sequences and LLM reply routing.",
+};
+
 export const projectDetails: Record<string, { platform: string; category: string; facts: string[] }> = {
   zone: {
     platform: "Android",
@@ -326,7 +351,7 @@ export const projectDetails: Record<string, { platform: string; category: string
     platform: "Web",
     category: "DeveloperApplication",
     facts: [
-      "An open-source AI code review hub where you bring your own model: OpenAI, Claude, Groq or an open model.",
+      "An AI code review hub where you bring your own model: OpenAI, Claude, Groq or an open model.",
       "Connect your own Model Context Protocol (MCP) servers so the reviewing agent can use your internal tools.",
       "GitHub webhooks: raise a pull request and the agent analyses the diff and posts inline comments.",
       "A Python FastAPI backend with SQLAlchemy and asynchronous workers on Redis and Celery; a React and Tailwind front end.",
@@ -415,7 +440,7 @@ export const faqs = [
   },
   {
     q: "What has Arunodoy Banerjee built?",
-    a: "His projects include Zone, an offline Bluetooth mesh network for disasters; Cadence, a speaking-first language-learning app; Nura, family nutrition tracking on Android; Meow AI and Nakung AI, Chrome extensions for developers; Your-Reviewer, open-source AI code review; RedZone, hazard and relocation planning for Sikkim; and Vaayu, a carbon-footprint platform.",
+    a: "His projects include Zone, an offline Bluetooth mesh network for disasters; Cadence, a speaking-first language-learning app; Nura, family nutrition tracking on Android; Meow AI and Nakung AI, Chrome extensions for developers; Your-Reviewer, AI code review with your own model; RedZone, hazard and relocation planning for Sikkim; and Vaayu, a carbon-footprint platform.",
   },
   {
     q: "What has Arunodoy Banerjee achieved?",

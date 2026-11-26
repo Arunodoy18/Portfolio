@@ -28,6 +28,23 @@ export default function Hud() {
     };
   }, []);
 
+  // lazy background images: [data-bg] elements get their picture when they come within a screen of view
+  useEffect(() => {
+    let n = 0;
+    return onTick(() => {
+      if (n++ % 10) return;
+      const vh = window.innerHeight;
+      document.querySelectorAll<HTMLElement>("[data-bg]:not([data-bg-set])").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        // the notes plane is transformed, so also accept anything inside a visible stage
+        const near = r.bottom > -vh * 1.2 && r.top < vh * 2.2;
+        if (!near) return;
+        el.style.backgroundImage = `url(${el.dataset.bg})`;
+        el.setAttribute("data-bg-set", "");
+      });
+    });
+  }, []);
+
   // which plate is under the middle of the screen
   useEffect(() => {
     let last = "";
@@ -138,7 +155,7 @@ function ThemeToggle() {
     <button
       type="button"
       data-cursor="hover"
-      aria-label={ink ? "Switch to day" : "Switch to night"}
+      aria-label={ink ? "Night — switch to day" : "Day — switch to night"}
       onClick={() => setTheme(isInk() ? "paper" : "ink")}
       className="flex items-center gap-1.5 tracking-[0.22em]"
     >

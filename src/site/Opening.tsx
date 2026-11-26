@@ -234,7 +234,6 @@ export default function Opening() {
         {/* headline */}
         <p
           ref={head}
-          aria-label={`Engineering, as art — ${profile.first} ${profile.last}`}
           className="cast absolute left-[3.2vw] top-[11vh] whitespace-nowrap text-[clamp(44px,7.4vw,150px)] leading-none text-ink opacity-0"
         >
           <span data-root aria-hidden className="inline-block">

@@ -142,7 +142,8 @@ export default function Manifesto() {
         </div>
 
         {/* capitals */}
-        <div ref={caps} className="absolute inset-0 flex flex-col items-center justify-center opacity-0" aria-label={LINES.join(" ")}>
+        <div ref={caps} className="absolute inset-0 flex flex-col items-center justify-center opacity-0">
+          <p className="sr-only">{LINES.join(" ")}</p>
           {letters.map((line, li) => (
             <div
               key={li}

@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
 import SubPage from "@/site/SubPage";
-import { breadcrumbs, graph, personId, siteUrl as SITE } from "@/site/seo";
-import { profile } from "@/site/data";
+import { metaDescriptions, profile } from "@/site/data";
+import { alternatesFor, breadcrumbs, graph, personId, siteUrl as SITE } from "@/site/seo";
 
 const siteUrl = "https://aruno.buildc3.tech";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description:
-    "Contact Arunodoy Banerjee for internships, collaboration, and full stack engineering opportunities.",
-  alternates: {
-    canonical: `${siteUrl}/contact`,
-  },
+  description: metaDescriptions["contact"],
+  alternates: alternatesFor("/contact"),
   openGraph: {
     title: "Contact | Arunodoy Banerjee",
     description:

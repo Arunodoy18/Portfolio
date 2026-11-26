@@ -73,7 +73,7 @@ export default function Practice() {
             <ul className="mt-4 hidden space-y-1 font-mono md:block text-[10px] leading-relaxed tracking-[0.12em] text-paper/70">
               {practice.groups.map((g) => (
                 <li key={g.label}>
-                  <span className="text-paper/40">{g.label.toUpperCase()} ·</span> {g.items.join(", ")}
+                  <span className="text-paper/65">{g.label.toUpperCase()} ·</span> {g.items.join(", ")}
                 </li>
               ))}
             </ul>
@@ -84,7 +84,7 @@ export default function Practice() {
           ref={grid}
           className="relative grid aspect-[12/7] w-full gap-[3px] md:col-span-8"
           style={{ gridTemplateColumns: "repeat(12, 1fr)", gridTemplateRows: "repeat(7, 1fr)" }}
-          aria-label="Skills"
+          role="group" aria-label="Skills"
         >
           {tiles.map((t, i) =>
             t.type === 1 ? (
@@ -94,7 +94,7 @@ export default function Practice() {
                 className="flex flex-col justify-between bg-ink p-[0.4vw] text-paper opacity-0"
                 style={{ gridColumn: t.x + 1, gridRow: t.y + 1 }}
               >
-                <span className="font-mono text-[clamp(5px,0.45vw,8px)] tracking-[0.15em] text-paper/40">{t.group?.toUpperCase()}</span>
+                <span className="font-mono text-[clamp(5px,0.45vw,8px)] tracking-[0.15em] text-paper/65">{t.group?.toUpperCase()}</span>
                 <span className="font-mono text-[clamp(6px,0.62vw,11px)] leading-tight tracking-[0.06em]">{t.label}</span>
               </div>
             ) : (
@@ -103,7 +103,8 @@ export default function Practice() {
                 data-seed={t.seed}
                 aria-hidden
                 className="bg-cover opacity-0 grayscale"
-                style={{ gridColumn: t.x + 1, gridRow: t.y + 1, backgroundImage: `url(${t.img})`, backgroundPosition: t.pos, backgroundSize: "600%" }}
+                data-bg={t.img}
+                style={{ gridColumn: t.x + 1, gridRow: t.y + 1, backgroundPosition: t.pos, backgroundSize: "600%" }}
               />
             ),
           )}

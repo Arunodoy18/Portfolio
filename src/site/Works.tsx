@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Glyph from "./Glyph";
 import { Wormhole } from "./Notes";
-import { projects, type Project } from "./data";
+import { projects, type Project, webp } from "./data";
 
 const KINDS = ["All", "App", "Extension", "Platform", "System", "Agent"] as const;
 
@@ -17,7 +17,7 @@ export default function Works() {
       <Wormhole className="pointer-events-none absolute inset-0 h-full w-full text-ink/[0.13]" />
       <div className="relative grid grid-cols-1 gap-y-12 md:grid-cols-12 md:gap-x-[1.2vw]">
         <aside className="md:sticky md:top-[12vh] md:col-span-4 md:h-fit">
-          <p className="font-mono text-[10px] tracking-[0.25em] text-ink/50">04 — WORKS</p>
+          <p className="font-mono text-[10px] tracking-[0.25em] text-ink/65">04 — WORKS</p>
           <h2 className="cast mt-3 text-[clamp(64px,9vw,180px)] leading-[0.8] text-ink">WORKS</h2>
           <p className="mt-6 max-w-[34ch] font-serif text-[clamp(15px,1.3vw,20px)] italic leading-snug text-ink/75">
             Things built to be used: apps that work with no network, extensions that sit beside you while you learn, and the
@@ -78,11 +78,11 @@ function Entry({ p, i, index }: { p: Project; i: number; index: number }) {
         {p.image && (
           <div
             className="absolute inset-0 bg-cover bg-top opacity-0 grayscale transition duration-700 group-hover:opacity-30 group-hover:grayscale-0"
-            style={{ backgroundImage: `url(${p.image})` }}
+            data-bg={webp(p.image)}
           />
         )}
         <div className="relative p-5 sm:p-6">
-          <div className="flex items-center justify-between font-mono text-[9px] tracking-[0.2em] text-paper/55">
+          <div className="flex items-center justify-between font-mono text-[9px] tracking-[0.2em] text-paper/65">
             <span>
               {String(index + 1).padStart(2, "0")} · {p.kind.toUpperCase()} · {p.year}
             </span>
@@ -91,7 +91,7 @@ function Entry({ p, i, index }: { p: Project; i: number; index: number }) {
           <h3 className="mt-5 font-serif text-[clamp(34px,3.6vw,60px)] italic font-light leading-none tracking-[-0.02em]">{p.name}</h3>
           <p className="mt-3 max-w-[44ch] font-serif text-[15px] leading-snug text-paper/90">{p.line}</p>
           <p className="mt-4 max-w-[60ch] text-[12.5px] leading-relaxed text-paper/60">{p.body}</p>
-          <div className="mt-5 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[9px] tracking-[0.15em] text-paper/50">
+          <div className="mt-5 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[9px] tracking-[0.15em] text-paper/65">
             {p.stack.map((s) => (
               <span key={s}>{s.toUpperCase()}</span>
             ))}

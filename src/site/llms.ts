@@ -21,6 +21,7 @@ ${fullName} — ${jobTitle}. Based in ${profile.place}. ${profile.school}, ${pro
 - [About ${fullName}](${siteUrl}/about): who he is, what he works with, and common questions answered
 - [Projects](${siteUrl}/projects): every project with a short description
 ${projects.map((p) => `- [${p.name}](${siteUrl}/projects/${p.slug}): ${p.line}`).join("\n")}
+- [Notes](${siteUrl}/notes): short pieces on what he builds and why
 - [Open source](${siteUrl}/open-source)
 - [Contact](${siteUrl}/contact)
 

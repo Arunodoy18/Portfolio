@@ -859,6 +859,7 @@ export default function Forme() {
         <canvas
           ref={canvas}
           className="absolute inset-0 h-full w-full"
+          role="img"
           aria-label="Engineering and art should be seen through the same lens: three beams of letters, and a small figure you can walk across them."
         />
         <div ref={veil} aria-hidden className="pointer-events-none absolute inset-0 bg-paper opacity-0" />

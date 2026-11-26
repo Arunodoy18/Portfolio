@@ -187,13 +187,14 @@ export default function Plane() {
               {n.image && (
                 <div
                   className="shrink-0 bg-cover bg-center grayscale-[0.35]"
-                  style={{ width: n.w ?? 300, height: (n.w ?? 300) * (n.kind === "Photographs" ? 1.25 : 0.78), backgroundImage: `url(${n.image})` }}
+                  data-bg={n.image}
+                  style={{ width: n.w ?? 300, height: (n.w ?? 300) * (n.kind === "Photographs" ? 1.25 : 0.78) }}
                   role="img"
                   aria-label={n.title}
                 />
               )}
               <div className="flex w-[340px] shrink-0 flex-col justify-end">
-                <p className="flex justify-between font-mono text-[13px] tracking-[0.2em] text-ink/50">
+                <p className="flex justify-between font-mono text-[13px] tracking-[0.2em] text-ink/65">
                   <span>{n.id}</span>
                   <span>{n.kind.toUpperCase()}</span>
                 </p>

@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import SubPage from "@/site/SubPage";
+import { metaDescriptions, projects } from "@/site/data";
+import { alternatesFor, breadcrumbs, graph, personId, projectList } from "@/site/seo";
 import Link from "next/link";
-import { projects } from "@/site/data";
-import { breadcrumbs, graph, personId, projectList } from "@/site/seo";
 
 const siteUrl = "https://aruno.buildc3.tech";
 
 export const metadata: Metadata = {
   title: "Projects",
-  description:
-    "Projects by Arunodoy Banerjee: Zone (offline Bluetooth mesh), Cadence, Nura, Meow AI, Nakung AI, Your-Reviewer, RedZone, Vaayu and more.",
-  alternates: { canonical: `${siteUrl}/projects` },
+  description: metaDescriptions["projects"],
+  alternates: alternatesFor("/projects"),
   openGraph: {
     title: "Projects | Arunodoy Banerjee",
     description: "Apps, browser extensions, platforms and systems built by Arunodoy Banerjee.",
@@ -48,7 +47,7 @@ export default function ProjectsPage() {
       <ol className="space-y-px bg-ink/15">
         {projects.map((p, i) => (
           <li key={p.slug} className="grid gap-4 bg-paper py-8 md:grid-cols-[80px_1fr_220px]">
-            <span className="font-mono text-[11px] tracking-[0.2em] text-ink/45">{String(i + 1).padStart(2, "0")}</span>
+            <span className="font-mono text-[11px] tracking-[0.2em] text-ink/65">{String(i + 1).padStart(2, "0")}</span>
             <div>
               <h2 className="font-serif text-[clamp(30px,3vw,44px)] italic leading-none">
                 <Link href={`/projects/${p.slug}`} className="hover:underline">

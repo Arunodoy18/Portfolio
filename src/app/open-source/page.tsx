@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
 import SubPage from "@/site/SubPage";
-import { breadcrumbs, graph, personId, siteUrl as SITE } from "@/site/seo";
-import { profile, projects } from "@/site/data";
+import { metaDescriptions, profile, projects } from "@/site/data";
+import { alternatesFor, breadcrumbs, graph, personId, siteUrl as SITE } from "@/site/seo";
 
 const siteUrl = "https://aruno.buildc3.tech";
 
 export const metadata: Metadata = {
   title: "Open Source",
-  description:
-    "Open-source work by Arunodoy Banerjee: Zone, Cadence, Nura, Meow AI, Nakung AI, Your-Reviewer and more.",
-  alternates: {
-    canonical: `${siteUrl}/open-source`,
-  },
+  description: metaDescriptions["open-source"],
+  alternates: alternatesFor("/open-source"),
   openGraph: {
     title: "Open Source | Arunodoy Banerjee",
     description:
@@ -50,7 +47,7 @@ export default function OpenSourcePage() {
         {open.map((p) => (
           <li key={p.slug} className="bg-paper p-5">
             <a href={p.code} className="group block">
-              <p className="font-mono text-[10px] tracking-[0.2em] text-ink/50">
+              <p className="font-mono text-[10px] tracking-[0.2em] text-ink/65">
                 {p.kind.toUpperCase()} · {p.year}
               </p>
               <p className="mt-2 font-serif text-[28px] italic leading-none group-hover:underline">{p.name}</p>
