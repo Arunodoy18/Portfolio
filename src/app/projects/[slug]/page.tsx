@@ -106,7 +106,7 @@ export default async function ProjectPage({ params }: Params) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: graph(page, app, faq, breadcrumbs([{ name: "Projects", path: "/projects" }, { name: p.name, path: `/projects/${slug}` }])) }}
       />
-      <nav aria-label="Breadcrumb" className="-mt-8 mb-10 font-mono text-[10px] tracking-[0.18em] text-ink/65">
+      <nav aria-label="Breadcrumb" className="-mt-8 mb-10 flex flex-wrap items-center gap-x-2 font-mono text-[10px] tracking-[0.18em] text-ink/65 [&_a]:inline-block [&_a]:py-3">
         <Link href="/" className="link-u">HOME</Link> / <Link href="/projects" className="link-u">PROJECTS</Link> / <span className="text-ink">{p.name.toUpperCase()}</span>
       </nav>
 
@@ -190,7 +190,7 @@ export default async function ProjectPage({ params }: Params) {
         <ul className="mt-5 grid gap-x-8 gap-y-3 sm:grid-cols-2 md:grid-cols-3">
           {others.map((o) => (
             <li key={o.slug}>
-              <Link href={`/projects/${o.slug}`} className="group block">
+              <Link href={`/projects/${o.slug}`} className="group block py-2">
                 <span className="font-serif text-[22px] italic group-hover:underline">{o.name}</span>
                 <span className="block text-[13px] text-ink/60">{o.line}</span>
               </Link>

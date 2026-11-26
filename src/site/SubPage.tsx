@@ -27,7 +27,7 @@ export default function SubPage({
         <Link href="/" className="cast text-[14px] tracking-[0.02em]">
           {profile.first} {profile.last}
         </Link>
-        <nav aria-label="Main" className="flex flex-wrap justify-end gap-x-5 gap-y-1">
+        <nav aria-label="Main" className="flex flex-wrap justify-end gap-x-5 [&_a]:inline-block [&_a]:py-3">
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} className="link-u">
               {l.label.toUpperCase()}
@@ -52,7 +52,7 @@ export default function SubPage({
           </a>
         </p>
       </aside>
-      <footer className="mx-auto mt-8 flex max-w-5xl flex-wrap justify-between gap-3 border-t border-ink/15 pt-4 font-mono text-[10px] tracking-[0.18em] text-ink/65">
+      <footer className="mx-auto mt-8 flex max-w-5xl flex-wrap items-center justify-between gap-3 border-t border-ink/15 pt-2 font-mono text-[10px] tracking-[0.18em] text-ink/65 [&_a]:inline-block [&_a]:py-3">
         <Link href="/" className="link-u">
           ← BACK TO THE LENS
         </Link>
